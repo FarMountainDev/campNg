@@ -10,5 +10,7 @@ public class CampsiteConfiguration : IEntityTypeConfiguration<Campsite>
     {
         builder.Property(x => x.Name).HasMaxLength(50).IsRequired();
         builder.Property(x => x.Description).HasMaxLength(180).IsRequired();
+        builder.HasOne<Campground>().WithMany(x => x.Campsites).HasForeignKey(x => x.CampsiteTypeId);
+        builder.HasOne(x => x.CampsiteType).WithMany().HasForeignKey(x => x.CampsiteTypeId);
     }
 }

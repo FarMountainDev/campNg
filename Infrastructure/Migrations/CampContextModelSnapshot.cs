@@ -52,6 +52,12 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("CampgroundId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CampsiteTypeId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(180)
@@ -62,10 +68,9 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("Type")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("CampsiteTypeId");
 
                     b.ToTable("Campsites");
                 });
@@ -97,6 +102,28 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("CampsiteTypes");
+                });
+
+            modelBuilder.Entity("Core.Entities.Campsite", b =>
+                {
+                    b.HasOne("Core.Entities.Campground", null)
+                        .WithMany("Campsites")
+                        .HasForeignKey("CampsiteTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Core.Entities.CampsiteType", "CampsiteType")
+                        .WithMany()
+                        .HasForeignKey("CampsiteTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CampsiteType");
+                });
+
+            modelBuilder.Entity("Core.Entities.Campground", b =>
+                {
+                    b.Navigation("Campsites");
                 });
 #pragma warning restore 612, 618
         }

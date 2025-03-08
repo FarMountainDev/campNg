@@ -1,0 +1,23 @@
+[
+  {
+    "Id": 1,
+    "Name": "Tent Site",
+    "Description": "Pellentesque habitant morbi tristique sen.",
+    "WeekDayPrice": 15.00,
+    "WeekEndPrice": 25.00
+  },
+  {
+    "Id": 2,
+    "Name": "RV Site",
+    "Description": "Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
+    "WeekDayPrice": 35.00,
+    "WeekEndPrice": 50.00
+  },
+  {
+    "Id": 3,
+    "Name": "Cabin",
+    "Description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa.",
+    "WeekDayPrice": 75.00,
+    "WeekEndPrice": 100.00
+  }
+]

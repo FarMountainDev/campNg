@@ -11,8 +11,8 @@ public class CampContext(DbContextOptions options) : DbContext(options)
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        base.OnModelCreating(modelBuilder);
-        
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(CampContext).Assembly);
+        
+        base.OnModelCreating(modelBuilder);
     }
 }

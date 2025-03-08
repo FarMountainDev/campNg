@@ -1,5 +1,5 @@
 ﻿using Core.Entities;
-using Infrastructure.Data;
+using Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,18 +7,18 @@ namespace API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class CampgroundsController(CampContext context) : ControllerBase
+public class CampgroundsController(ICampgroundsRepository repo) : ControllerBase
 {
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Campground>>> GetCampgrounds()
     {
-        return await context.Campgrounds.ToListAsync();
+        return Ok(await repo.GetCampgroundsAsync());
     }
     
     [HttpGet("{id:int}")]
     public async Task<ActionResult<Campground>> GetCampground(int id)
     {
-        var campground = await context.Campgrounds.FindAsync(id);
+        var campground = await repo.GetCampgroundByIdAsync(id);
         
         if (campground == null) return NotFound();
         
@@ -28,11 +28,14 @@ public class CampgroundsController(CampContext context) : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Campground>> CreateCampground(Campground campground)
     {
-        context.Campgrounds.Add(campground);
+        repo.AddCampground(campground);
         
-        await context.SaveChangesAsync();
+        if (await repo.SaveChangesAsync())
+        {
+            return CreatedAtAction(nameof(GetCampground), new { id = campground.Id }, campground);
+        }
 
-        return campground;
+        return BadRequest("Problem creating campground");
     }
     
     [HttpPut("{id:int}")]
@@ -40,26 +43,32 @@ public class CampgroundsController(CampContext context) : ControllerBase
     {
         if (id != campground.Id || !CampgroundExists(id)) return BadRequest("Cannot update this campground");
         
-        context.Entry(campground).State = EntityState.Modified;
+        repo.UpdateCampground(campground);
         
-        await context.SaveChangesAsync();
+        if (await repo.SaveChangesAsync())
+        {
+            return NoContent();
+        }
         
-        return NoContent();
+        return BadRequest("Problem updating campground");
     }
     
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> DeleteCampground(int id)
     {
-        var campground = await context.Campgrounds.FindAsync(id);
+        var campground = await repo.GetCampgroundByIdAsync(id);
         
         if (campground == null) return NotFound();
         
-        context.Campgrounds.Remove(campground);
+        repo.DeleteCampground(campground);
         
-        await context.SaveChangesAsync();
+        if (await repo.SaveChangesAsync())
+        {
+            return NoContent();
+        }
         
-        return NoContent();
+        return BadRequest("Problem updating campground");
     }
     
-    private bool CampgroundExists(int id) => context.Campgrounds.Any(x => x.Id == id);
+    private bool CampgroundExists(int id) => repo.CampgroundExists(id);
 }

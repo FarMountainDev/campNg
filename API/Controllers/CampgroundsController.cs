@@ -1,5 +1,6 @@
 ﻿using Core.Entities;
 using Core.Interfaces;
+using Core.Specifications;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,18 +8,22 @@ namespace API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class CampgroundsController(ICampgroundsRepository repo) : ControllerBase
+public class CampgroundsController(IGenericRepository<Campground> repo) : ControllerBase
 {
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Campground>>> GetCampgrounds()
     {
-        return Ok(await repo.GetCampgroundsAsync());
+        var spec = new CampgroundSpecification();
+        
+        var campgrounds = await repo.ListAsync(spec);
+        
+        return Ok(campgrounds);
     }
     
     [HttpGet("{id:int}")]
     public async Task<ActionResult<Campground>> GetCampground(int id)
     {
-        var campground = await repo.GetCampgroundByIdAsync(id);
+        var campground = await repo.GetByIdAsync(id);
         
         if (campground == null) return NotFound();
         
@@ -28,9 +33,9 @@ public class CampgroundsController(ICampgroundsRepository repo) : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Campground>> CreateCampground(Campground campground)
     {
-        repo.AddCampground(campground);
+        repo.Add(campground);
         
-        if (await repo.SaveChangesAsync())
+        if (await repo.SaveAllAsync())
         {
             return CreatedAtAction(nameof(GetCampground), new { id = campground.Id }, campground);
         }
@@ -43,9 +48,9 @@ public class CampgroundsController(ICampgroundsRepository repo) : ControllerBase
     {
         if (id != campground.Id || !CampgroundExists(id)) return BadRequest("Cannot update this campground");
         
-        repo.UpdateCampground(campground);
+        repo.Update(campground);
         
-        if (await repo.SaveChangesAsync())
+        if (await repo.SaveAllAsync())
         {
             return NoContent();
         }
@@ -56,13 +61,13 @@ public class CampgroundsController(ICampgroundsRepository repo) : ControllerBase
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> DeleteCampground(int id)
     {
-        var campground = await repo.GetCampgroundByIdAsync(id);
+        var campground = await repo.GetByIdAsync(id);
         
         if (campground == null) return NotFound();
         
-        repo.DeleteCampground(campground);
+        repo.Remove(campground);
         
-        if (await repo.SaveChangesAsync())
+        if (await repo.SaveAllAsync())
         {
             return NoContent();
         }
@@ -70,5 +75,5 @@ public class CampgroundsController(ICampgroundsRepository repo) : ControllerBase
         return BadRequest("Problem updating campground");
     }
     
-    private bool CampgroundExists(int id) => repo.CampgroundExists(id);
+    private bool CampgroundExists(int id) => repo.Exists(id);
 }

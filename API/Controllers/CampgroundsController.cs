@@ -14,7 +14,6 @@ public class CampgroundsController(IGenericRepository<Campground> repo) : Contro
     public async Task<ActionResult<IEnumerable<Campground>>> GetCampgrounds()
     {
         var spec = new CampgroundSpecification();
-        
         var campgrounds = await repo.ListAsync(spec);
         
         return Ok(campgrounds);
@@ -23,7 +22,8 @@ public class CampgroundsController(IGenericRepository<Campground> repo) : Contro
     [HttpGet("{id:int}")]
     public async Task<ActionResult<Campground>> GetCampground(int id)
     {
-        var campground = await repo.GetByIdAsync(id);
+        var spec = new CampgroundSpecification(id);
+        var campground = await repo.GetEntityWithSpec(spec);
         
         if (campground == null) return NotFound();
         

@@ -4,8 +4,10 @@ namespace Core.Specifications;
 
 public class CampgroundSpecification : BaseSpecification<Campground>
 {
-    public CampgroundSpecification(int? id = null) : base()
+    public CampgroundSpecification(BaseSpecParams specParams) : base(x => 
+        (string.IsNullOrWhiteSpace(specParams.Search) || x.Name.ToLower().Contains(specParams.Search)))
     {
+        ApplyPaging(specParams.PageSize * (specParams.PageNumber - 1), specParams.PageSize);
         AddInclude(x => x.Campsites!);
     }
 

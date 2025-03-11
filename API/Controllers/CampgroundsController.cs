@@ -2,21 +2,17 @@
 using Core.Interfaces;
 using Core.Specifications;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]
-public class CampgroundsController(IGenericRepository<Campground> repo) : ControllerBase
+public class CampgroundsController(IGenericRepository<Campground> repo) : BaseApiController
 {
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Campground>>> GetCampgrounds()
+    public async Task<ActionResult> GetCampgrounds([FromQuery]BaseSpecParams specParams)
     {
-        var spec = new CampgroundSpecification();
-        var campgrounds = await repo.ListAsync(spec);
+        var spec = new CampgroundSpecification(specParams);
         
-        return Ok(campgrounds);
+        return await CreatePagedResult(repo, spec, specParams.PageNumber, specParams.PageSize);
     }
     
     [HttpGet("{id:int}")]

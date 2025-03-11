@@ -24,7 +24,8 @@ public static class SpecificationEvaluator<T> where T : BaseEntity
             query = query.Skip(spec.Skip).Take(spec.Take);
 
         query = spec.Includes.Aggregate(query, (current, include) => current.Include(include));
-        
+        query = spec.IncludeStrings.Aggregate(query, (current, include) => current.Include(include));
+
         return query;
     }
     
@@ -41,6 +42,7 @@ public static class SpecificationEvaluator<T> where T : BaseEntity
             query = query.OrderByDescending(spec.OrderByDescending);
         
         query = spec.Includes.Aggregate(query, (current, include) => current.Include(include));
+        query = spec.IncludeStrings.Aggregate(query, (current, include) => current.Include(include));
 
         var selectQuery = query as IQueryable<TResult>;
 

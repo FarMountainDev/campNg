@@ -12,6 +12,12 @@
     "CampsiteTypeId": 1
   },
   {
+    "Name": "Tent Site 3",
+    "Description": "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede.",
+    "CampgroundId": 1,
+    "CampsiteTypeId": 1
+  },
+  {
     "Name": "RV Site 1",
     "Description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa.",
     "CampgroundId": 2,
@@ -24,6 +30,12 @@
     "CampsiteTypeId": 2
   },
   {
+    "Name": "RV Site 3",
+    "Description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa.",
+    "CampgroundId": 2,
+    "CampsiteTypeId": 2
+  },
+  {
     "Name": "Cabin 1",
     "Description": "Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
     "CampgroundId": 3,
@@ -31,7 +43,13 @@
   },
   {
     "Name": "Cabin 2",
-    "Description": "Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
+    "Description": "Suspendisse dui purus, scelerisque at, vulputate vitae. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
+    "CampgroundId": 3,
+    "CampsiteTypeId": 3
+  },
+  {
+    "Name": "Cabin 3",
+    "Description": "Suspendisse dui purus, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
     "CampgroundId": 3,
     "CampsiteTypeId": 3
   }

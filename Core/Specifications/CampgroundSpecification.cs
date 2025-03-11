@@ -9,10 +9,12 @@ public class CampgroundSpecification : BaseSpecification<Campground>
     {
         ApplyPaging(specParams.PageSize * (specParams.PageNumber - 1), specParams.PageSize);
         AddInclude(x => x.Campsites!);
+        ThenAddInclude("Campsites.CampsiteType");
     }
 
     public CampgroundSpecification(int id) : base(x => x.Id == id)
     {
         AddInclude(x => x.Campsites!);
+        ThenAddInclude("Campsites.CampsiteType");
     }
 }

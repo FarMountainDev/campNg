@@ -42,14 +42,27 @@ public class BaseSpecification<T>(Expression<Func<T, bool>>? criteria) : ISpecif
         Includes.Add(includeExpression);
     }
     
-    protected void ThenAddInclude(string includeString)
+    protected void AddInclude(string includeString)
     {
         IncludeStrings.Add(includeString);
     }
     
-    protected void AddInclude<TProperty>(Expression<Func<T, object>> includeExpression)
+    protected void AddThenInclude<TProperty, TCollection>(
+        Expression<Func<T, IEnumerable<TCollection>>> collection,
+        Expression<Func<TCollection, TProperty>> property)
     {
-        Includes.Add(includeExpression);
+        var path = GetPropertyPathFromExpression(collection) + "." + GetPropertyPathFromExpression(property);
+        AddInclude(path);
+    }
+
+    private static string GetPropertyPathFromExpression<TSource, TProperty>(Expression<Func<TSource, TProperty>> expression)
+    {
+        return expression.Body switch
+        {
+            MemberExpression memberExpression => memberExpression.Member.Name,
+            UnaryExpression { Operand: MemberExpression operandExpression } => operandExpression.Member.Name,
+            _ => throw new ArgumentException("Expression must be a member expression")
+        };
     }
     
     protected void ApplyDistinct()

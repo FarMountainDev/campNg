@@ -11,6 +11,6 @@ public class CampsiteTypeConfiguration : IEntityTypeConfiguration<CampsiteType>
         builder.Property(x => x.Name).HasMaxLength(50).IsRequired();
         builder.Property(x => x.Description).HasMaxLength(180).IsRequired();
         builder.Property(x => x.WeekDayPrice).HasColumnType("decimal(18,2)");
-        builder.Property(x => x.WeekendPrice).HasColumnType("decimal(18,2)");
+        builder.Property(x => x.WeekEndPrice).HasColumnType("decimal(18,2)");
     }
 }

@@ -19,7 +19,6 @@ public class CampgroundSpecification : BaseSpecification<Campground>
                 AddOrderBy(x => x.Name);
                 break;
         }
-        
     }
 
     public CampgroundSpecification(int id) : base(x => x.Id == id)

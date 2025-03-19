@@ -1,4 +1,13 @@
+<app-header />
+
 <h3 class="text-3xl font-bold underline">
   Welcome to {{ title }}!
 </h3>
 
+@for (campground of campgrounds; track campground.id) {
+  {{campground.name}} - {{campground.campsites.length}}
+  @for (campsite of campground.campsites; track campsite.id) {
+    {{campsite.name}}
+  }
+  <br/>
+}

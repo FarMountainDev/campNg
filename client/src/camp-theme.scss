@@ -1,0 +1,15 @@
+﻿@use '@angular/material' as mat;
+
+html {
+  color-scheme: light dark;
+  @include mat.theme((
+    color: mat.$spring-green-palette,
+    typography: Roboto,
+    density: 0
+  ));
+
+  // override button styles
+  .mdc-button, .mdc-raised-button, .mdc-stroked-button, .mdc-flat-button {
+    @apply rounded-lg;
+  }
+}

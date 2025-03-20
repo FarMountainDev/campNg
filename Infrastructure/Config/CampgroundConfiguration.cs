@@ -10,5 +10,6 @@ public class CampgroundConfiguration : IEntityTypeConfiguration<Campground>
     {
         builder.Property(x => x.Name).HasMaxLength(50).IsRequired();
         builder.Property(x => x.Description).HasMaxLength(180).IsRequired();
+        builder.Property(x => x.PictureUrl).IsRequired();
     }
 }

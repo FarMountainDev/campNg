@@ -52,5 +52,23 @@
     "Description": "Suspendisse dui purus, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
     "CampgroundId": 3,
     "CampsiteTypeId": 3
+  },
+  {
+    "Name": "Other 1",
+    "Description": "Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
+    "CampgroundId": 4,
+    "CampsiteTypeId": 3
+  },
+  {
+    "Name": "Other 2",
+    "Description": "Suspendisse dui purus, scelerisque at, vulputate vitae. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
+    "CampgroundId": 4,
+    "CampsiteTypeId": 3
+  },
+  {
+    "Name": "Other 3",
+    "Description": "Suspendisse dui purus, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
+    "CampgroundId": 4,
+    "CampsiteTypeId": 3
   }
 ]

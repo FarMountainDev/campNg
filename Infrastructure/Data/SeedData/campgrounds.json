@@ -1,17 +1,26 @@
 [
   {
     "Id": 1,
-    "Name": "Salmon Creek",
+    "Name": "Cedar Ridge",
+    "PictureUrl": "/images/campgrounds/cedar-ridge.jpg",
     "Description": "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci."
   },
   {
     "Id": 2,
-    "Name": "Granite Hill",
+    "Name": "Crystal Shores",
+    "PictureUrl": "/images/campgrounds/crystal-shores.jpg",
     "Description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa."
   },
   {
     "Id": 3,
-    "Name": "Mountain Goat's Rest",
+    "Name": "Granite Hill",
+    "PictureUrl": "/images/campgrounds/granite-hill.jpg",
+    "Description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa."
+  },
+  {
+    "Id": 4,
+    "Name": "Silver Pine Meadows",
+    "PictureUrl": "/images/campgrounds/silver-pine-meadows.jpg",
     "Description": "Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy."
   }
 ]

@@ -2,25 +2,57 @@
   {
     "Id": 1,
     "Name": "Cedar Ridge",
+    "Description": "Cedar Ridge Campground offers a truly off-the-grid escape into nature's untouched beauty. Nestled in a remote, rugged wilderness, it provides primitive tent camping for adventurers seeking tranquility and solitude. Surrounded by towering cedar trees and panoramic views, this secluded haven invites campers to immerse themselves in the simplicity of the outdoors, with no distractions—just the sounds of the wind through the trees and the crackle of a campfire under a star-filled sky. Cedar Ridge is perfect for those who crave an authentic, raw connection with nature.",
     "PictureUrl": "/images/campgrounds/cedar-ridge.jpg",
-    "Description": "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci."
+    "HasSwimming": false,
+    "HasHiking": true,
+    "HasFishing": false,
+    "HasBoatRentals": false,
+    "HasStore": false,
+    "HasShowers": false,
+    "HasWifi": false,
+    "AllowsPets": true
   },
   {
     "Id": 2,
     "Name": "Crystal Shores",
+    "Description": "Crystal Shores Campground is a picturesque getaway perched right on the shimmering shores of a tranquil lake. Offering a range of accommodations, from cozy cabins to well-equipped RV campsites, it provides a perfect balance of comfort and natural beauty. Wake up to stunning waterfront views, spend your days kayaking, fishing, or simply relaxing by the water, and unwind under starlit skies. Whether you're seeking adventure or serenity, Crystal Shores promises a lakeside retreat you'll never forget.",
     "PictureUrl": "/images/campgrounds/crystal-shores.jpg",
-    "Description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa."
+    "HasSwimming": true,
+    "HasHiking": false,
+    "HasFishing": true,
+    "HasBoatRentals": true,
+    "HasStore": true,
+    "HasShowers": true,
+    "HasWifi": true,
+    "AllowsPets": false
   },
   {
     "Id": 3,
     "Name": "Granite Hill",
+    "Description": "Granite Hill Campground offers a stunning setting with rugged granite formations and options for both tent camping and RV sites. This scenic location provides the perfect backdrop for outdoor adventures, from exploring nearby trails to relaxing by the campfire under starry skies. Whether you prefer the simplicity of a tent or the comfort of an RV, Granite Hill delivers a memorable camping experience surrounded by nature's beauty.",
     "PictureUrl": "/images/campgrounds/granite-hill.jpg",
-    "Description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa."
+    "HasSwimming": false,
+    "HasHiking": true,
+    "HasFishing": false,
+    "HasBoatRentals": false,
+    "HasStore": false,
+    "HasShowers": true,
+    "HasWifi": false,
+    "AllowsPets": true
   },
   {
     "Id": 4,
     "Name": "Silver Pine Meadows",
+    "Description": "Silver Pine Meadows Campground is a peaceful escape surrounded by the beauty of towering pines and open grassy meadows. Perfect for nature lovers, it offers a serene setting for camping, stargazing, and outdoor adventures. Whether you're unwinding in the shade of the pines or exploring nearby trails, Silver Pine Meadows provides a refreshing retreat for all who seek the tranquility of the great outdoors.",
     "PictureUrl": "/images/campgrounds/silver-pine-meadows.jpg",
-    "Description": "Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy."
+    "HasSwimming": false,
+    "HasHiking": true,
+    "HasFishing": true,
+    "HasBoatRentals": false,
+    "HasStore": false,
+    "HasShowers": false,
+    "HasWifi": false,
+    "AllowsPets": true
   }
 ]

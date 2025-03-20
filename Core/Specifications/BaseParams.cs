@@ -1,6 +1,6 @@
 ﻿namespace Core.Specifications;
 
-public class BaseSpecParams
+public class BaseParams
 {
     private const int MaxPageSize = 50;
     public int PageNumber { get; set; } = 1;

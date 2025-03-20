@@ -1,74 +1,121 @@
 [
   {
-    "Name": "Tent Site 1",
+    "Id": 1,
+    "Name": "Cedar Ridge Tent Site 1",
     "Description": "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.",
     "CampgroundId": 1,
     "CampsiteTypeId": 1
   },
   {
-    "Name": "Tent Site 2",
+    "Id": 2,
+    "Name": "Cedar Ridge Tent Site 2",
     "Description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa.",
     "CampgroundId": 1,
     "CampsiteTypeId": 1
   },
   {
-    "Name": "Tent Site 3",
+    "Id": 3,
+    "Name": "Cedar Ridge Tent Site 3",
     "Description": "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede.",
     "CampgroundId": 1,
     "CampsiteTypeId": 1
   },
   {
-    "Name": "RV Site 1",
+    "Id": 4,
+    "Name": "Lakeside RV Site 1",
     "Description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa.",
     "CampgroundId": 2,
     "CampsiteTypeId": 2
   },
   {
-    "Name": "RV Site 2",
+    "Id": 5,
+    "Name": "Lakeside RV Site 2",
     "Description": "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.",
     "CampgroundId": 2,
     "CampsiteTypeId": 2
   },
   {
-    "Name": "RV Site 3",
+    "Id": 6,
+    "Name": "Lakeside RV Site 3",
     "Description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa.",
     "CampgroundId": 2,
     "CampsiteTypeId": 2
   },
   {
-    "Name": "Cabin 1",
+    "Id": 7,
+    "Name": "Lakeside Cabin 1",
+    "Description": "Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
+    "CampgroundId": 2,
+    "CampsiteTypeId": 3
+  },
+  {
+    "Id": 8,
+    "Name": "Lakeside Cabin 2",
+    "Description": "Suspendisse dui purus, scelerisque at, vulputate vitae. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
+    "CampgroundId": 2,
+    "CampsiteTypeId": 3
+  },
+  {
+    "Id": 9,
+    "Name": "Lakeside Cabin 3",
+    "Description": "Suspendisse dui purus, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
+    "CampgroundId": 2,
+    "CampsiteTypeId": 3
+  },
+  {
+    "Id": 10,
+    "Name": "Granite Tent Site 1",
     "Description": "Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
     "CampgroundId": 3,
-    "CampsiteTypeId": 3
+    "CampsiteTypeId": 1
   },
   {
-    "Name": "Cabin 2",
+    "Id": 11,
+    "Name": "Granite Tent Site 2",
     "Description": "Suspendisse dui purus, scelerisque at, vulputate vitae. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
     "CampgroundId": 3,
-    "CampsiteTypeId": 3
+    "CampsiteTypeId": 1
   },
   {
-    "Name": "Cabin 3",
+    "Id": 12,
+    "Name": "Granite Tent Site 3",
     "Description": "Suspendisse dui purus, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
     "CampgroundId": 3,
-    "CampsiteTypeId": 3
+    "CampsiteTypeId": 1
   },
   {
-    "Name": "Other 1",
+    "Id": 13,
+    "Name": "Granite RV Site 1",
     "Description": "Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
-    "CampgroundId": 4,
-    "CampsiteTypeId": 3
+    "CampgroundId": 3,
+    "CampsiteTypeId": 2
   },
   {
-    "Name": "Other 2",
+    "Id": 14,
+    "Name": "Granite RV Site 2",
     "Description": "Suspendisse dui purus, scelerisque at, vulputate vitae. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
-    "CampgroundId": 4,
-    "CampsiteTypeId": 3
+    "CampgroundId": 3,
+    "CampsiteTypeId": 2
   },
   {
-    "Name": "Other 3",
+    "Id": 15,
+    "Name": "Silver Pine Tent Site 1",
     "Description": "Suspendisse dui purus, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
     "CampgroundId": 4,
-    "CampsiteTypeId": 3
+    "CampsiteTypeId": 1
+  },
+  {
+    "Id": 16,
+    "Name": "Silver Pine Tent Site 2",
+    "Description": "Suspendisse dui purus, scelerisque at, vulputate vitae. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
+    "CampgroundId": 4,
+    "CampsiteTypeId": 1
+  },
+  {
+    "Id": 17,
+    "Name": "Silver Pine Tent Site 3",
+    "Description": "Suspendisse dui purus, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
+    "CampgroundId": 4,
+    "CampsiteTypeId": 1
   }
 ]

@@ -77,15 +77,29 @@ public static class CampContextSeed
     {
         if (!context.Campsites.Any())
         {
-            var campsitesData = await File.ReadAllTextAsync("../Infrastructure/Data/SeedData/campsites.json");
-            
-            var campsites = JsonSerializer.Deserialize<List<Campsite>>(campsitesData);
+            await using var transaction = await context.Database.BeginTransactionAsync();
 
-            if (campsites == null) return;
+            try
+            {
+                var campsitesData = await File.ReadAllTextAsync("../Infrastructure/Data/SeedData/campsites.json");
+                var campsites = JsonSerializer.Deserialize<List<Campsite>>(campsitesData);
+
+                if (campsites == null) return;
+                
+                await context.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT dbo.Campsites ON");
             
-            context.Campsites.AddRange(campsites);
-            
-            await context.SaveChangesAsync();
+                context.Campsites.AddRange(campsites);
+                await context.SaveChangesAsync();
+                
+                await context.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT dbo.Campsites OFF");
+                
+                await transaction.CommitAsync();
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
     }
 }

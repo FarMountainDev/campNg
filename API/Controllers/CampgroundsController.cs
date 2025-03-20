@@ -1,75 +1,66 @@
 ﻿using Core.Entities;
-using Core.Interfaces;
 using Core.Specifications;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
-public class CampgroundsController(IGenericRepository<Campground> repo) : BaseApiController
+public class CampgroundsController(CampContext context) : BaseApiController
 {
     [HttpGet]
-    public async Task<ActionResult> GetCampgrounds([FromQuery]BaseSpecParams specParams)
+    public async Task<IActionResult> GetCampgrounds([FromQuery] CampgroundParams campgroundParams)
     {
-        var spec = new CampgroundSpecification(specParams);
+        var query = context.Campgrounds.AsQueryable();
         
-        return await CreatePagedResult(repo, spec, specParams.PageNumber, specParams.PageSize);
-    }
-    
-    [HttpGet("{id:int}")]
-    public async Task<ActionResult<Campground>> GetCampground(int id)
-    {
-        var spec = new CampgroundSpecification(id);
-        var campground = await repo.GetEntityWithSpec(spec);
-        
-        if (campground == null) return NotFound();
-        
-        return campground;
-    }
-    
-    [HttpPost]
-    public async Task<ActionResult<Campground>> CreateCampground(Campground campground)
-    {
-        repo.Add(campground);
-        
-        if (await repo.SaveAllAsync())
+        if (!string.IsNullOrEmpty(campgroundParams.Sort))
         {
-            return CreatedAtAction(nameof(GetCampground), new { id = campground.Id }, campground);
+            query = campgroundParams.Sort switch
+            {
+                "name" => query.OrderBy(e => e.Name),
+                "nameDesc" => query.OrderByDescending(e => e.Name),
+                _ => query.OrderBy(e => e.Name)
+            };
         }
+        
+        if (campgroundParams.HasHiking is not null && campgroundParams.HasHiking == true)
+            query = query.Where(e => e.HasHiking);
+        
+        if (campgroundParams.HasSwimming is not null && campgroundParams.HasSwimming == true)
+            query = query.Where(e => e.HasSwimming);
+        
+        if (campgroundParams.HasFishing is not null && campgroundParams.HasFishing == true)
+            query = query.Where(e => e.HasFishing);
+        
+        if (campgroundParams.HasBoatRentals is not null && campgroundParams.HasBoatRentals == true)
+            query = query.Where(e => e.HasBoatRentals);
+        
+        if (campgroundParams.HasStore is not null && campgroundParams.HasStore == true)
+            query = query.Where(e => e.HasStore);
+        
+        if (campgroundParams.HasShowers is not null && campgroundParams.HasShowers == true)
+            query = query.Where(e => e.HasShowers);
+        
+        if (campgroundParams.HasWifi is not null && campgroundParams.HasWifi == true)
+            query = query.Where(e => e.HasWifi);
+        
+        if (campgroundParams.AllowsPets is not null && campgroundParams.AllowsPets == true)
+            query = query.Where(e => e.AllowsPets);
 
-        return BadRequest("Problem creating campground");
-    }
-    
-    [HttpPut("{id:int}")]
-    public async Task<ActionResult> UpdateCampground(int id, Campground campground)
-    {
-        if (id != campground.Id || !CampgroundExists(id)) return BadRequest("Cannot update this campground");
-        
-        repo.Update(campground);
-        
-        if (await repo.SaveAllAsync())
+        if (campgroundParams.CampsiteTypeIds().Count > 0)
         {
-            return NoContent();
+            query = query.Where(c => c.Campsites.Any(cs => 
+                campgroundParams.CampsiteTypeIds().Contains(cs.CampsiteTypeId)));
         }
         
-        return BadRequest("Problem updating campground");
+        query = query.Include(e => e.Campsites)
+            .ThenInclude(e => e.CampsiteType);
+        
+        // var campgrounds = await context.Campgrounds
+        //     .Include(c => c.Campsites)
+        //     .ThenInclude(c => c.CampsiteType)
+        //     .ToListAsync();
+
+        return await CreatePagedResult(context, query, campgroundParams.PageNumber, campgroundParams.PageSize);
     }
-    
-    [HttpDelete("{id:int}")]
-    public async Task<ActionResult> DeleteCampground(int id)
-    {
-        var campground = await repo.GetByIdAsync(id);
-        
-        if (campground == null) return NotFound();
-        
-        repo.Remove(campground);
-        
-        if (await repo.SaveAllAsync())
-        {
-            return NoContent();
-        }
-        
-        return BadRequest("Problem updating campground");
-    }
-    
-    private bool CampgroundExists(int id) => repo.Exists(id);
 }

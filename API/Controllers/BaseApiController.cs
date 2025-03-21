@@ -9,13 +9,13 @@ namespace API.Controllers;
 [Route("api/[controller]")]
 public class BaseApiController : ControllerBase
 {
-    protected async Task<IActionResult> CreatePagedResult<T>(DbContext context, IQueryable<T> query,
-        int pageIndex, int pageSize) where T : BaseEntity
+    protected async Task<IActionResult> CreatePagedResult<T>(IQueryable<T> query, int pageNumber, int pageSize)
+        where T : BaseEntity
     {
-        var items = await query.ToListAsync();
+        var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
         var count = await query.CountAsync();
         
-        var pagination = new Pagination<T>(pageIndex, pageSize, count, items);
+        var pagination = new Pagination<T>(pageNumber, pageSize, count, items);
         
         return Ok(pagination);
     }

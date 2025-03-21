@@ -8,9 +8,9 @@ public class Campground : BaseEntity
     public bool HasSwimming { get; set; } = false;
     public bool HasHiking { get; set; } = false;
     public bool HasFishing { get; set; } = false;
+    public bool HasShowers { get; set; } = false;
     public bool HasBoatRentals { get; set; } = false;
     public bool HasStore { get; set; } = false;
-    public bool HasShowers { get; set; } = false;
     public bool HasWifi { get; set; } = false;
     public bool AllowsPets { get; set; } = false;
     public ICollection<Campsite> Campsites { get; set; } = [];

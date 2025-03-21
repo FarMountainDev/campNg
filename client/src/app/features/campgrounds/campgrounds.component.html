@@ -1,0 +1,33 @@
+<div class="flex flex-col gap-3">
+
+  <div class="flex justify-between backdrop-blur backdrop-brightness-50 rounded-lg py-2 px-4 w-full items-center">
+
+    <mat-paginator
+      (page)="handlePageEvent($event)"
+      [length]="campgrounds?.count"
+      [pageSize]="campParams.pageSize"
+      [showFirstLastButtons]="true"
+      [pageSizeOptions]="pageSizeOptions"
+      [pageIndex]="campParams.pageNumber - 1"
+      aria-label="Select page"
+      class="bg-white"
+    ></mat-paginator>
+
+    <div class="flex gap-3">
+      <button mat-stroked-button (click)="openFiltersDialog()">
+        <mat-icon>filter_list</mat-icon>
+        Filters
+      </button>
+      <button mat-stroked-button (click)="clearFilters()">
+        <mat-icon>clear</mat-icon>
+        Reset
+      </button>
+    </div>
+
+  </div>
+
+  @for (campground of campgrounds?.data; track campground.id) {
+    <app-campground-item [campground]="campground" />
+  }
+
+</div>

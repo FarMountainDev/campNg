@@ -1,0 +1,39 @@
+@if (campground) {
+  <div class="backdrop-blur backdrop-brightness-50 rounded-lg p-4 w-full flex gap-4">
+    <img src="{{campground.pictureUrl}}" alt="{{campground.name}}" class="max-h-64 rounded-lg border-2 border-gray-600">
+    <div class="mr-auto flex flex-col justify-between">
+      <div class="flex flex-col gap-1">
+        <h3 class="text-2xl font-semibold underline mb-1">{{campground.name}}</h3>
+        <p>{{campground.description}}</p>
+      </div>
+    </div>
+    <div class="ml-auto min-w-64 flex flex-col justify-between">
+      <div class="flex flex-col">
+        <h3 class="text-xl font-semibold underline">Amenities</h3>
+        <p>
+          <mat-icon class="scale-150 m-2" matTooltip="Swimming" *ngIf="campground.hasSwimming">pool</mat-icon>
+          <mat-icon class="scale-150 m-2" matTooltip="Hiking" *ngIf="campground.hasHiking">hiking</mat-icon>
+          <mat-icon class="scale-150 m-2" matTooltip="Boat Rentals" *ngIf="campground.hasBoatRentals">rowing</mat-icon>
+          <mat-icon class="scale-150 m-2" matTooltip="Fishing" *ngIf="campground.hasFishing">phishing</mat-icon>
+          <mat-icon class="scale-150 m-2" matTooltip="Showers" *ngIf="campground.hasShowers">shower</mat-icon>
+          <mat-icon class="scale-150 m-2" matTooltip="General Store" *ngIf="campground.hasStore">local_grocery_store</mat-icon>
+          <mat-icon class="scale-150 m-2" matTooltip="WiFi" *ngIf="campground.hasWifi">wifi</mat-icon>
+          <mat-icon class="scale-150 m-2" matTooltip="Allows Pets" *ngIf="campground.allowsPets">pets</mat-icon>
+        </p>
+        <h3 class="text-xl font-semibold underline mt-1">Accommodations</h3>
+        <ul>
+          @if (hasCampsiteType(1)) {
+            <li>Tent Sites</li>
+          }
+          @if (hasCampsiteType(2)) {
+            <li>RV Sites</li>
+          }
+          @if (hasCampsiteType(3)) {
+            <li>Cabins</li>
+          }
+        </ul>
+      </div>
+      <button mat-stroked-button>Check Availability</button>
+    </div>
+  </div>
+}

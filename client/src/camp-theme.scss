@@ -12,4 +12,8 @@ html {
   .mdc-button, .mdc-raised-button, .mdc-stroked-button, .mdc-flat-button {
     @apply rounded-lg;
   }
+
+  @include mat.paginator-overrides((
+    container-background-color: transparentize(white, 1),
+  ));
 }

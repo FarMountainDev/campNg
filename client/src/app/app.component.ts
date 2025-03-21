@@ -4,10 +4,12 @@ import {HeaderComponent} from './layout/header/header.component';
 import {HttpClient} from '@angular/common/http';
 import {Campground} from './shared/models/campground';
 import {Pagination} from './shared/models/pagination';
+import {CampgroundsComponent} from './features/campgrounds/campgrounds.component';
+import {FooterComponent} from './layout/footer/footer.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, HeaderComponent],
+  imports: [RouterOutlet, HeaderComponent, CampgroundsComponent, FooterComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

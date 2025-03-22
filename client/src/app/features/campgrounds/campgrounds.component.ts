@@ -8,7 +8,12 @@ import {MatIcon} from '@angular/material/icon';
 import {FiltersDialogComponent} from './filters-dialog/filters-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 import {CampParams} from '../../shared/models/campParams';
-import {MatButton} from '@angular/material/button';
+import {MatButton, MatIconButton} from '@angular/material/button';
+import {CampsiteTypeService} from '../../core/services/campsite-type.service';
+import {CampsiteType} from '../../shared/models/campsiteType';
+import {FormsModule} from '@angular/forms';
+import {MatProgressSpinner} from '@angular/material/progress-spinner';
+import {NgIf} from '@angular/common';
 
 @Component({
   selector: 'app-campgrounds',
@@ -16,7 +21,11 @@ import {MatButton} from '@angular/material/button';
     CampgroundItemComponent,
     MatPaginator,
     MatIcon,
-    MatButton
+    MatButton,
+    FormsModule,
+    MatIconButton,
+    MatProgressSpinner,
+    NgIf
   ],
   templateUrl: './campgrounds.component.html',
   styleUrl: './campgrounds.component.scss'
@@ -27,16 +36,25 @@ export class CampgroundsComponent implements OnInit {
   campgrounds?: Pagination<Campground>;
   campParams = new CampParams();
   pageSizeOptions = [2, 5, 10, 15, 20];
+  loading = false;
 
   ngOnInit() {
     this.getCampgrounds();
   }
 
   getCampgrounds() {
+    this.loading = true;
+    this.campgrounds = undefined;
     this.campgroundService.getCampgrounds(this.campParams).subscribe({
       next: response => this.campgrounds = response,
-      error: error => console.log(error)
+      error: error => console.log(error),
+      complete: () => this.loading = false,
     });
+  }
+
+  onSearchChange() {
+    this.campParams.pageNumber = 1;
+    this.getCampgrounds();
   }
 
   handlePageEvent(event: PageEvent) {
@@ -56,14 +74,14 @@ export class CampgroundsComponent implements OnInit {
         hasBoatRentals: this.campParams.hasBoatRentals,
         hasStore: this.campParams.hasStore,
         hasWifi: this.campParams.hasWifi,
-        allowsPets: this.campParams.allowsPets
+        allowsPets: this.campParams.allowsPets,
+        selectedTypes: this.campParams.campsiteTypes
       }
     });
 
     dialogRef.afterClosed().subscribe({
       next: result => {
         if (result) {
-          console.log(result);
           this.campParams.hasHiking = result.hasHiking;
           this.campParams.hasSwimming = result.hasSwimming;
           this.campParams.hasFishing = result.hasFishing;
@@ -72,6 +90,7 @@ export class CampgroundsComponent implements OnInit {
           this.campParams.hasStore = result.hasStore;
           this.campParams.hasWifi = result.hasWifi;
           this.campParams.allowsPets = result.allowsPets;
+          this.campParams.campsiteTypes = result.selectedTypes;
           this.campParams.pageNumber = 1;
           this.getCampgrounds();
         }
@@ -88,6 +107,8 @@ export class CampgroundsComponent implements OnInit {
     this.campParams.hasStore = null;
     this.campParams.hasWifi = null;
     this.campParams.allowsPets = null;
+    this.campParams.campsiteTypes = [];
+    this.campParams.search = '';
     this.campParams.pageNumber = 1;
     this.getCampgrounds();
   }

@@ -15,6 +15,12 @@ export class CampgroundService {
   getCampgrounds(campParams: CampParams) {
     let params = new HttpParams();
 
+    if (campParams.campsiteTypes.length > 0)
+      params = params.append('campsiteTypes', campParams.campsiteTypes.join(','));
+
+    if (campParams.search)
+      params = params.append('search', campParams.search);
+
     if (campParams.hasHiking)
       params = params.append('hasHiking', campParams.hasHiking);
 

@@ -41,6 +41,9 @@ public class CampgroundsController(CampContext context) : BaseApiController
             query = query.Where(c => c.Campsites.Any(cs => 
                 campgroundParams.CampsiteTypeIds().Contains(cs.CampsiteTypeId)));
         
+        if (!string.IsNullOrWhiteSpace(campgroundParams.Search))
+            query = query.Where(e => e.Name.Contains(campgroundParams.Search));
+        
         query = query.Include(e => e.Campsites)
             .ThenInclude(e => e.CampsiteType);
         

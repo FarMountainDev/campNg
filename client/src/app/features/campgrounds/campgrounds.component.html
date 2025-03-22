@@ -13,6 +13,20 @@
       class="bg-white"
     ></mat-paginator>
 
+    <form (ngSubmit)="onSearchChange()" class="relative flex items-center w-full max-w-md mx-4">
+      <input
+        type="search"
+        class="block w-full p-2 text-sm border rounded-lg bg-transparent"
+        placeholder="Search..."
+        name="search"
+        [(ngModel)]="campParams.search"
+      />
+      <button type="submit"
+              class="absolute inset-y-0 right-6 flex items-center pl-3">
+        <mat-icon>search</mat-icon>
+      </button>
+    </form>
+
     <div class="flex gap-3">
       <button mat-stroked-button (click)="openFiltersDialog()">
         <mat-icon>filter_list</mat-icon>
@@ -25,6 +39,13 @@
     </div>
 
   </div>
+
+  @if (campgrounds === undefined || campgrounds?.count == 0) {
+    <div class="flex justify-between backdrop-blur backdrop-brightness-50 rounded-lg p-4 w-full items-center">
+      <mat-spinner *ngIf="loading" class="mx-auto"></mat-spinner>
+      <p class="mx-auto" *ngIf="!loading">No campgrounds found matching your criteria.</p>
+    </div>
+  }
 
   @for (campground of campgrounds?.data; track campground.id) {
     <app-campground-item [campground]="campground" />

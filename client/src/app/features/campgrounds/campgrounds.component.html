@@ -1,6 +1,6 @@
 <div class="flex flex-col gap-3">
 
-  <div class="flex justify-between backdrop-blur backdrop-brightness-50 rounded-lg py-2 px-4 w-full items-center">
+  <div class="flex justify-between w-full items-center px-4 py-2 div-backdrop">
 
     <mat-paginator
       (page)="handlePageEvent($event)"
@@ -41,7 +41,7 @@
   </div>
 
   @if (campgrounds === undefined || campgrounds?.count == 0) {
-    <div class="flex justify-between backdrop-blur backdrop-brightness-50 rounded-lg p-4 w-full items-center">
+    <div class="flex justify-between backdrop-blur p-4 w-full items-center div-backdrop">
       <mat-spinner *ngIf="loading" class="mx-auto"></mat-spinner>
       <p class="mx-auto" *ngIf="!loading">No campgrounds found matching your criteria.</p>
     </div>

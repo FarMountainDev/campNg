@@ -6,7 +6,6 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {MatButton} from '@angular/material/button';
 import {MatCheckbox} from '@angular/material/checkbox';
 import {CampsiteTypeService} from '../../../core/services/campsite-type.service';
-import {CampsiteType} from '../../../shared/models/campsiteType';
 
 @Component({
   selector: 'app-filters-dialog',

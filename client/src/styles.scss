@@ -1,15 +1,55 @@
+@use '@angular/material' as mat;
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+
 html {
-  background-image: url("/images/night-sky-bg.jpg");
+  color-scheme: light;
+  @include mat.theme((
+    color: mat.$azure-palette,
+    typography: Roboto,
+    density: 0
+  ));
+
+  background-image: url("/images/day-sky-bg.jpg");
   background-size: cover;
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-position: center;
+
+  .div-backdrop {
+    background-color: rgba(255, 255, 255, 0.8);
+    @apply rounded-lg backdrop-blur;
+  }
+
+  // override button styles
+  .mdc-button, .mdc-raised-button, .mdc-stroked-button, .mdc-flat-button {
+    @apply rounded-lg;
+  }
+
+  @include mat.paginator-overrides((
+    container-background-color: transparentize(white, 1),
+  ));
+}
+
+html.dark-mode {
+  color-scheme: dark;
+  @include mat.theme((
+    color: mat.$spring-green-palette,
+    typography: Roboto,
+    density: 0
+  ));
+
+  background-image: url("/images/night-sky-bg.jpg");
+
+  .div-backdrop {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
 }
 
 .container {
   @apply mx-auto max-w-screen-xl;
 }
+

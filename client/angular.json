@@ -32,8 +32,7 @@
               }
             ],
             "styles": [
-              "src/styles.scss",
-              "src/camp-theme.scss"
+              "src/styles.scss"
             ],
             "scripts": []
           },
@@ -97,8 +96,7 @@
               }
             ],
             "styles": [
-              "src/styles.scss",
-              "src/camp-theme.scss"
+              "src/styles.scss"
             ],
             "scripts": []
           }

@@ -9,8 +9,6 @@ import {FiltersDialogComponent} from './filters-dialog/filters-dialog.component'
 import {MatDialog} from '@angular/material/dialog';
 import {CampParams} from '../../shared/models/campParams';
 import {MatButton, MatIconButton} from '@angular/material/button';
-import {CampsiteTypeService} from '../../core/services/campsite-type.service';
-import {CampsiteType} from '../../shared/models/campsiteType';
 import {FormsModule} from '@angular/forms';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {NgIf} from '@angular/common';
@@ -31,8 +29,8 @@ import {NgIf} from '@angular/common';
   styleUrl: './campgrounds.component.scss'
 })
 export class CampgroundsComponent implements OnInit {
-  private campgroundService = inject(CampgroundService);
-  private dialogService = inject(MatDialog);
+  private readonly campgroundService = inject(CampgroundService);
+  private readonly dialogService = inject(MatDialog);
   campgrounds?: Pagination<Campground>;
   campParams = new CampParams();
   pageSizeOptions = [2, 5, 10, 15, 20];

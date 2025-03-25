@@ -49,4 +49,18 @@ public class CampgroundsController(CampContext context) : BaseApiController
         
         return await CreatePagedResult(query, campgroundParams.PageNumber, campgroundParams.PageSize);
     }
+    
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetCampground(int id)
+    {
+        var campground = await context.Campgrounds
+            .Include(e => e.Campsites)
+            .ThenInclude(e => e.CampsiteType)
+            .FirstOrDefaultAsync(e => e.Id == id);
+        
+        if (campground is null)
+            return NotFound();
+        
+        return Ok(campground);
+    }
 }

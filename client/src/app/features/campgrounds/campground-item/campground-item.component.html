@@ -33,7 +33,9 @@
           }
         </ul>
       </div>
-      <button mat-stroked-button>Check Availability</button>
+      <div class="flex flex-col justify-end gap-1">
+        <button mat-stroked-button routerLink="/campgrounds/{{campground.id}}">Details & Availability</button>
+      </div>
     </div>
   </div>
 }

@@ -4,6 +4,7 @@ import {MatButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
 import {MatTooltip} from '@angular/material/tooltip';
 import {NgIf} from '@angular/common';
+import {RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-campground-item',
@@ -11,7 +12,8 @@ import {NgIf} from '@angular/common';
     MatButton,
     MatIcon,
     MatTooltip,
-    NgIf
+    NgIf,
+    RouterLink
   ],
   templateUrl: './campground-item.component.html',
   styleUrl: './campground-item.component.scss'

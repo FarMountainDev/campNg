@@ -50,4 +50,8 @@ export class CampgroundService {
 
     return this.http.get<Pagination<Campground>>(this.baseUrl + 'campgrounds', {params});
   }
+
+  getCampground(id: number) {
+    return this.http.get<Campground>(this.baseUrl + 'campgrounds/' + id);
+  }
 }

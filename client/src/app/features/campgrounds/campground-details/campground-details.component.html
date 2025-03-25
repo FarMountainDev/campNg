@@ -1,0 +1,11 @@
+@if (campground) {
+  <div class="div-backdrop px-4 py-2">
+    <h1 class="text-2xl">{{campground.name}}</h1>
+    <ul>
+      @for (campsite of campground.campsites; track campsite.id) {
+        <li>{{campsite.name}}</li>
+      }
+    </ul>
+  </div>
+
+}

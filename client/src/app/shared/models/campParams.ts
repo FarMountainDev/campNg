@@ -5,13 +5,6 @@ export class CampParams implements PaginationParams {
   pageSize = 10;
   sort = 'name';
   search = '';
+  campgroundAmenities: number[] = [];
   campsiteTypes: number[] = [];
-  hasHiking: boolean | null = null;
-  hasSwimming: boolean | null = null;
-  hasFishing: boolean | null = null;
-  hasShowers: boolean | null = null;
-  hasBoatRentals: boolean | null = null;
-  hasStore: boolean | null = null;
-  hasWifi: boolean | null = null;
-  allowsPets: boolean | null = null;
 }

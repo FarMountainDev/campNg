@@ -15,35 +15,11 @@ export class CampgroundService {
   getCampgrounds(campParams: CampParams) {
     let params = new HttpParams();
 
+    if (campParams.campgroundAmenities.length > 0)
+      params = params.append('campgroundAmenities', campParams.campgroundAmenities.join(','));
+
     if (campParams.campsiteTypes.length > 0)
       params = params.append('campsiteTypes', campParams.campsiteTypes.join(','));
-
-    if (campParams.search)
-      params = params.append('search', campParams.search);
-
-    if (campParams.hasHiking)
-      params = params.append('hasHiking', campParams.hasHiking);
-
-    if (campParams.hasSwimming)
-      params = params.append('hasSwimming', campParams.hasSwimming);
-
-    if (campParams.hasFishing)
-      params = params.append('hasFishing', campParams.hasFishing);
-
-    if (campParams.hasShowers)
-      params = params.append('hasShowers', campParams.hasShowers);
-
-    if (campParams.hasBoatRentals)
-      params = params.append('hasBoatRentals', campParams.hasBoatRentals);
-
-    if (campParams.hasStore)
-      params = params.append('hasStore', campParams.hasStore);
-
-    if (campParams.hasWifi)
-      params = params.append('hasWifi', campParams.hasWifi);
-
-    if (campParams.allowsPets)
-      params = params.append('allowsPets', campParams.allowsPets);
 
     params = params.append('pageNumber', campParams.pageNumber);
     params = params.append('pageSize', campParams.pageSize);

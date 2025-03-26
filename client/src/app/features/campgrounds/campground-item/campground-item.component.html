@@ -11,14 +11,9 @@
       <div class="flex flex-col">
         <h3 class="text-xl font-semibold underline">Amenities</h3>
         <p>
-          <mat-icon class="scale-150 m-2" matTooltip="Swimming" *ngIf="campground.hasSwimming">pool</mat-icon>
-          <mat-icon class="scale-150 m-2" matTooltip="Hiking" *ngIf="campground.hasHiking">hiking</mat-icon>
-          <mat-icon class="scale-150 m-2" matTooltip="Boat Rentals" *ngIf="campground.hasBoatRentals">rowing</mat-icon>
-          <mat-icon class="scale-150 m-2" matTooltip="Fishing" *ngIf="campground.hasFishing">phishing</mat-icon>
-          <mat-icon class="scale-150 m-2" matTooltip="Showers" *ngIf="campground.hasShowers">shower</mat-icon>
-          <mat-icon class="scale-150 m-2" matTooltip="General Store" *ngIf="campground.hasStore">local_grocery_store</mat-icon>
-          <mat-icon class="scale-150 m-2" matTooltip="WiFi" *ngIf="campground.hasWifi">wifi</mat-icon>
-          <mat-icon class="scale-150 m-2" matTooltip="Allows Pets" *ngIf="campground.allowsPets">pets</mat-icon>
+          @for (amenity of campground.amenities; track amenity.id) {
+            <mat-icon class="scale-150 m-2" matTooltip="{{amenity.name}}">{{amenity.matIcon}}</mat-icon>
+          }
         </p>
         <h3 class="text-xl font-semibold underline mt-1">Accommodations</h3>
         <ul>

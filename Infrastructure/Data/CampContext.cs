@@ -8,6 +8,7 @@ public class CampContext(DbContextOptions options) : DbContext(options)
     public DbSet<Campground> Campgrounds { get; set; }
     public DbSet<Campsite> Campsites { get; set; }
     public DbSet<CampsiteType> CampsiteTypes { get; set; }
+    public DbSet<CampgroundAmenity> CampgroundAmenities { get; set; }
     public DbSet<Reservation> Reservations { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -18,11 +19,22 @@ public class CampContext(DbContextOptions options) : DbContext(options)
             entity.Property(e => e.Name).IsRequired().HasMaxLength(50);
             entity.Property(e => e.Description).IsRequired().HasMaxLength(1000);
             entity.Property(e => e.PictureUrl).IsRequired().HasMaxLength(100);
+
+            entity.HasMany(e => e.Amenities)
+                .WithMany();
         
             entity.HasMany(e => e.Campsites)
                 .WithOne(e => e.Campground)
                 .HasForeignKey(e => e.CampgroundId)
                 .OnDelete(DeleteBehavior.Cascade);
+        });
+        
+        // CampgroundAmenity
+        modelBuilder.Entity<CampgroundAmenity>(entity =>
+        {
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.Description).IsRequired().HasMaxLength(500);
+            entity.Property(e => e.MatIcon).IsRequired().HasMaxLength(50);
         });
         
         // Campsite

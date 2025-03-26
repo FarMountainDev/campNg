@@ -6,6 +6,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {MatButton} from '@angular/material/button';
 import {MatCheckbox} from '@angular/material/checkbox';
 import {CampsiteTypeService} from '../../../core/services/campsite-type.service';
+import {CampgroundAmenityService} from '../../../core/services/campground-amenities.service';
 
 @Component({
   selector: 'app-filters-dialog',
@@ -21,37 +22,25 @@ import {CampsiteTypeService} from '../../../core/services/campsite-type.service'
   styleUrl: './filters-dialog.component.scss'
 })
 export class FiltersDialogComponent implements OnInit {
-  private dialogRef = inject(MatDialogRef<FiltersDialogComponent>);
-  campsiteTypeService = inject(CampsiteTypeService);
+  private readonly dialogRef = inject(MatDialogRef<FiltersDialogComponent>);
+  readonly campgroundAmenityService = inject(CampgroundAmenityService);
+  readonly campsiteTypeService = inject(CampsiteTypeService);
   data = inject(MAT_DIALOG_DATA);
-  hasHiking: boolean = this.data.hasHiking;
-  hasSwimming: boolean = this.data.hasSwimming;
-  hasFishing: boolean = this.data.hasFishing;
-  hasShowers: boolean = this.data.hasShowers;
-  hasBoatRentals: boolean = this.data.hasBoatRentals;
-  hasStore: boolean = this.data.hasStore;
-  hasWifi: boolean = this.data.hasWifi;
-  allowsPets: boolean = this.data.allowsPets;
+  selectedAmenities: number[] = this.data.selectedAmenities;
   selectedTypes: number[] = this.data.selectedTypes;
 
   ngOnInit() {
-    this.initializeCampsiteTypes();
+    this.initializeFilterOptions();
   }
 
-  initializeCampsiteTypes() {
+  initializeFilterOptions() {
+    this.campgroundAmenityService.getCampgroundAmenities();
     this.campsiteTypeService.getCampsiteTypes();
   }
 
   applyFilters() {
     this.dialogRef.close({
-      hasHiking: this.hasHiking,
-      hasSwimming: this.hasSwimming,
-      hasFishing: this.hasFishing,
-      hasShowers: this.hasShowers,
-      hasBoatRentals: this.hasBoatRentals,
-      hasStore: this.hasStore,
-      hasWifi: this.hasWifi,
-      allowsPets: this.allowsPets,
+      selectedAmenities: this.selectedAmenities,
       selectedTypes: this.selectedTypes
     })
   }

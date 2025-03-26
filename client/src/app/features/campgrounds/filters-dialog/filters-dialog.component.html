@@ -4,14 +4,11 @@
   <div class="flex p-4">
     <div class="w-1/2 flex flex-col">
       <h4 class="font-semibold text-xl text-primary">Amenities</h4>
-      <mat-checkbox [(ngModel)]="hasHiking">Hiking</mat-checkbox>
-      <mat-checkbox [(ngModel)]="hasSwimming">Swimming</mat-checkbox>
-      <mat-checkbox [(ngModel)]="hasFishing">Fishing</mat-checkbox>
-      <mat-checkbox [(ngModel)]="hasShowers">Showers</mat-checkbox>
-      <mat-checkbox [(ngModel)]="hasBoatRentals">Boat Rentals</mat-checkbox>
-      <mat-checkbox [(ngModel)]="hasStore">General Store</mat-checkbox>
-      <mat-checkbox [(ngModel)]="hasWifi">WiFi</mat-checkbox>
-      <mat-checkbox [(ngModel)]="allowsPets">Pets Allowed</mat-checkbox>
+      <mat-selection-list [(ngModel)]="selectedAmenities" [multiple]="true">
+        @for (amenity of campgroundAmenityService.campgroundAmenities; track amenity.id) {
+          <mat-list-option [value]="amenity.id">{{amenity.name}}</mat-list-option>
+        }
+      </mat-selection-list>
     </div>
     <div class="w-1/2">
       <h4 class="font-semibold text-xl text-primary">Campsite Types</h4>

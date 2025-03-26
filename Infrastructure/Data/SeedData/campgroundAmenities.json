@@ -1,0 +1,50 @@
+﻿[
+  {
+    "Id": 1,
+    "Name": "Has Hiking",
+    "Description": "Pellentesque habitant morbi tristique sen.",
+    "MatIcon": "hiking"
+  },
+  {
+    "Id": 2,
+    "Name": "Has Swimming",
+    "Description": "Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
+    "MatIcon": "pool"
+  },
+  {
+    "Id": 3,
+    "Name": "Has Fishing",
+    "Description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa.",
+    "MatIcon": "phishing"
+  },
+  {
+    "Id": 4,
+    "Name": "Has Boat Rentals",
+    "Description": "Pellentesque habitant morbi tristique sen.",
+    "MatIcon": "rowing"
+  },
+  {
+    "Id": 5,
+    "Name": "Has Showers",
+    "Description": "Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
+    "MatIcon": "shower"
+  },
+  {
+    "Id": 6,
+    "Name": "Has Store",
+    "Description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa.",
+    "MatIcon": "local_grocery_store"
+  },
+  {
+    "Id": 7,
+    "Name": "Has WiFi",
+    "Description": "Pellentesque habitant morbi tristique sen.",
+    "MatIcon": "wifi"
+  },
+  {
+    "Id": 8,
+    "Name": "Allows Pets",
+    "Description": "Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
+    "MatIcon": "pets"
+  }
+]

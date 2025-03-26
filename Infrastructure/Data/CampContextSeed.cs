@@ -8,10 +8,41 @@ public static class CampContextSeed
 {
     public static async Task SeedAsync(CampContext context)
     {
+        await SeedCampgroundAmenitiesAsync(context);
         await SeedCampgroundsAsync(context);
         await SeedCampsiteTypesAsync(context);
         await SeedCampsitesAsync(context);
         await SeedReservationsAsync(context);
+    }
+
+    private static async Task SeedCampgroundAmenitiesAsync(CampContext context)
+    {
+        if (!context.CampgroundAmenities.Any())
+        {
+            await using var transaction = await context.Database.BeginTransactionAsync();
+
+            try
+            {
+                var amenitiesData = await File.ReadAllTextAsync("../Infrastructure/Data/SeedData/campgroundAmenities.json");
+                var amenities = JsonSerializer.Deserialize<List<CampgroundAmenity>>(amenitiesData);
+                
+                if (amenities == null) return;
+                
+                await context.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT dbo.CampgroundAmenities ON");
+                
+                context.CampgroundAmenities.AddRange(amenities);
+                await context.SaveChangesAsync();
+                
+                await context.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT dbo.CampgroundAmenities OFF");
+                
+                await transaction.CommitAsync();
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
+        }
     }
 
     private static async Task SeedCampgroundsAsync(CampContext context)
@@ -23,17 +54,50 @@ public static class CampContextSeed
             try
             {
                 var campgroundsData = await File.ReadAllTextAsync("../Infrastructure/Data/SeedData/campgrounds.json");
-                var campgrounds = JsonSerializer.Deserialize<List<Campground>>(campgroundsData);
-            
-                if (campgrounds == null) return;
+                
+                // Custom JSON converter to handle the AmenityIds array
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                };
 
+                var campgroundsWithAmenities = JsonSerializer.Deserialize<List<CampgroundSeedData>>(campgroundsData, options);
+
+                if (campgroundsWithAmenities is null) return;
+                
                 await context.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT dbo.Campgrounds ON");
-            
-                context.Campgrounds.AddRange(campgrounds);
+                
+                foreach (var item in campgroundsWithAmenities)
+                {
+                    var campground = new Campground
+                    {
+                        Id = item.Id,
+                        Name = item.Name,
+                        Description = item.Description,
+                        PictureUrl = item.PictureUrl,
+                        Amenities = new List<CampgroundAmenity>()
+                    };
+
+                    // Add amenities to campground
+                    if (item.AmenityIds != null)
+                    {
+                        foreach (var amenityId in item.AmenityIds)
+                        {
+                            var amenity = await context.CampgroundAmenities.FindAsync(amenityId);
+                            if (amenity != null)
+                            {
+                                campground.Amenities.Add(amenity);
+                            }
+                        }
+                    }
+
+                    context.Campgrounds.Add(campground);
+                }
+                
                 await context.SaveChangesAsync();
-            
+                
                 await context.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT dbo.Campgrounds OFF");
-            
+                
                 await transaction.CommitAsync();
             }
             catch
@@ -55,7 +119,7 @@ public static class CampContextSeed
                 var campsiteTypesData = await File.ReadAllTextAsync("../Infrastructure/Data/SeedData/campsiteTypes.json");
                 var campsiteTypes = JsonSerializer.Deserialize<List<CampsiteType>>(campsiteTypesData);
 
-                if (campsiteTypes == null) return;
+                if (campsiteTypes is null) return;
                 
                 await context.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT dbo.CampsiteTypes ON");
 
@@ -85,7 +149,7 @@ public static class CampContextSeed
                 var campsitesData = await File.ReadAllTextAsync("../Infrastructure/Data/SeedData/campsites.json");
                 var campsites = JsonSerializer.Deserialize<List<Campsite>>(campsitesData);
 
-                if (campsites == null) return;
+                if (campsites is null) return;
                 
                 await context.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT dbo.Campsites ON");
             
@@ -103,6 +167,8 @@ public static class CampContextSeed
             }
         }
     }
+    
+    
 
     private static async Task SeedReservationsAsync(CampContext context)
     {
@@ -229,5 +295,15 @@ public static class CampContextSeed
             < 0.95 => random.Next(8, 11),
             _ => random.Next(11, 15)
         };
+    }
+    
+    // Helper class for deserialization
+    private class CampgroundSeedData
+    {
+        public int Id { get; set; }
+        public required string Name { get; set; }
+        public required string Description { get; set; }
+        public required string PictureUrl { get; set; }
+        public List<int>? AmenityIds { get; set; }
     }
 }

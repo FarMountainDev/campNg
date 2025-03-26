@@ -65,14 +65,7 @@ export class CampgroundsComponent implements OnInit {
     const dialogRef = this.dialogService.open(FiltersDialogComponent, {
       minWidth: '500px',
       data: {
-        hasHiking: this.campParams.hasHiking,
-        hasSwimming: this.campParams.hasSwimming,
-        hasFishing: this.campParams.hasFishing,
-        hasShowers: this.campParams.hasShowers,
-        hasBoatRentals: this.campParams.hasBoatRentals,
-        hasStore: this.campParams.hasStore,
-        hasWifi: this.campParams.hasWifi,
-        allowsPets: this.campParams.allowsPets,
+        selectedAmenities: this.campParams.campgroundAmenities,
         selectedTypes: this.campParams.campsiteTypes
       }
     });
@@ -80,14 +73,7 @@ export class CampgroundsComponent implements OnInit {
     dialogRef.afterClosed().subscribe({
       next: result => {
         if (result) {
-          this.campParams.hasHiking = result.hasHiking;
-          this.campParams.hasSwimming = result.hasSwimming;
-          this.campParams.hasFishing = result.hasFishing;
-          this.campParams.hasShowers = result.hasShowers;
-          this.campParams.hasBoatRentals = result.hasBoatRentals;
-          this.campParams.hasStore = result.hasStore;
-          this.campParams.hasWifi = result.hasWifi;
-          this.campParams.allowsPets = result.allowsPets;
+          this.campParams.campgroundAmenities = result.selectedAmenities;
           this.campParams.campsiteTypes = result.selectedTypes;
           this.campParams.pageNumber = 1;
           this.getCampgrounds();
@@ -97,14 +83,7 @@ export class CampgroundsComponent implements OnInit {
   }
 
   clearFilters() {
-    this.campParams.hasHiking = null;
-    this.campParams.hasSwimming = null;
-    this.campParams.hasFishing = null;
-    this.campParams.hasShowers = null;
-    this.campParams.hasBoatRentals = null;
-    this.campParams.hasStore = null;
-    this.campParams.hasWifi = null;
-    this.campParams.allowsPets = null;
+    this.campParams.campgroundAmenities = [];
     this.campParams.campsiteTypes = [];
     this.campParams.search = '';
     this.campParams.pageNumber = 1;

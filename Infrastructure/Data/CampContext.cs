@@ -8,6 +8,7 @@ public class CampContext(DbContextOptions options) : DbContext(options)
     public DbSet<Campground> Campgrounds { get; set; }
     public DbSet<Campsite> Campsites { get; set; }
     public DbSet<CampsiteType> CampsiteTypes { get; set; }
+    public DbSet<Reservation> Reservations { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -38,6 +39,11 @@ public class CampContext(DbContextOptions options) : DbContext(options)
                 .WithMany()
                 .HasForeignKey(e => e.CampsiteTypeId)
                 .OnDelete(DeleteBehavior.Restrict);
+            
+            entity.HasMany(e => e.Reservations)
+                .WithOne(e => e.Campsite)
+                .HasForeignKey(e => e.CampsiteId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
     
         // CampsiteType
@@ -47,6 +53,18 @@ public class CampContext(DbContextOptions options) : DbContext(options)
             entity.Property(e => e.Description).IsRequired().HasMaxLength(500);
             entity.Property(e => e.WeekDayPrice).HasColumnType("decimal(18,2)");
             entity.Property(e => e.WeekEndPrice).HasColumnType("decimal(18,2)");
+        });
+        
+        // Reservation
+        modelBuilder.Entity<Reservation>(entity =>
+        {
+            entity.Property(e => e.StartDate).IsRequired();
+            entity.Property(e => e.EndDate).IsRequired();
+        
+            entity.HasOne(e => e.Campsite)
+                .WithMany(e => e.Reservations)
+                .HasForeignKey(e => e.CampsiteId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
         
         base.OnModelCreating(modelBuilder);

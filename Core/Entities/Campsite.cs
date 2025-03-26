@@ -8,4 +8,5 @@ public class Campsite : BaseEntity
     public int CampgroundId { get; set; }
     public CampsiteType? CampsiteType { get; set; }
     public int CampsiteTypeId { get; set; }
+    public ICollection<Reservation>? Reservations { get; set; }
 }

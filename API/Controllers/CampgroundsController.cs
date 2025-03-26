@@ -1,5 +1,4 @@
-﻿using Core.Entities;
-using Core.Specifications;
+﻿using Core.Parameters;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -50,7 +49,7 @@ public class CampgroundsController(CampContext context) : BaseApiController
         return await CreatePagedResult(query, campgroundParams.PageNumber, campgroundParams.PageSize);
     }
     
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     public async Task<IActionResult> GetCampground(int id)
     {
         var campground = await context.Campgrounds

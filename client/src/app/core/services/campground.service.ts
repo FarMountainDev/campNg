@@ -10,7 +10,7 @@ import {CampParams} from '../../shared/models/campParams';
 })
 export class CampgroundService {
   private readonly baseUrl = environment.apiUrl;
-  private http = inject(HttpClient);
+  private readonly http = inject(HttpClient);
 
   getCampgrounds(campParams: CampParams) {
     let params = new HttpParams();

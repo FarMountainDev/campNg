@@ -4,6 +4,7 @@ import {HttpClient, HttpParams} from '@angular/common/http';
 import {Campground} from '../../shared/models/campground';
 import {Pagination} from '../../shared/models/pagination';
 import {CampParams} from '../../shared/models/campParams';
+import {Observable} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ export class CampgroundService {
   private readonly baseUrl = environment.apiUrl;
   private readonly http = inject(HttpClient);
 
-  getCampgrounds(campParams: CampParams) {
+  getCampgrounds(campParams: CampParams): Observable<Pagination<Campground>> {
     let params = new HttpParams();
 
     if (campParams.campgroundAmenities.length > 0)

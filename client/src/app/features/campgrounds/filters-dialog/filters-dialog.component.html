@@ -4,16 +4,18 @@
   <div class="flex p-4">
     <div class="w-1/2 flex flex-col">
       <h4 class="font-semibold text-xl text-primary">Amenities</h4>
-      <mat-selection-list [(ngModel)]="selectedAmenities" [multiple]="true">
-        @for (amenity of campgroundAmenityService.campgroundAmenities; track amenity.id) {
-          <mat-list-option [value]="amenity.id">{{amenity.name}}</mat-list-option>
-        }
-      </mat-selection-list>
+        <mat-selection-list [(ngModel)]="selectedAmenities" [multiple]="true"
+                            *ngIf="campgroundAmenityService.getCampgroundAmenities() | async as amenities">
+          @for (amenity of amenities; track amenity.id) {
+            <mat-list-option [value]="amenity.id">{{amenity.name}}</mat-list-option>
+          }
+        </mat-selection-list>
     </div>
     <div class="w-1/2">
       <h4 class="font-semibold text-xl text-primary">Campsite Types</h4>
-      <mat-selection-list [(ngModel)]="selectedTypes" [multiple]="true">
-        @for (type of campsiteTypeService.campsiteTypes; track type.id) {
+      <mat-selection-list [(ngModel)]="selectedTypes" [multiple]="true"
+                          *ngIf="campsiteTypeService.getCampsiteTypes() | async as types">
+        @for (type of types; track type.id) {
           <mat-list-option [value]="type.id">{{type.name}}</mat-list-option>
         }
       </mat-selection-list>

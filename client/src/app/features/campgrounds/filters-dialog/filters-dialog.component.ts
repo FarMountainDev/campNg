@@ -6,6 +6,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {MatButton} from '@angular/material/button';
 import {CampsiteTypeService} from '../../../core/services/campsite-type.service';
 import {CampgroundAmenityService} from '../../../core/services/campground-amenities.service';
+import {AsyncPipe, NgIf} from '@angular/common';
 
 @Component({
   selector: 'app-filters-dialog',
@@ -14,7 +15,9 @@ import {CampgroundAmenityService} from '../../../core/services/campground-amenit
     MatSelectionList,
     MatListOption,
     FormsModule,
-    MatButton
+    MatButton,
+    NgIf,
+    AsyncPipe
   ],
   templateUrl: './filters-dialog.component.html',
   styleUrl: './filters-dialog.component.scss'

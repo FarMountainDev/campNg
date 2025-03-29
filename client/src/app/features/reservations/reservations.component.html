@@ -15,18 +15,18 @@
 
       <mat-divider vertical="true"></mat-divider>
 
-      <mat-form-field subscriptSizing="dynamic">
+      <mat-form-field subscriptSizing="dynamic" *ngIf="campsiteTypeService.getCampsiteTypes() | async as types">
         <mat-label>Campsite Types</mat-label>
         <mat-select [formControl]="campsiteTypes" multiple>
           <mat-select-trigger>
-            {{ getTypeNameById(campsiteTypes.value?.[0]) || '' }}
+            {{ getTypeNameById(campsiteTypes.value?.[0], types) || '' }}
             @if ((campsiteTypes.value?.length || 0) > 1) {
               <span>
-              (+{{(campsiteTypes.value?.length || 0) - 1}} {{campsiteTypes.value?.length === 2 ? 'other' : 'others'}})
-            </span>
+                (+{{(campsiteTypes.value?.length || 0) - 1}} {{campsiteTypes.value?.length === 2 ? 'other' : 'others'}})
+              </span>
             }
           </mat-select-trigger>
-          @for (campsiteType of campsiteTypeService.campsiteTypes; track campsiteType.id) {
+          @for (campsiteType of types; track campsiteType.id) {
             <mat-option [value]="campsiteType.id">{{campsiteType.name}}</mat-option>
           }
         </mat-select>
@@ -34,18 +34,18 @@
 
       <mat-divider vertical="true"></mat-divider>
 
-      <mat-form-field subscriptSizing="dynamic">
+      <mat-form-field subscriptSizing="dynamic" *ngIf="campgroundAmenityService.getCampgroundAmenities() | async as amenities">
         <mat-label>Campground Amenities</mat-label>
         <mat-select [formControl]="campgroundAmenities" multiple>
           <mat-select-trigger>
-            {{ getAmenityNameById(campgroundAmenities.value?.[0]) || '' }}
+            {{ getAmenityNameById(campgroundAmenities.value?.[0], amenities) || '' }}
             @if ((campgroundAmenities.value?.length || 0) > 1) {
               <span>
-              (+{{(campgroundAmenities.value?.length || 0) - 1}} {{campgroundAmenities.value?.length === 2 ? 'other' : 'others'}})
-            </span>
+                (+{{(campgroundAmenities.value?.length || 0) - 1}} {{campgroundAmenities.value?.length === 2 ? 'other' : 'others'}})
+              </span>
             }
           </mat-select-trigger>
-          @for (campgroundAmenity of campgroundAmenityService.campgroundAmenities; track campgroundAmenity.id) {
+          @for (campgroundAmenity of amenities; track campgroundAmenity.id) {
             <mat-option [value]="campgroundAmenity.id">{{campgroundAmenity.name}}</mat-option>
           }
         </mat-select>
@@ -65,16 +65,13 @@
 
   </div>
 
-  <div class="flex flex-col justify-between backdrop-blur p-4 w-full div-backdrop gap-2">
-    @if (campsites === undefined || campsites.count == 0) {
-      <mat-spinner *ngIf="loading" class="mx-auto"></mat-spinner>
-      <p class="mx-auto" *ngIf="!loading">No campsites found matching your criteria.</p>
-    }
-    @else {
-      <div class="flex justify-center">
+  <div class="p-4 div-backdrop" *ngIf="(loading$ | async) === false; else loadingTemplate">
+
+    <div *ngIf="(campsites$ | async) as campsites" class="flex flex-col gap-3">
+      <div class="flex justify-center" *ngIf="campsiteCount > 0">
         <mat-paginator
           (page)="handlePageEvent($event)"
-          [length]="campsites.count"
+          [length]="campsiteCount"
           [pageSize]="campParams.pageSize"
           [showFirstLastButtons]="true"
           [pageSizeOptions]="pageSizeOptions"
@@ -83,7 +80,7 @@
           class="bg-white"
         ></mat-paginator>
       </div>
-      <div>
+      <div *ngIf="campsiteCount > 0">
         <mat-divider></mat-divider>
         <ol>
           @for (campsite of campsites.data; track campsite.id) {
@@ -92,10 +89,10 @@
           }
         </ol>
       </div>
-      <div class="flex justify-center">
+      <div class="flex justify-center" *ngIf="campsiteCount > 0">
         <mat-paginator
           (page)="handlePageEvent($event)"
-          [length]="campsites.count"
+          [length]="campsiteCount"
           [pageSize]="campParams.pageSize"
           [showFirstLastButtons]="true"
           [pageSizeOptions]="pageSizeOptions"
@@ -104,7 +101,18 @@
           class="bg-white"
         ></mat-paginator>
       </div>
-    }
+
+      <div *ngIf="campsiteCount === 0" class="flex">
+        <p class="mx-auto">No campsites found matching your criteria.</p>
+      </div>
+    </div>
+
   </div>
+
+  <ng-template #loadingTemplate>
+    <div class="flex p-4 div-backdrop justify-center">
+      <mat-spinner></mat-spinner>
+    </div>
+  </ng-template>
 
 </div>

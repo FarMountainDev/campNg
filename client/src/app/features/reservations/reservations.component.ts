@@ -4,7 +4,7 @@ import {MatButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
-import {NgIf} from '@angular/common';
+import {AsyncPipe, NgIf} from '@angular/common';
 import {MatFormField, MatLabel} from '@angular/material/form-field';
 import {
   MatDatepickerToggle,
@@ -19,10 +19,13 @@ import {Pagination} from '../../shared/models/pagination';
 import {CampParams} from '../../shared/models/campParams';
 import {Campsite} from '../../shared/models/campsite';
 import {FormControl, FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {MatSelect, MatSelectModule, MatSelectTrigger} from '@angular/material/select';
+import {MatSelect, MatSelectTrigger} from '@angular/material/select';
 import {MatDivider} from '@angular/material/divider';
 import {CampsiteTypeService} from '../../core/services/campsite-type.service';
 import {CampgroundAmenityService} from '../../core/services/campground-amenities.service';
+import {CampgroundAmenity} from '../../shared/models/campgroundAmenity';
+import {CampsiteType} from '../../shared/models/campsiteType';
+import {BehaviorSubject, catchError, EMPTY, tap, map} from 'rxjs';
 
 @Component({
   selector: 'app-reservations',
@@ -45,7 +48,8 @@ import {CampgroundAmenityService} from '../../core/services/campground-amenities
     MatSelect,
     MatOption,
     MatSelectTrigger,
-    MatDivider
+    MatDivider,
+    AsyncPipe
   ],
   templateUrl: './reservations.component.html',
   styleUrl: './reservations.component.scss',
@@ -55,16 +59,19 @@ export class ReservationsComponent implements OnInit {
   private readonly campsiteService = inject(CampsiteService);
   readonly campsiteTypeService = inject(CampsiteTypeService);
   readonly campgroundAmenityService = inject(CampgroundAmenityService);
-  campsites?: Pagination<Campsite>;
+  amenities$ = this.campgroundAmenityService.getCampgroundAmenities();
+  campsiteTypes$ = this.campsiteTypeService.getCampsiteTypes();
+  campsites$ = new BehaviorSubject<Pagination<Campsite> | null>(null);
+  loading$ = new BehaviorSubject<boolean>(false);
   startDate: Date = new Date();
   endDate: Date = new Date();
   campParams = new CampParams();
   pageSizeOptions = [2, 5, 10, 15, 20];
-  loading = false;
   minDate = new Date();
   maxDate = new Date();
   campsiteTypes = new FormControl([]);
   campgroundAmenities = new FormControl([]);
+  campsiteCount: number = 0;
 
   ngOnInit() {
     this.initializeServices();
@@ -73,15 +80,24 @@ export class ReservationsComponent implements OnInit {
   }
 
   getCampsites() {
-    this.loading = true;
-    this.campsites = undefined;
+    this.loading$.next(true);
     this.campParams.campsiteTypes = this.campsiteTypes.value || [];
     this.campParams.campgroundAmenities = this.campgroundAmenities.value || [];
-    this.campsiteService.getAvailableCampsites(this.startDate, this.endDate, this.campParams).subscribe({
-      next: response => this.campsites = response,
-      error: error => console.log(error),
-      complete: () => this.loading = false,
-    });
+
+    this.campsiteService.getAvailableCampsites(this.startDate, this.endDate, this.campParams).pipe(
+      tap(response => {
+        this.campsites$.next(response);
+        this.loading$.next(false);
+      }),
+      map(response => {
+        this.campsiteCount = response.count;
+      }),
+      catchError(error => {
+        console.log(error);
+        this.loading$.next(false);
+        return EMPTY;
+      })
+    ).subscribe();
   }
 
   handlePageEvent(event: PageEvent) {
@@ -100,15 +116,15 @@ export class ReservationsComponent implements OnInit {
     this.getCampsites();
   }
 
-  getTypeNameById(id: number | null | undefined): string {
+  getTypeNameById(id: number | null | undefined, types: CampsiteType[]): string {
     if (id === null || id === undefined) return '';
-    const type = this.campsiteTypeService.campsiteTypes.find(t => t.id === id);
+    const type = types.find(t => t.id === id);
     return type ? type.name : '';
   }
 
-  getAmenityNameById(id: number | null | undefined): string {
+  getAmenityNameById(id: number | null | undefined, amenities: CampgroundAmenity[]): string {
     if (id === null || id === undefined) return '';
-    const amenity = this.campgroundAmenityService.campgroundAmenities.find(a => a.id === id);
+    const amenity = amenities.find(a => a.id === id);
     return amenity ? amenity.name : '';
   }
 

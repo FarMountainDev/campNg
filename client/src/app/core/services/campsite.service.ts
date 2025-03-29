@@ -10,7 +10,7 @@ import {Campsite} from '../../shared/models/campsite';
 })
 export class CampsiteService {
   private readonly baseUrl = environment.apiUrl;
-  private http = inject(HttpClient);
+  private readonly http = inject(HttpClient);
 
   getCampsites() {
     return this.http.get(this.baseUrl + 'campsites');

@@ -4,7 +4,7 @@
 
     <mat-paginator
       (page)="handlePageEvent($event)"
-      [length]="campgrounds?.count"
+      [length]="campgroundCount"
       [pageSize]="campParams.pageSize"
       [showFirstLastButtons]="true"
       [pageSizeOptions]="pageSizeOptions"
@@ -39,15 +39,21 @@
 
   </div>
 
-  @if (campgrounds === undefined || campgrounds.count == 0) {
-    <div class="flex justify-between backdrop-blur p-4 w-full items-center div-backdrop">
-      <mat-spinner *ngIf="loading" class="mx-auto"></mat-spinner>
-      <p class="mx-auto" *ngIf="!loading">No campgrounds found matching your criteria.</p>
+  <ng-container *ngIf="(loading | async) === false; else loadingTemplate">
+    <div *ngIf="(campgrounds$ | async) as campgrounds" class="flex flex-col gap-3">
+      @for (campground of campgrounds?.data; track campground.id) {
+        <app-campground-item [campground]="campground" />
+      }
+      <div *ngIf="campgroundCount === 0" class="flex p-4 div-backdrop">
+        <p class="mx-auto">No campgrounds found matching your criteria.</p>
+      </div>
     </div>
-  }
+  </ng-container>
 
-  @for (campground of campgrounds?.data; track campground.id) {
-    <app-campground-item [campground]="campground" />
-  }
+  <ng-template #loadingTemplate>
+    <div class="flex p-4 div-backdrop justify-center">
+      <mat-spinner></mat-spinner>
+    </div>
+  </ng-template>
 
 </div>

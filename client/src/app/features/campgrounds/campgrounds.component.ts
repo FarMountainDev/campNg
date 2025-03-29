@@ -11,7 +11,8 @@ import {CampParams} from '../../shared/models/campParams';
 import {MatButton} from '@angular/material/button';
 import {FormsModule} from '@angular/forms';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
-import {NgIf} from '@angular/common';
+import {AsyncPipe, NgIf} from '@angular/common';
+import {BehaviorSubject, catchError, EMPTY, tap, map} from 'rxjs';
 
 @Component({
   selector: 'app-campgrounds',
@@ -22,7 +23,8 @@ import {NgIf} from '@angular/common';
     MatButton,
     FormsModule,
     MatProgressSpinner,
-    NgIf
+    NgIf,
+    AsyncPipe
   ],
   templateUrl: './campgrounds.component.html',
   styleUrl: './campgrounds.component.scss'
@@ -30,23 +32,32 @@ import {NgIf} from '@angular/common';
 export class CampgroundsComponent implements OnInit {
   private readonly campgroundService = inject(CampgroundService);
   private readonly dialogService = inject(MatDialog);
-  campgrounds?: Pagination<Campground>;
+  campgrounds$ = new BehaviorSubject<Pagination<Campground> | null>(null);
+  loading = new BehaviorSubject<boolean>(false);
   campParams = new CampParams();
   pageSizeOptions = [2, 5, 10, 15, 20];
-  loading = false;
+  campgroundCount: number = 0;
 
   ngOnInit() {
     this.getCampgrounds();
   }
 
   getCampgrounds() {
-    this.loading = true;
-    this.campgrounds = undefined;
-    this.campgroundService.getCampgrounds(this.campParams).subscribe({
-      next: response => this.campgrounds = response,
-      error: error => console.log(error),
-      complete: () => this.loading = false,
-    });
+    this.loading.next(true);
+    this.campgroundService.getCampgrounds(this.campParams).pipe(
+      tap(response => {
+        this.campgrounds$.next(response);
+        this.loading.next(false);
+      }),
+      map(response => {
+        this.campgroundCount = response.count;
+      }),
+      catchError(error => {
+        console.log(error);
+        this.loading.next(false);
+        return EMPTY;
+      })
+    ).subscribe();
   }
 
   onSearchChange() {

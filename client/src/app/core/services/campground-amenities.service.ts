@@ -2,6 +2,7 @@ import {inject, Injectable} from '@angular/core';
 import {environment} from '../../../environments/environment';
 import {HttpClient} from '@angular/common/http';
 import {CampgroundAmenity} from '../../shared/models/campgroundAmenity';
+import {Observable, shareReplay} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -9,12 +10,16 @@ import {CampgroundAmenity} from '../../shared/models/campgroundAmenity';
 export class CampgroundAmenityService {
   private readonly baseUrl = environment.apiUrl;
   private readonly http = inject(HttpClient);
-  campgroundAmenities: CampgroundAmenity[] = [];
+  private campgroundAmenities$: Observable<CampgroundAmenity[]> | null = null;
 
-  getCampgroundAmenities() {
-    if (this.campgroundAmenities.length > 0) return ;
-    return this.http.get<CampgroundAmenity[]>(this.baseUrl + 'campgroundAmenities').subscribe({
-      next: response => this.campgroundAmenities = response
-    });
+  getCampgroundAmenities(): Observable<CampgroundAmenity[]> {
+    if (!this.campgroundAmenities$) {
+      this.campgroundAmenities$ = this.http.get<CampgroundAmenity[]>(
+        this.baseUrl + 'campgroundAmenities'
+      ).pipe(
+        shareReplay(1)
+      );
+    }
+    return this.campgroundAmenities$;
   }
 }

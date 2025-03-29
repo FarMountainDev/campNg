@@ -21,8 +21,7 @@
         name="search"
         [(ngModel)]="campParams.search"
       />
-      <button type="submit"
-              class="absolute inset-y-0 right-6 flex items-center pl-3">
+      <button type="submit" class="absolute inset-y-0 right-6 flex items-center pl-3">
         <mat-icon>search</mat-icon>
       </button>
     </form>
@@ -40,7 +39,7 @@
 
   </div>
 
-  @if (campgrounds === undefined || campgrounds?.count == 0) {
+  @if (campgrounds === undefined || campgrounds.count == 0) {
     <div class="flex justify-between backdrop-blur p-4 w-full items-center div-backdrop">
       <mat-spinner *ngIf="loading" class="mx-auto"></mat-spinner>
       <p class="mx-auto" *ngIf="!loading">No campgrounds found matching your criteria.</p>

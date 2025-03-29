@@ -13,15 +13,27 @@ html {
     density: 0
   ));
 
-  background-image: url("/images/day-sky-bg.jpg");
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  background-position: center;
+  & {
+    background-image: url("/images/day-sky-bg.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+  }
 
   .div-backdrop {
     background-color: rgba(240, 248, 255, 0.8);
     @apply rounded-lg backdrop-blur;
+  }
+
+  .home-image {
+    width: 720px;
+    height: 340px;
+    background-image: url('/images/photos/campfire-people.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    @apply rounded-lg;
   }
 
   // override button styles
@@ -29,8 +41,12 @@ html {
     @apply rounded-lg;
   }
 
+  .mdc-text-field, .mdc-text-field--outlined, .mdc-text-field--filled {
+    background-color: rgba(0,0,0,0) !important;
+  }
+
   @include mat.paginator-overrides((
-    container-background-color: transparentize(white, 1),
+    container-background-color: transparent,
   ));
 }
 
@@ -42,7 +58,9 @@ html.dark-mode {
     density: 0
   ));
 
-  background-image: url("/images/night-sky-bg.jpg");
+  & {
+    background-image: url("/images/night-sky-bg.jpg");
+  }
 
   .div-backdrop {
     background-color: rgba(0, 0, 0, 0.5);

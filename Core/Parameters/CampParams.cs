@@ -2,8 +2,8 @@
 
 public class CampParams : BaseParams
 {
-    private const int StartHour = 13;
-    private const int EndHour = 11;
+    public const int StartHour = 13;
+    public const int EndHour = 11;
     
     private List<int> campgroundAmenities = [];
     public List<int> CampgroundAmenityIds() => campgroundAmenities;

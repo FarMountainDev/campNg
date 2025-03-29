@@ -8,7 +8,7 @@ import {MatIcon} from '@angular/material/icon';
 import {FiltersDialogComponent} from './filters-dialog/filters-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 import {CampParams} from '../../shared/models/campParams';
-import {MatButton, MatIconButton} from '@angular/material/button';
+import {MatButton} from '@angular/material/button';
 import {FormsModule} from '@angular/forms';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {NgIf} from '@angular/common';
@@ -21,7 +21,6 @@ import {NgIf} from '@angular/common';
     MatIcon,
     MatButton,
     FormsModule,
-    MatIconButton,
     MatProgressSpinner,
     NgIf
   ],

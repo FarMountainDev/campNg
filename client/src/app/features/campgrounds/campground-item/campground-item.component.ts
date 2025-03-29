@@ -3,7 +3,6 @@ import {Campground} from '../../../shared/models/campground';
 import {MatButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
 import {MatTooltip} from '@angular/material/tooltip';
-import {NgIf} from '@angular/common';
 import {RouterLink} from '@angular/router';
 
 @Component({
@@ -12,7 +11,6 @@ import {RouterLink} from '@angular/router';
     MatButton,
     MatIcon,
     MatTooltip,
-    NgIf,
     RouterLink
   ],
   templateUrl: './campground-item.component.html',

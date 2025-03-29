@@ -4,7 +4,6 @@ import {MatListOption, MatSelectionList} from '@angular/material/list';
 import {FormsModule} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {MatButton} from '@angular/material/button';
-import {MatCheckbox} from '@angular/material/checkbox';
 import {CampsiteTypeService} from '../../../core/services/campsite-type.service';
 import {CampgroundAmenityService} from '../../../core/services/campground-amenities.service';
 
@@ -15,8 +14,7 @@ import {CampgroundAmenityService} from '../../../core/services/campground-amenit
     MatSelectionList,
     MatListOption,
     FormsModule,
-    MatButton,
-    MatCheckbox
+    MatButton
   ],
   templateUrl: './filters-dialog.component.html',
   styleUrl: './filters-dialog.component.scss'

@@ -2,8 +2,7 @@
 
 public class CampParams : BaseParams
 {
-    public const int StartHour = 13;
-    public const int EndHour = 11;
+    public int? CampgroundId { get; set; } = null;
     
     private List<int> campgroundAmenities = [];
     public List<int> CampgroundAmenityIds() => campgroundAmenities;
@@ -54,9 +53,7 @@ public class CampParams : BaseParams
     {
         get => startDate;
         set => startDate = value.HasValue 
-            ? DateTime.SpecifyKind(
-                new DateTime(value.Value.Year, value.Value.Month, value.Value.Day, StartHour, 0, 0),
-                DateTimeKind.Utc)
+            ? DateTime.SpecifyKind(value.Value, DateTimeKind.Utc)
             : null;
     }
 
@@ -65,9 +62,7 @@ public class CampParams : BaseParams
     {
         get => endDate;
         set => endDate = value.HasValue 
-            ? DateTime.SpecifyKind(
-                new DateTime(value.Value.Year, value.Value.Month, value.Value.Day, EndHour, 0, 0),
-                DateTimeKind.Utc)
+            ? DateTime.SpecifyKind(value.Value, DateTimeKind.Utc)
             : null;
     }
 }

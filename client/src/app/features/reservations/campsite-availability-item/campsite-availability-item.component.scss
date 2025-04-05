@@ -1,0 +1,21 @@
+.date-grid {
+  display: flex;
+  overflow-x: auto;
+  gap: 4px;
+  font-size: smaller;
+}
+
+.date-cell {
+  padding: 2px 8px;
+  min-width: 65px;
+  text-align: center;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.reserve-btn {
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  min-width: 100px;
+}

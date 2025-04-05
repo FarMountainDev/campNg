@@ -6,11 +6,7 @@ import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {AsyncPipe, NgIf} from '@angular/common';
 import {MatFormField, MatLabel} from '@angular/material/form-field';
-import {
-  MatDatepickerToggle,
-  MatDateRangeInput,
-  MatDateRangePicker
-} from '@angular/material/datepicker';
+import {MatDatepickerToggle, MatDateRangeInput, MatDateRangePicker} from '@angular/material/datepicker';
 import {MatInput} from '@angular/material/input';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatOption, provideNativeDateAdapter} from '@angular/material/core';
@@ -26,6 +22,7 @@ import {CampgroundAmenityService} from '../../core/services/campground-amenities
 import {CampgroundAmenity} from '../../shared/models/campgroundAmenity';
 import {CampsiteType} from '../../shared/models/campsiteType';
 import {BehaviorSubject, catchError, EMPTY, tap, map} from 'rxjs';
+import {CampsiteAvailabilityItemComponent} from './campsite-availability-item/campsite-availability-item.component';
 
 @Component({
   selector: 'app-reservations',
@@ -49,7 +46,8 @@ import {BehaviorSubject, catchError, EMPTY, tap, map} from 'rxjs';
     MatOption,
     MatSelectTrigger,
     MatDivider,
-    AsyncPipe
+    AsyncPipe,
+    CampsiteAvailabilityItemComponent
   ],
   templateUrl: './reservations.component.html',
   styleUrl: './reservations.component.scss',
@@ -59,8 +57,6 @@ export class ReservationsComponent implements OnInit {
   private readonly campsiteService = inject(CampsiteService);
   readonly campsiteTypeService = inject(CampsiteTypeService);
   readonly campgroundAmenityService = inject(CampgroundAmenityService);
-  amenities$ = this.campgroundAmenityService.getCampgroundAmenities();
-  campsiteTypes$ = this.campsiteTypeService.getCampsiteTypes();
   campsites$ = new BehaviorSubject<Pagination<Campsite> | null>(null);
   loading$ = new BehaviorSubject<boolean>(false);
   startDate: Date = new Date();
@@ -72,6 +68,8 @@ export class ReservationsComponent implements OnInit {
   campsiteTypes = new FormControl([]);
   campgroundAmenities = new FormControl([]);
   campsiteCount: number = 0;
+  searchStartDate: Date = new Date();
+  searchEndDate: Date = new Date();
 
   ngOnInit() {
     this.initializeServices();
@@ -83,6 +81,8 @@ export class ReservationsComponent implements OnInit {
     this.loading$.next(true);
     this.campParams.campsiteTypes = this.campsiteTypes.value || [];
     this.campParams.campgroundAmenities = this.campgroundAmenities.value || [];
+    this.searchStartDate = this.startDate;
+    this.searchEndDate = this.endDate;
 
     this.campsiteService.getAvailableCampsites(this.startDate, this.endDate, this.campParams).pipe(
       tap(response => {

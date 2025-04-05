@@ -1,0 +1,29 @@
+<div *ngIf="campsite" class="px-2 py-2 flex">
+  <div class="flex-1 pr-2 py-1">
+    <button mat-stroked-button class="reserve-btn">Reserve Now</button>
+  </div>
+  <div>
+    <div class="pb-1">
+      <span class="font-semibold underline">{{campsite.name}}</span>&nbsp;
+      <span class="italic">({{campsite.campsiteType.name}})</span> - <span class="font-light">{{campsite.campground.name}}</span>
+    </div>
+    <div class="date-grid">
+      <div *ngFor="let date of dateRange" class="flex flex-col">
+        <div class="date-cell" [class.font-bold]="isDateInSelectedRange(date)">
+          {{ date | date:'MMM d' }}
+        </div>
+        <div class="date-cell"
+             [class.available]="!isDateReserved(date)"
+             [class.reserved]="isDateReserved(date)"
+             [class.selectedAvailable]="!isDateReserved(date) && isDateInSelectedRange(date)"
+             [class.selectedReserved]="isDateReserved(date) && isDateInSelectedRange(date)">
+          @if (isDateReserved(date)) {
+            R
+          } @else {
+            A
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

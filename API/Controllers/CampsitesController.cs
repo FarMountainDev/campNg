@@ -37,6 +37,10 @@ public class CampsitesController(CampContext context) : BaseApiController
     public async Task<IActionResult> GetAvailableCampsites([FromQuery] CampParams campParams)
     {
         var query = context.Campsites.AsQueryable();
+        
+        // Filter by campground ID if provided
+        if (campParams.CampgroundId > 0)
+            query = query.Where(e => e.CampgroundId == campParams.CampgroundId);
 
         // Check if the campsite is available for the given date range
         if (campParams.StartDate is not null && campParams.EndDate is not null)
@@ -52,6 +56,20 @@ public class CampsitesController(CampContext context) : BaseApiController
         // Ensure the campsite type is one of the selected types
         if (campParams.CampsiteTypeIds().Count > 0)
             query = query.Where(e => campParams.CampsiteTypeIds().Contains(e.CampsiteTypeId));
+        
+        // Include reservations surrounding the selected date range
+        if (campParams.StartDate is not null && campParams.EndDate is not null)
+        {
+            var dayBeforeStartDate = campParams.StartDate.Value.AddDays(-1);
+            var twoWeeksAfterStartDate = campParams.StartDate.Value.AddDays(14);
+            query = query.Include(e => e.Reservations!.Where(r => 
+                (r.StartDate >= dayBeforeStartDate && r.StartDate <= twoWeeksAfterStartDate) ||
+                (r.EndDate >= dayBeforeStartDate && r.EndDate <= twoWeeksAfterStartDate)));
+        }
+        
+        // Include the campground and campsite type
+        query = query.Include(e => e.Campground)
+            .Include(e => e.CampsiteType);
         
         return await CreatePagedResult(query, campParams.PageNumber, campParams.PageSize);
     }

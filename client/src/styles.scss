@@ -28,20 +28,53 @@ html {
   .home-image {
     width: 720px;
     height: 340px;
-    background-image: url('/images/photos/campfire-people.jpg');
+    background-image: url('/images/photos/campsite-people.jpg');
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
     @apply rounded-lg;
   }
 
-  // override button styles
+  .date-cell {
+    &.available {
+      background-color: #e8ecf5;
+      color: #38438e;
+    }
+
+    &.selectedAvailable {
+      background-color: #c8e6c9;
+      color: #2e7d32;
+    }
+
+    &.reserved {
+      background-color: #ffe2cd;
+      color: #c66a28;
+    }
+
+    &.selectedReserved {
+      background-color: #ffcdd2;
+      color: #c62828;
+    }
+  }
+
+  .linkDisabled {
+    @apply text-gray-400 cursor-not-allowed;
+  }
+
   .mdc-button, .mdc-raised-button, .mdc-stroked-button, .mdc-flat-button {
     @apply rounded-lg;
   }
 
   .mdc-text-field, .mdc-text-field--outlined, .mdc-text-field--filled {
-    background-color: rgba(0,0,0,0) !important;
+    background-color: transparent !important;
+  }
+
+  .mdc-menu-surface {
+    background-color: rgb(240, 248, 255) !important;
+  }
+
+  .mdc-list-item--selected {
+    background-color: rgb(222, 230, 243) !important;
   }
 
   @include mat.paginator-overrides((
@@ -61,8 +94,42 @@ html.dark-mode {
     background-image: url("/images/night-sky-bg.jpg");
   }
 
+  .home-image {
+    background-image: url('/images/photos/campfire-people.jpg');
+  }
+
+  .date-cell {
+    &.available {
+      background-color: #38438e;
+      color: #e8ecf5;
+    }
+
+    &.selectedAvailable {
+      background-color: #2e7d32;
+      color: #c8e6c9;
+    }
+
+    &.reserved {
+      background-color: #c66a28;
+      color: #ffe2cd;
+    }
+
+    &.selectedReserved {
+      background-color: #c62828;
+      color: #ffcdd2;
+    }
+  }
+
   .div-backdrop {
     background-color: rgba(0, 0, 0, 0.5);
+  }
+
+  .mdc-menu-surface {
+    background-color: #000f1c !important;
+  }
+
+  .mdc-list-item--selected {
+    background-color: #012848 !important;
   }
 }
 

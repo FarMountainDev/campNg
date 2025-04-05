@@ -6,8 +6,8 @@
       <mat-form-field subscriptSizing="dynamic">
         <mat-label>Select dates</mat-label>
         <mat-date-range-input [min]="minDate" [max]="maxDate" [rangePicker]="picker">
-          <input matStartDate matInput placeholder="Check in" [(ngModel)]="startDate" >
-          <input matEndDate matInput placeholder="Check out" [(ngModel)]="endDate">
+          <input matStartDate matInput placeholder="First night" [(ngModel)]="startDate" >
+          <input matEndDate matInput placeholder="Last night" [(ngModel)]="endDate">
         </mat-date-range-input>
         <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-date-range-picker #picker></mat-date-range-picker>
@@ -34,7 +34,8 @@
 
       <mat-divider vertical="true"></mat-divider>
 
-      <mat-form-field subscriptSizing="dynamic" *ngIf="campgroundAmenityService.getCampgroundAmenities() | async as amenities">
+      <mat-form-field subscriptSizing="dynamic" *ngIf="campgroundAmenityService.getCampgroundAmenities() | async as amenities"
+                      style="width: 240px;">
         <mat-label>Campground Amenities</mat-label>
         <mat-select [formControl]="campgroundAmenities" multiple>
           <mat-select-trigger>
@@ -84,8 +85,8 @@
         <mat-divider></mat-divider>
         <ol>
           @for (campsite of campsites.data; track campsite.id) {
-            <li>{{campsite.name}}</li>
-            <mat-divider></mat-divider>
+            <app-campsite-availability-item [campsite]="campsite" [startDate]="searchStartDate" [endDate]="searchEndDate" />
+            <mat-divider />
           }
         </ol>
       </div>

@@ -1,10 +1,10 @@
 <div *ngIf="campsite" class="px-2 py-2 flex">
-  <div class="flex-1 pr-2 py-1">
+  <div class="flex-1 pr-2">
     <button mat-stroked-button class="reserve-btn">Reserve Now</button>
   </div>
   <div>
     <div class="pb-1">
-      <span class="font-semibold underline">{{campsite.name}}</span>&nbsp;
+      <span class="font-semibold underline text-lg">{{campsite.name}}</span>&nbsp;
       <span class="italic">({{campsite.campsiteType.name}})</span> - <span class="font-light">{{campsite.campground.name}}</span>
     </div>
     <div class="date-grid">

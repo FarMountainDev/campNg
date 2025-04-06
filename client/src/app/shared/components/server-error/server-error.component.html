@@ -1,0 +1,17 @@
+<div class="flex items-center justify-center min-h-96 div-backdrop py-4 px-2">
+  <div class="text-center">
+    <h1 class="text-4xl font-bold">Internal Error</h1>
+    <img src="/images/errors/internal-error.png" alt="Internal Error" class="mx-auto max-h-96 rounded-3xl mt-2" />
+    <p class="text-lg mt-2">An unhandled exception occurred</p>
+    <button routerLink="/reservations" mat-flat-button class="my-4">Back to reservations</button>
+    <mat-divider></mat-divider>
+    <div class="text-left p-4">
+      @if (error) {
+        <h5 class="text-lg font-semibold mb-2">Error Details <span class="italic">(not intended for production environments!)</span></h5>
+        <h5 class="text-red-600 mb-2">Error: {{error.message}}</h5>
+        <h5 class="text-lg font-semibold mb-2">Stack Trace</h5>
+        <code class="block whitespace-pre-wrap">{{error.details}}</code>
+      }
+    </div>
+  </div>
+</div>

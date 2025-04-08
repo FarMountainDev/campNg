@@ -20,8 +20,8 @@ builder.Services.AddDbContext<CampContext>(options =>
 });
 builder.Services.AddSingleton<IConnectionMultiplexer>(config =>
 {
-    var connectionString = builder.Configuration.GetConnectionString("Redis") ??
-                           throw new Exception("Could not get Redis connection string");
+    var connectionString = builder.Configuration.GetConnectionString("Redis") 
+                           ?? throw new Exception("Could not get Redis connection string");
     var configOptions = ConfigurationOptions.Parse(connectionString, true);
     return ConnectionMultiplexer.Connect(configOptions);
 });

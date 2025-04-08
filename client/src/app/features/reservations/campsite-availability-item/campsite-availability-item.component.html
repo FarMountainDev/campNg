@@ -1,11 +1,13 @@
 <div *ngIf="campsite" class="px-2 py-2 flex">
   <div class="flex-1 pr-2">
-    <button mat-stroked-button class="reserve-btn">Reserve Now</button>
+    <button mat-stroked-button class="reserve-btn" (click)="addReservationToCart()">Reserve Now</button>
   </div>
   <div>
     <div class="pb-1">
       <span class="font-semibold underline text-lg">{{campsite.name}}</span>&nbsp;
-      <span class="italic">({{campsite.campsiteType.name}})</span> - <span class="font-light">{{campsite.campground.name}}</span>
+      <span class="italic">({{campsite.campsiteType.name}})</span> - <span class="font-light">{{campsite.campground.name}}</span> -
+      <span class="font-light">Week Day Price: {{campsite.campsiteType.weekDayPrice | currency}}</span> | <span class="font-light">Week End Price: {{campsite.campsiteType.weekEndPrice | currency}}</span> |
+      <span class="font-semibold">Total Price: <u>{{this.totalPrice | currency}}</u></span>
     </div>
     <div class="date-grid">
       <div *ngFor="let date of dateRange" class="flex flex-col">

@@ -1,0 +1,21 @@
+<div class="p-4 flex flex-col div-backdrop gap-3">
+  <h4 class="text-2xl font-bold">Order Summary</h4>
+  <div class="flex flex-col gap-3">
+    <div class="flex justify-between">
+      <span>Subtotal</span>
+      <span class="font-semibold">{{cartService.cartTotals()?.subtotal | currency}}</span>
+    </div>
+    <div class="flex justify-between">
+      <span>Discount</span>
+      <span class="font-semibold text-green-600">-{{cartService.cartTotals()?.discount | currency}}</span>
+    </div>
+    <div class="flex justify-between">
+      <span>Tax</span>
+      <span class="font-semibold">{{cartService.cartTotals()?.tax | currency}}</span>
+    </div>
+    <div class="flex justify-between border-t border-gray-400 pt-3">
+      <span class="text-xl font-semibold">Total</span>
+      <span class="text-xl font-bold">-{{cartService.cartTotals()?.total | currency}}</span>
+    </div>
+  </div>
+</div>

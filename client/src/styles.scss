@@ -81,6 +81,20 @@ html {
     background-color: rgb(222, 230, 243) !important;
   }
 
+  .mdc-notched-outline__notch {
+    border-right-style: none !important;
+  }
+
+  .mdc-notched-outline__leading {
+    border-top-left-radius: 8px !important;
+    border-bottom-left-radius: 8px !important;
+  }
+
+  .mdc-notched-outline__trailing {
+    border-top-right-radius: 8px !important;
+    border-bottom-right-radius: 8px !important;
+  }
+
   .mat-mdc-snack-bar-container {
     &.snackbar-success {
       --mdc-snackbar-container-color: green;

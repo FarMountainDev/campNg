@@ -1,9 +1,10 @@
 ﻿using Core.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data;
 
-public class CampContext(DbContextOptions options) : DbContext(options)
+public class CampContext(DbContextOptions options) : IdentityDbContext<AppUser>(options)
 {
     public DbSet<Campground> Campgrounds { get; set; }
     public DbSet<Campsite> Campsites { get; set; }

@@ -49,6 +49,15 @@ export class CartService {
     this.setCart(cart);
   }
 
+  removeItemFromCart(item: CartItem) {
+    const cart = this.cart();
+    if (!cart) return;
+    const index = cart.items.findIndex(i => i.campsiteId === item.campsiteId && i.startDate === item.startDate);
+    if (index === -1) return;
+    cart.items.splice(index, 1);
+    this.setCart(cart);
+  }
+
   private createCart(): ShoppingCart {
     const cart = new ShoppingCart();
     localStorage.setItem('cart_id', cart.id);

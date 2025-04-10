@@ -1,11 +1,17 @@
 <div class="p-4 flex flex-col gap-4 div-backdrop">
   <div>
-    {{item().campgroundName}} - {{item().campsiteType}} - {{item().campgroundName}}
+    {{item().campsiteName}} - {{item().campsiteType}} - {{item().campgroundName}}
   </div>
   <div>
     {{item().startDate | date}} - {{item().endDate | date}}
   </div>
   <div>
     Price: {{item().price | currency}}
+  </div>
+  <div>
+    <button mat-stroked-button color="warn" (click)="removeItemFromCart()">
+      <mat-icon>delete</mat-icon>
+      Delete
+    </button>
   </div>
 </div>

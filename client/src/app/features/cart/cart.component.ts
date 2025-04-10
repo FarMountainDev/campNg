@@ -6,6 +6,7 @@ import {MatButton} from '@angular/material/button';
 import {RouterLink} from '@angular/router';
 import {MatFormField, MatLabel} from '@angular/material/form-field';
 import {MatInput} from '@angular/material/input';
+import {EmptyStateComponent} from '../../shared/components/empty-state/empty-state.component';
 
 @Component({
   selector: 'app-cart',
@@ -16,7 +17,8 @@ import {MatInput} from '@angular/material/input';
     RouterLink,
     MatFormField,
     MatInput,
-    MatLabel
+    MatLabel,
+    EmptyStateComponent
   ],
   templateUrl: './cart.component.html',
   styleUrl: './cart.component.scss'

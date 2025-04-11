@@ -30,7 +30,6 @@ public class AccountController(SignInManager<AppUser> signInManager) : BaseApiCo
         }
             
         return ValidationProblem();
-
     }
 
     [Authorize]

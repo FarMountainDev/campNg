@@ -1,0 +1,380 @@
+{
+	"info": {
+		"_postman_id": "439ba7dc-0c19-48f6-a47b-b3151bcd129d",
+		"name": "campNg",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "16130264",
+		"_collection_link": "https://solar-water-185627.postman.co/workspace/Camping~500d29d1-f2b4-4c3a-b654-99ef75b339ca/collection/16130264-439ba7dc-0c19-48f6-a47b-b3151bcd129d?action=share&source=collection_link&creator=16130264"
+	},
+	"item": [
+		{
+			"name": "Campgrounds",
+			"item": [
+				{
+					"name": "Get Campgrounds",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/campgrounds",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"campgrounds"
+							],
+							"query": [
+								{
+									"key": "pageSize",
+									"value": "2",
+									"disabled": true
+								},
+								{
+									"key": "pageNumber",
+									"value": "2",
+									"disabled": true
+								},
+								{
+									"key": "campgroundAmenities",
+									"value": "1,2",
+									"disabled": true
+								},
+								{
+									"key": "campsiteTypes",
+									"value": "1,2,3",
+									"disabled": true
+								},
+								{
+									"key": "search",
+									"value": "crystal",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Campground By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/campgrounds/3",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"campgrounds",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Campsites",
+			"item": [
+				{
+					"name": "Get Campsites",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/campsites",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"campsites"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Campsite By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/campsites/2",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"campsites",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Available Campsites",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/campsites/available?startDate=2025-07-01&endDate=2025-07-07&campgroundAmenities=1,2&campsiteTypes=1,2",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"campsites",
+								"available"
+							],
+							"query": [
+								{
+									"key": "startDate",
+									"value": "2025-07-01"
+								},
+								{
+									"key": "endDate",
+									"value": "2025-07-07"
+								},
+								{
+									"key": "campgroundAmenities",
+									"value": "1,2"
+								},
+								{
+									"key": "campsiteTypes",
+									"value": "1,2"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Reservations",
+			"item": [
+				{
+					"name": "Get Reservation By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/reservations/108",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"reservations",
+								"108"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Shopping Cart",
+			"item": [
+				{
+					"name": "Get Cart",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Update Cart",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": \"cart1\",\r\n    \"items\": [\r\n        {\r\n            \"campsiteId\": 1,\r\n            \"campsiteName\": \"Cedar Ridge Tent Site 1\",\r\n            \"campsiteType\": \"Tent Site\",\r\n            \"campgroundName\": \"Cedar Ridge\",\r\n            \"startDate\": \"04-05-2025\",\r\n            \"endDate\": \"04-07-2025\",\r\n\t\t\t\"price\": 100.00\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/cart",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"cart"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Cart",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/cart?id=cart1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"cart"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "cart1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User Account",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"firstName\": \"Garrett\",\r\n    \"lastName\": \"Smith\",\r\n\t\"email\": \"garrett@test.com\",\r\n\t\"password\": \"Pa$$w0rd\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/account/register",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"email\": \"garrett@test.com\",\r\n\t\"password\": \"Pa$$w0rd\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/login?useCookies=true",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"login"
+							],
+							"query": [
+								{
+									"key": "useCookies",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Info",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/account/user-info",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"user-info"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/account/logout",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "url",
+			"value": "https://localhost:5001",
+			"type": "string"
+		}
+	]
+}

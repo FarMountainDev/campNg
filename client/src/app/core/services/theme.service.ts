@@ -21,11 +21,7 @@ export class ThemeService {
 
   setTheme(theme: Theme) {
     this.currentTheme.set(theme);
-    if (theme === 'dark') {
-      this.document.documentElement.classList.add('dark-mode');
-    } else {
-      this.document.documentElement.classList.remove('dark-mode');
-    }
+    this.applyThemeToDOM(theme);
     this.saveTheme();
   }
 
@@ -34,13 +30,29 @@ export class ThemeService {
   }
 
   loadTheme() {
+    const theme = this.getPreferredTheme();
+    this.setTheme(theme);
+  }
+
+  applyThemeSynchronously() {
+    const theme = this.getPreferredTheme();
+    this.currentTheme.set(theme);
+    this.applyThemeToDOM(theme);
+  }
+
+  private getPreferredTheme(): Theme {
     const savedTheme = localStorage.getItem(this.themeKey) as Theme | null;
     if (savedTheme) {
-      this.setTheme(savedTheme);
+      return savedTheme;
+    }
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+
+  private applyThemeToDOM(theme: Theme) {
+    if (theme === 'dark') {
+      this.document.documentElement.classList.add('dark-mode');
     } else {
-      const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      this.setTheme(prefersDarkMode ? 'dark' : 'light');
+      this.document.documentElement.classList.remove('dark-mode');
     }
   }
 }
-

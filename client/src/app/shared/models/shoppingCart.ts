@@ -3,6 +3,9 @@
 export type Cart = {
   id: string;
   items: CartItem[];
+  deliveryMethodId?: number;
+  paymentIntentId?: string;
+  clientSecret?: string;
 }
 
 export type CartItem = {
@@ -18,4 +21,7 @@ export type CartItem = {
 export class ShoppingCart implements Cart {
   id = nanoid();
   items: CartItem[] = [];
+  deliveryMethodId?: number;
+  paymentIntentId?: string;
+  clientSecret?: string;
 }

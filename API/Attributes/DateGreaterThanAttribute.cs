@@ -2,15 +2,8 @@
 
 namespace API.Attributes;
 
-public class DateGreaterThanAttribute : ValidationAttribute
+public class DateGreaterThanAttribute(string comparisonProperty) : ValidationAttribute
 {
-    private readonly string comparisonProperty;
-
-    public DateGreaterThanAttribute(string comparisonProperty)
-    {
-        this.comparisonProperty = comparisonProperty;
-    }
-
     protected override ValidationResult IsValid(object? value, ValidationContext validationContext)
     {
         if (value == null)

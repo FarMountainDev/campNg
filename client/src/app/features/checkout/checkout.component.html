@@ -1,3 +1,97 @@
-<div class="div-backdrop p-5 text-center">
-  <h1 class="text-2xl">Guarded checkout works!</h1>
+
+<div class="flex gap-3">
+  <div class="flex flex-col basis-3/4 gap-3">
+    <mat-stepper (selectionChange)="onStepChange($event)" [linear]="true" #stepper
+      class="div-backdrop p-2">
+      <mat-step label="Policy" [completed]="completionStatus().terms">
+        <div>
+          <h1 class="text-lg font-semibold mt-3 mb-2">Campsite Reservation Terms and Conditions</h1>
+          <h2 class="text-md">1. Reservation Policy</h2>
+          <ul class="text-sm list-disc list-inside mb-2">
+            <li>All reservations must be made in advance through our official booking system (website, phone, or authorized partners).</li>
+            <li>Full payment is required at the time of booking to secure your reservation.</li>
+            <li>Campers must be at least 18 years old to make a reservation.</li>
+          </ul>
+          <h2 class="text-md">2. Check-In / Check-Out</h2>
+          <ul class="text-sm list-disc list-inside mb-2">
+            <li>Check-in time: 2:00 PM</li>
+            <li>Check-out time: 11:00 AM</li>
+            <li>Early check-in or late check-out is subject to availability and may incur additional fees.</li>
+            <li>Campers must check in at the office or designated check-in location upon arrival.</li>
+          </ul>
+          <h2 class="text-md">3. Cancellation and Refunds</h2>
+          <ul class="text-sm list-disc list-inside mb-2">
+            <li>Cancellations made <strong>7 days or more</strong> before the arrival date are eligible for a full refund minus a processing fee.</li>
+            <li>Cancellations made <strong>less than 7 days</strong> before the arrival date are non-refundable.</li>
+            <li>No-shows and early departures are non-refundable.</li>
+            <li>Weather-related cancellations are not eligible for refunds unless the campground is officially closed.</li>
+          </ul>
+          <h2 class="text-md">4. Campground Rules</h2>
+          <ul class="text-sm list-disc list-inside mb-2">
+            <li>Quiet hours are from 10:00 PM to 7:00 AM.</li>
+            <li>Fires are permitted only in designated fire rings and must be extinguished before leaving the campsite or going to sleep.</li>
+            <li>Pets are allowed but must be kept on a leash at all times and cleaned up after.</li>
+            <li>Alcohol may be permitted, subject to local regulations—excessive noise or disruptive behavior is not tolerated.</li>
+            <li>Fireworks, firearms, and illegal substances are strictly prohibited.</li>
+          </ul>
+          <h2 class="text-md">5. Liability</h2>
+          <ul class="text-sm list-disc list-inside mb-2">
+            <li>Campers use the campsite and all facilities at their own risk.</li>
+            <li>The campground is not responsible for lost, stolen, or damaged property.</li>
+            <li>Campers are responsible for any damage caused to the campsite, facilities, or natural environment during their stay.</li>
+          </ul>
+          <h2 class="text-md">6. Site Occupancy and Vehicles</h2>
+          <ul class="text-sm list-disc list-inside mb-2">
+            <li>Maximum number of occupants and vehicles per site must be observed (as specified at time of booking).</li>
+            <li>Additional guests or vehicles may incur extra fees and must be approved in advance.</li>
+            <li>RVs and trailers must fit within the designated space and comply with hookup requirements, if applicable.</li>
+          </ul>
+          <h2 class="text-md">7. Environmental Responsibility</h2>
+          <ul class="text-sm list-disc list-inside mb-2">
+            <li>Leave No Trace: All campers are expected to leave their campsite clean and free of trash.</li>
+            <li>Use only biodegradable soap near water sources.</li>
+            <li>Do not disturb wildlife or remove plants, rocks, or other natural features.</li>
+          </ul>
+          <h2 class="text-md">8. Campground Management Rights</h2>
+          <ul class="text-sm list-disc list-inside mb-2">
+            <li>Management reserves the right to refuse service or remove any camper(s) for violation of these terms, without refund.</li>
+            <li>Rules are subject to change; campers are responsible for staying informed of current policies.</li>
+          </ul>
+        </div>
+        <div class="flex justify-end mt-1">
+          <mat-checkbox [checked]="termsAccepted"
+                        (change)="handleTermsChange($event)">
+            Accept terms
+          </mat-checkbox>
+        </div>
+        <div class="flex justify-between mt-6">
+          <button routerLink="/reservations" mat-stroked-button class="z-0">Search for another reservation</button>
+          <button matStepperNext mat-flat-button class="z-0" [disabled]="!completionStatus().terms">Next</button>
+        </div>
+      </mat-step>
+      <mat-step label="Payment" [completed]="completionStatus().payment">
+        <div id="payment-element" class="mt-2"></div>
+        <div class="flex justify-between mt-6">
+          <button matStepperPrevious mat-stroked-button>Back</button>
+          <button matStepperNext mat-flat-button [disabled]="!completionStatus().payment">Next</button>
+        </div>
+      </mat-step>
+      <mat-step label="Confirm">
+        <app-checkout-review [confirmationToken]="confirmationToken"></app-checkout-review>
+        <div class="flex justify-between mt-6">
+          <button matStepperPrevious mat-stroked-button>Back</button>
+          <button mat-flat-button (click)="confirmPayment(stepper)" [disabled]="!confirmationToken || loading">
+            @if (loading) {
+              <mat-spinner diameter="20" mode="indeterminate"></mat-spinner>
+            } @else {
+              <span>Pay {{cartService.cartTotals()?.total | currency}}</span>
+            }
+          </button>
+        </div>
+      </mat-step>
+    </mat-stepper>
+  </div>
+  <div class="basis-1/4 flex flex-col gap-3">
+    <app-order-summary></app-order-summary>
+  </div>
 </div>

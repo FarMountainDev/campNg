@@ -10,14 +10,13 @@
     <table class="w-full text-center">
       <tbody class="divide-y divide-gray-200">
         @for (item of cartService.cart()?.items; track item) {
-          <tr>
-            <td class="py-4">
-              <div class="flex items-center gap-4">
-                <span>{{item.campsiteName}}</span>
-              </div>
+          <tr class="text-sm">
+            <td class="py-4 text-left">
+              <span>{{item.campsiteName}}</span> - <span class="italic">{{reservationService.getNumberOfNights(item)}} night(s)</span>
             </td>
-            <td class="p-4">{{item.startDate | date}} - {{item.endDate | date}}</td>
-            <td class="p-4 text-right">{{item.price | currency}}</td>
+            <td class="py-4 pl-4 pr-1"><span class="font-semibold">Check In:</span> {{item.startDate | date}} {{reservationService.checkInTime}}</td>
+            <td class="py-4 pl-1 pr-4"><span class="font-semibold">Check Out:</span> {{reservationService.getCheckoutDate(item.endDate) | date}} {{reservationService.checkOutTime}}</td>
+            <td class="p-4 text-right"><span class="font-semibold">{{item.price | currency}}</span></td>
           </tr>
         }
       </tbody>

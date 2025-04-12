@@ -4,6 +4,7 @@ import {CurrencyPipe, DatePipe} from '@angular/common';
 import {CartService} from '../../../core/services/cart.service';
 import {MatIcon} from '@angular/material/icon';
 import {MatButton} from '@angular/material/button';
+import {ReservationService} from '../../../core/services/reservation.service';
 
 @Component({
   selector: 'app-cart-item',
@@ -18,6 +19,7 @@ import {MatButton} from '@angular/material/button';
 })
 export class CartItemComponent {
   protected readonly cartService = inject(CartService);
+  protected readonly reservationService = inject(ReservationService);
   item = input.required<CartItem>();
 
   removeItemFromCart() {

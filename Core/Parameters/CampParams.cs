@@ -52,17 +52,13 @@ public class CampParams : BaseParams
     public DateTime? StartDate
     {
         get => startDate;
-        set => startDate = value.HasValue 
-            ? DateTime.SpecifyKind(value.Value, DateTimeKind.Utc)
-            : null;
+        set => startDate = value;
     }
 
     private DateTime? endDate;
     public DateTime? EndDate
     {
         get => endDate;
-        set => endDate = value.HasValue 
-            ? DateTime.SpecifyKind(value.Value, DateTimeKind.Utc)
-            : null;
+        set => endDate = value;
     }
 }

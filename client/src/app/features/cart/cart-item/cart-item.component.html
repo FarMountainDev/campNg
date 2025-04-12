@@ -3,7 +3,20 @@
     {{item().campsiteName}} - {{item().campsiteType}} - {{item().campgroundName}}
   </div>
   <div>
-    {{item().startDate | date}} - {{item().endDate | date}}
+    {{reservationService.getNumberOfNights(item())}} Night(s)
+  </div>
+  <div>
+    <table>
+      <tr>
+        <td class="py-1 pr-4">Check In:</td>
+        <td>{{item().startDate | date}} {{reservationService.checkInTime}}</td>
+      </tr>
+      <tr>
+      <tr>
+        <td class="py-1 pr-4">Check Out:</td>
+        <td>{{reservationService.getCheckoutDate(item().endDate) | date}} {{reservationService.checkOutTime}}</td>
+      </tr>
+    </table>
   </div>
   <div>
     Price: {{item().price | currency}}

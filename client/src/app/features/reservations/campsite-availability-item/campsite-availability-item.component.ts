@@ -4,6 +4,7 @@ import {CurrencyPipe, DatePipe, NgForOf, NgIf} from '@angular/common';
 import {MatButton} from '@angular/material/button';
 import {CartService} from '../../../core/services/cart.service';
 import {Router} from '@angular/router';
+import {ReservationService} from '../../../core/services/reservation.service';
 
 @Component({
   selector: 'app-campsite-availability-item',
@@ -24,6 +25,7 @@ export class CampsiteAvailabilityItemComponent implements OnChanges{
 
   private readonly router = inject(Router);
   private readonly cartService = inject(CartService);
+  private readonly reservationService = inject(ReservationService);
 
   dateRange: Date[] = [];
   totalPrice: number = 0;
@@ -90,7 +92,29 @@ export class CampsiteAvailabilityItemComponent implements OnChanges{
     };
 
     this.cartService.addItemToCart(cartItem);
-    this.router.navigate(['/cart']);
+    void this.router.navigate(['/cart']);
+  }
+
+  isSelectedRangeUnavailable(): boolean {
+    // Return true if any required data is missing
+    if (!this.campsite || !this.startDate || !this.endDate) return true;
+    if (!this.reservationService.datesValid(this.startDate, this.endDate)) return true;
+
+    const currentDate = new Date(this.startDate);
+    currentDate.setHours(0, 0, 0, 0);
+
+    const endDate = new Date(this.endDate);
+    endDate.setHours(0, 0, 0, 0);
+
+    // Check each date in the range
+    while (currentDate <= endDate) {
+      if (this.isDateReserved(new Date(currentDate))) {
+        return true; // Found a conflict
+      }
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    return false; // No conflicts found
   }
 
   private calculateDateRange(): void {

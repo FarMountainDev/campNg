@@ -1,6 +1,6 @@
 <div class="p-4 flex flex-col gap-4 div-backdrop">
-  <div>
-    {{item().campsiteName}} - {{item().campsiteType}} - {{item().campgroundName}}
+  <div class="text-lg border-b border-gray-500">
+    {{item().campsiteName}} - <span class="italic">({{item().campsiteType}})</span> - <span>{{item().campgroundName}}</span>
   </div>
   <div>
     {{reservationService.getNumberOfNights(item())}} Night(s)
@@ -18,7 +18,7 @@
       </tr>
     </table>
   </div>
-  <div>
+  <div class="text-xl">
     Price: {{item().price | currency}}
   </div>
   <div>

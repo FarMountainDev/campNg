@@ -45,8 +45,7 @@ public class CampsitesController(CampContext context) : BaseApiController
         // Check if the campsite is available for the given date range
         if (campParams.StartDate is not null && campParams.EndDate is not null)
             query = query.Where(e => e.Reservations != null && !e.Reservations.Any(r => 
-                (campParams.StartDate >= r.StartDate && campParams.StartDate <= r.EndDate) ||
-                (campParams.EndDate >= r.StartDate && campParams.EndDate <= r.EndDate)));
+                campParams.StartDate <= r.EndDate && r.StartDate <= campParams.EndDate));
         
         // Ensure the campground has all the selected amenities
         if (campParams.CampgroundAmenityIds().Count > 0)
@@ -57,15 +56,11 @@ public class CampsitesController(CampContext context) : BaseApiController
         if (campParams.CampsiteTypeIds().Count > 0)
             query = query.Where(e => campParams.CampsiteTypeIds().Contains(e.CampsiteTypeId));
         
-        // Include reservations surrounding the selected date range
-        if (campParams.StartDate is not null && campParams.EndDate is not null)
-        {
-            var dayBeforeStartDate = campParams.StartDate.Value.AddDays(-1);
-            var twoWeeksAfterStartDate = campParams.StartDate.Value.AddDays(14);
-            query = query.Include(e => e.Reservations!.Where(r => 
-                (r.StartDate >= dayBeforeStartDate && r.StartDate <= twoWeeksAfterStartDate) ||
-                (r.EndDate >= dayBeforeStartDate && r.EndDate <= twoWeeksAfterStartDate)));
-        }
+        // Include reservations for the allowed date range
+        var yesterday = DateTime.Today.AddDays(-1);
+        var oneYearFromToday = DateTime.Today.AddYears(1);
+        query = query.Include(e => e.Reservations!.Where(r => 
+            yesterday <= r.EndDate && r.StartDate <= oneYearFromToday));
         
         // Include the campground and campsite type
         query = query.Include(e => e.Campground)

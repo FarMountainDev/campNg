@@ -5,9 +5,13 @@
     <div class="flex gap-4">
       <mat-form-field subscriptSizing="dynamic">
         <mat-label>Select dates</mat-label>
-        <mat-date-range-input [min]="minDate" [max]="maxDate" [rangePicker]="picker">
-          <input matStartDate matInput placeholder="First night" [(ngModel)]="startDate" >
-          <input matEndDate matInput placeholder="Last night" [(ngModel)]="endDate">
+        <mat-date-range-input [min]="reservationService.minDate" [max]="reservationService.maxDate" [rangePicker]="picker">
+          <input matStartDate matInput placeholder="First night"
+                 [ngModel]="startDate"
+                 (ngModelChange)="handleStartDateChange($event)">
+          <input matEndDate matInput placeholder="Last night"
+                 [ngModel]="endDate"
+                 (ngModelChange)="handleEndDateChange($event)">
         </mat-date-range-input>
         <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-date-range-picker #picker></mat-date-range-picker>
@@ -68,7 +72,7 @@
 
   <div class="p-4 div-backdrop" *ngIf="(loading$ | async) === false; else loadingTemplate">
 
-    <div *ngIf="(campsites$ | async) as campsites" class="flex flex-col gap-3">
+    <div *ngIf="reservationService.selectedStartDate() && (campsites$ | async) as campsites" class="flex flex-col gap-3">
       <div class="flex justify-center" *ngIf="campsiteCount > 0">
         <mat-paginator
           (page)="handlePageEvent($event)"
@@ -85,7 +89,9 @@
         <mat-divider></mat-divider>
         <ol>
           @for (campsite of campsites.data; track campsite.id) {
-            <app-campsite-availability-item [campsite]="campsite" [startDate]="searchStartDate" [endDate]="searchEndDate" />
+            <app-campsite-availability-item [campsite]="campsite"
+                                            [startDate]="reservationService.selectedStartDate()"
+                                            [endDate]="reservationService.selectedEndDate()" />
             <mat-divider />
           }
         </ol>

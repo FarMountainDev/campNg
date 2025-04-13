@@ -1,4 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
+import {Component, inject, OnDestroy, OnInit} from '@angular/core';
 import {CampsiteService} from '../../core/services/campsite.service';
 import {MatButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
@@ -21,8 +21,12 @@ import {CampsiteTypeService} from '../../core/services/campsite-type.service';
 import {CampgroundAmenityService} from '../../core/services/campground-amenities.service';
 import {CampgroundAmenity} from '../../shared/models/campgroundAmenity';
 import {CampsiteType} from '../../shared/models/campsiteType';
-import {BehaviorSubject, catchError, EMPTY, tap, map} from 'rxjs';
+import {BehaviorSubject, catchError, EMPTY, tap, map, Subscription} from 'rxjs';
 import {CampsiteAvailabilityItemComponent} from './campsite-availability-item/campsite-availability-item.component';
+import {ReservationService} from '../../core/services/reservation.service';
+import {MAT_DATE_RANGE_SELECTION_STRATEGY} from '@angular/material/datepicker';
+import {MaxRangeSelectionStrategy} from '../../shared/strategies/max-date-range-strategy';
+import {SnackbarService} from '../../core/services/snackbar.service';
 
 @Component({
   selector: 'app-reservations',
@@ -51,25 +55,30 @@ import {CampsiteAvailabilityItemComponent} from './campsite-availability-item/ca
   ],
   templateUrl: './reservations.component.html',
   styleUrl: './reservations.component.scss',
-  providers: [provideNativeDateAdapter()]
+  providers: [
+    {
+      provide: MAT_DATE_RANGE_SELECTION_STRATEGY,
+      useClass: MaxRangeSelectionStrategy
+    },
+    provideNativeDateAdapter()
+  ]
 })
-export class ReservationsComponent implements OnInit {
+export class ReservationsComponent implements OnInit, OnDestroy {
   private readonly campsiteService = inject(CampsiteService);
-  readonly campsiteTypeService = inject(CampsiteTypeService);
-  readonly campgroundAmenityService = inject(CampgroundAmenityService);
+  private readonly snackbar = inject(SnackbarService);
+  protected readonly campgroundAmenityService = inject(CampgroundAmenityService);
+  protected readonly campsiteTypeService = inject(CampsiteTypeService);
+  protected readonly reservationService = inject(ReservationService);
+  private campsiteSubscription?: Subscription;
   campsites$ = new BehaviorSubject<Pagination<Campsite> | null>(null);
   loading$ = new BehaviorSubject<boolean>(false);
-  startDate: Date = new Date();
-  endDate: Date = new Date();
   campParams = new CampParams();
   pageSizeOptions = [2, 5, 10, 15, 20];
-  minDate = new Date();
-  maxDate = new Date();
   campsiteTypes = new FormControl([]);
   campgroundAmenities = new FormControl([]);
   campsiteCount: number = 0;
-  searchStartDate: Date = new Date();
-  searchEndDate: Date = new Date();
+  startDate = new Date();
+  endDate = new Date();
 
   ngOnInit() {
     this.initializeServices();
@@ -77,35 +86,64 @@ export class ReservationsComponent implements OnInit {
     this.getCampsites();
   }
 
+  ngOnDestroy() {
+    this.campsiteSubscription?.unsubscribe();
+  }
+
   getCampsites() {
+    if (!this.reservationService.datesValid()) {
+      this.snackbar.error('Please select a valid date range.');
+      return;
+    }
     this.loading$.next(true);
     this.campParams.campsiteTypes = this.campsiteTypes.value || [];
     this.campParams.campgroundAmenities = this.campgroundAmenities.value || [];
-    this.searchStartDate = this.startDate;
-    this.searchEndDate = this.endDate;
+    let startDate = this.reservationService.selectedStartDate();
+    let endDate = this.reservationService.selectedEndDate();
 
-    this.campsiteService.getAvailableCampsites(this.startDate, this.endDate, this.campParams).pipe(
-      tap(response => {
-        this.campsites$.next(response);
-        this.loading$.next(false);
-      }),
-      map(response => {
-        this.campsiteCount = response.count;
-      }),
-      catchError(error => {
-        console.log(error);
-        this.loading$.next(false);
-        return EMPTY;
-      })
-    ).subscribe();
+    this.campsiteSubscription?.unsubscribe();
+    this.campsiteSubscription = this.campsiteService.getAvailableCampsites(startDate, endDate, this.campParams)
+      .pipe(
+        catchError(error => {
+          console.error('Error fetching campsites:', error);
+          this.snackbar.error('Failed to load campsites. Please try again.');
+          this.loading$.next(false);
+          return EMPTY;
+        })
+      )
+      .subscribe({
+        next: (response) => {
+          this.campsites$.next(response);
+          this.campsiteCount = response.count;
+          this.loading$.next(false);
+        }
+      });
   }
 
+  handleStartDateChange(date: Date) {
+    if (!date || date < this.reservationService.minDate || date > this.reservationService.maxDate) {
+      return;
+    }
+    this.reservationService.selectedStartDate.set(date);
+  }
+
+  handleEndDateChange(date: Date) {
+    if (!date || date < this.reservationService.minDate || date > this.reservationService.maxDate) {
+      return;
+    }
+    this.reservationService.selectedEndDate.set(date);
+  }
+
+  // TODO: when moving to a new page when the filters have been changed, sometimes the page is empty
+  //  Need to somehow keep track if filters have been changed since last search
   handlePageEvent(event: PageEvent) {
     this.campParams.pageNumber = event.pageIndex + 1;
     this.campParams.pageSize = event.pageSize;
     this.getCampsites();
   }
 
+  // TODO: Need to handle case when trying to clear filters when date range is invalid. Currently it shows an error,
+  //  but maybe it should clear the filters AND reset the date range? Or don't refresh campsites when clearing filters?
   clearFilters() {
     this.campsiteTypes = new FormControl([]);
     this.campgroundAmenities = new FormControl([]);
@@ -134,27 +172,7 @@ export class ReservationsComponent implements OnInit {
   }
 
   private initializeDateRange() {
-    this.minDate = new Date();
-    this.maxDate = new Date();
-    this.maxDate.setFullYear(this.maxDate.getFullYear() + 1);
-    this.setToNextWeekend();
-  }
-
-  private setToNextWeekend() {
-    const today = new Date();
-    const dayOfWeek = today.getDay(); // 0 = Sunday, 1 = Monday ...
-
-    // Calculate days until next Friday
-    const daysUntilFriday = (5 - dayOfWeek + 7) % 7;
-    // If today is Friday, we want next Friday, not today
-    const daysToAdd = daysUntilFriday === 0 ? 7 : daysUntilFriday;
-
-    // Set start date to next Friday
-    this.startDate = new Date(today);
-    this.startDate.setDate(today.getDate() + daysToAdd);
-
-    // Set end date to next Sunday
-    this.endDate = new Date(this.startDate);
-    this.endDate.setDate(this.startDate.getDate() + 2);
+    this.startDate = this.reservationService.selectedStartDate();
+    this.endDate = this.reservationService.selectedEndDate();
   }
 }

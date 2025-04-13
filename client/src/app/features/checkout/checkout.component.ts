@@ -17,6 +17,7 @@ import {CheckoutReviewComponent} from './checkout-review/checkout-review.compone
 import {CartService} from '../../core/services/cart.service';
 import {CurrencyPipe} from '@angular/common';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
+import {ReservationService} from '../../core/services/reservation.service';
 
 @Component({
   selector: 'app-checkout',
@@ -38,6 +39,7 @@ export class CheckoutComponent implements OnInit, OnDestroy{
   private readonly snackbar = inject(SnackbarService);
   private readonly router = inject(Router);
   protected readonly cartService = inject(CartService);
+  protected readonly reservationService = inject(ReservationService);
   paymentElement?: StripePaymentElement;
   completionStatus = signal<{terms: boolean, payment: boolean}>({
     terms: false,

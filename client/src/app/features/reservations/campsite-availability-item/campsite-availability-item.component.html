@@ -21,10 +21,14 @@
         <div class="date-cell"
              [class.available]="!isDateReserved(date)"
              [class.reserved]="isDateReserved(date)"
+             [class.pending]="isDatePending(date)"
              [class.selectedAvailable]="!isDateReserved(date) && isDateInSelectedRange(date)"
-             [class.selectedReserved]="isDateReserved(date) && isDateInSelectedRange(date)">
+             [class.selectedReserved]="isDateReserved(date) && isDateInSelectedRange(date)"
+             [class.selectedPending]="isDatePending(date) && isDateInSelectedRange(date)">
           @if (isDateReserved(date)) {
             R
+          } @else if (isDatePending(date)) {
+            P
           } @else {
             A
           }

@@ -49,6 +49,19 @@ export class CampsiteAvailabilityItemComponent implements OnChanges{
     });
   }
 
+  isDatePending(date: Date) {
+    if (!this.campsiteAvailabilityDto?.pendingReservations?.length) return false;
+
+    const compareDate = normalizeDate(date);
+
+    return this.campsiteAvailabilityDto.pendingReservations.some(reservation => {
+      const startDate = normalizeDate(reservation.startDate);
+      const endDate = normalizeDate(reservation.endDate);
+
+      return compareDate >= startDate && compareDate <= endDate;
+    });
+  }
+
   isDateInSelectedRange(date: Date): boolean {
     // If startDate or endDate are not set, date can't be in range
     if (!this.startDate || !this.endDate) return false;
@@ -89,6 +102,9 @@ export class CampsiteAvailabilityItemComponent implements OnChanges{
     // Check each date in the range
     while (currentDate <= endDate) {
       if (this.isDateReserved(new Date(currentDate))) {
+        return true; // Found a conflict
+      }
+      if (this.isDatePending(new Date(currentDate))) {
         return true; // Found a conflict
       }
       currentDate.setDate(currentDate.getDate() + 1);

@@ -55,6 +55,16 @@ html {
       background-color: #ffcdd2;
       color: #c62828;
     }
+
+    &.pending {
+      background-color: #c6a628;
+      color: #fff8cd;
+    }
+
+    &.selectedPending {
+      background-color: #fff8cd;
+      color: #c6a628;
+    }
   }
 
   .error-text {
@@ -153,6 +163,16 @@ html.dark-mode {
     &.selectedReserved {
       background-color: #c62828;
       color: #ffcdd2;
+    }
+
+    &.pending {
+      background-color: #c6a628;
+      color: #fff8cd;
+    }
+
+    &.selectedPending {
+      background-color: #fff8cd;
+      color: #c6a628;
     }
   }
 

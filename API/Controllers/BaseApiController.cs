@@ -1,5 +1,5 @@
-﻿using API.RequestHelpers;
-using Core.Entities;
+﻿using Core.Entities;
+using Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,7 +15,7 @@ public class BaseApiController : ControllerBase
         var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
         var count = await query.CountAsync();
         
-        var pagination = new Pagination<T>(pageNumber, pageSize, count, items);
+        var pagination = new PagedResult<T>(pageNumber, pageSize, count, items);
         
         return Ok(pagination);
     }

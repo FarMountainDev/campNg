@@ -1,6 +1,6 @@
-﻿namespace API.RequestHelpers;
+﻿namespace Core.Models;
 
-public class Pagination<T>(int pageNumber, int pageSize, int count, IReadOnlyList<T> data)
+public class PagedResult<T>(int pageNumber, int pageSize, int count, IReadOnlyList<T> data)
 {
     public int PageNumber { get; set; } = pageNumber;
     public int PageSize { get; set; } = pageSize;

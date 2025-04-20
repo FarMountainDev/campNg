@@ -9,14 +9,14 @@ public class DateGreaterThanAttribute(string comparisonProperty) : ValidationAtt
         if (value == null)
             return new ValidationResult("Date value cannot be null");
         
-        var currentValue = (DateTime)value;
+        var currentValue = (DateOnly)value;
 
         var property = validationContext.ObjectType.GetProperty(comparisonProperty);
 
         if (property == null)
             throw new ArgumentException("Property with this name not found");
 
-        var comparisonValue = (DateTime)property.GetValue(validationContext.ObjectInstance)!;
+        var comparisonValue = (DateOnly)property.GetValue(validationContext.ObjectInstance)!;
 
         if (currentValue <= comparisonValue)
             return new ValidationResult(ErrorMessage);

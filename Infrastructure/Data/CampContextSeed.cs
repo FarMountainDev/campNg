@@ -232,19 +232,19 @@ public static class CampContextSeed
     }
     
     // Helper method to generate random date with seasonal weighting
-    private static DateTime GetWeightedRandomDate(Random random, DateTime start, DateTime end)
+    private static DateOnly GetWeightedRandomDate(Random random, DateTime start, DateTime end)
     {
         var totalDays = (int)(end - start).TotalDays;
         
         // Generate several candidate dates and pick the best one
         const int candidates = 5;
-        var candidateDates = new DateTime[candidates];
+        var candidateDates = new DateOnly[candidates];
         var scores = new double[candidates];
         
         for (var i = 0; i < candidates; i++)
         {
             var randomDays = random.Next(totalDays);
-            candidateDates[i] = start.AddDays(randomDays);
+            candidateDates[i] = DateOnly.FromDateTime(start.AddDays(randomDays));
             
             var month = candidateDates[i].Month;
 
@@ -266,7 +266,7 @@ public static class CampContextSeed
             scores[i] += random.NextDouble() * 0.3;
         }
         
-        // Find candidate with the highest score
+        // Find the candidate with the highest score
         var bestIndex = 0;
         for (var i = 1; i < candidates; i++)
         {

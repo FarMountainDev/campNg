@@ -47,18 +47,7 @@ public class CampParams : BaseParams
             }
         }
     }
-    
-    private DateTime? startDate;
-    public DateTime? StartDate
-    {
-        get => startDate;
-        set => startDate = value;
-    }
 
-    private DateTime? endDate;
-    public DateTime? EndDate
-    {
-        get => endDate;
-        set => endDate = value;
-    }
+    public DateOnly? StartDate { get; set; }
+    public DateOnly? EndDate { get; set; }
 }

@@ -57,8 +57,8 @@ public class CampsitesController(CampContext context) : BaseApiController
             query = query.Where(e => campParams.CampsiteTypeIds().Contains(e.CampsiteTypeId));
         
         // Include reservations for the allowed date range
-        var yesterday = DateTime.Today.AddDays(-1);
-        var oneYearFromToday = DateTime.Today.AddYears(1);
+        var yesterday = DateOnly.FromDateTime(DateTime.Today.AddDays(-1));
+        var oneYearFromToday = DateOnly.FromDateTime(DateTime.Today.AddYears(1));
         query = query.Include(e => e.Reservations!.Where(r => 
             yesterday <= r.EndDate && r.StartDate <= oneYearFromToday));
         

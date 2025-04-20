@@ -33,4 +33,12 @@ public class CartController(ICartService cartService) : BaseApiController
         
         return Ok(deleted);
     }
+
+    [HttpGet("pending")]
+    public async Task<ActionResult> GetPendingReservations()
+    {
+        var pendingReservations = await cartService.GetAllPendingReservations();
+
+        return Ok(pendingReservations);
+    }
 }

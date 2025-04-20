@@ -89,7 +89,7 @@
         <mat-divider></mat-divider>
         <ol>
           @for (campsite of campsites.data; track campsite.id) {
-            <app-campsite-availability-item [campsite]="campsite"
+            <app-campsite-availability-item [campsiteAvailabilityDto]="campsite"
                                             [startDate]="reservationService.selectedStartDate()"
                                             [endDate]="reservationService.selectedEndDate()" />
             <mat-divider />

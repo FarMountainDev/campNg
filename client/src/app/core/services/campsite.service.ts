@@ -3,7 +3,7 @@ import {environment} from '../../../environments/environment';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {CampParams} from '../../shared/models/campParams';
 import {Pagination} from '../../shared/models/pagination';
-import {Campsite} from '../../shared/models/campsite';
+import {CampsiteAvailabilityDto} from '../../shared/models/campsiteAvailabilityDto';
 
 @Injectable({
   providedIn: 'root'
@@ -11,10 +11,6 @@ import {Campsite} from '../../shared/models/campsite';
 export class CampsiteService {
   private readonly baseUrl = environment.apiUrl;
   private readonly http = inject(HttpClient);
-
-  getCampsites() {
-    return this.http.get(this.baseUrl + 'campsites');
-  }
 
   getAvailableCampsites(startDate: Date, endDate: Date, campParams: CampParams) {
     let params = new HttpParams();
@@ -34,7 +30,7 @@ export class CampsiteService {
     params = params.append('pageNumber', campParams.pageNumber);
     params = params.append('pageSize', campParams.pageSize);
 
-    return this.http.get<Pagination<Campsite>>(this.baseUrl + 'campsites/available', {params});
+    return this.http.get<Pagination<CampsiteAvailabilityDto>>(this.baseUrl + 'campsites/available', {params});
   }
 
   private formatDateToYYYYMMDD(date: Date): string {

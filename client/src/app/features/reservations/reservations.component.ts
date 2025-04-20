@@ -13,7 +13,6 @@ import {MatOption, provideNativeDateAdapter} from '@angular/material/core';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {Pagination} from '../../shared/models/pagination';
 import {CampParams} from '../../shared/models/campParams';
-import {Campsite} from '../../shared/models/campsite';
 import {FormControl, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatSelect, MatSelectTrigger} from '@angular/material/select';
 import {MatDivider} from '@angular/material/divider';
@@ -21,12 +20,13 @@ import {CampsiteTypeService} from '../../core/services/campsite-type.service';
 import {CampgroundAmenityService} from '../../core/services/campground-amenities.service';
 import {CampgroundAmenity} from '../../shared/models/campgroundAmenity';
 import {CampsiteType} from '../../shared/models/campsiteType';
-import {BehaviorSubject, catchError, EMPTY, tap, map, Subscription} from 'rxjs';
+import {BehaviorSubject, catchError, EMPTY, Subscription} from 'rxjs';
 import {CampsiteAvailabilityItemComponent} from './campsite-availability-item/campsite-availability-item.component';
 import {ReservationService} from '../../core/services/reservation.service';
 import {MAT_DATE_RANGE_SELECTION_STRATEGY} from '@angular/material/datepicker';
 import {MaxRangeSelectionStrategy} from '../../shared/strategies/max-date-range-strategy';
 import {SnackbarService} from '../../core/services/snackbar.service';
+import {CampsiteAvailabilityDto} from '../../shared/models/campsiteAvailabilityDto';
 
 @Component({
   selector: 'app-reservations',
@@ -70,7 +70,7 @@ export class ReservationsComponent implements OnInit, OnDestroy {
   protected readonly campsiteTypeService = inject(CampsiteTypeService);
   protected readonly reservationService = inject(ReservationService);
   private campsiteSubscription?: Subscription;
-  campsites$ = new BehaviorSubject<Pagination<Campsite> | null>(null);
+  campsites$ = new BehaviorSubject<Pagination<CampsiteAvailabilityDto> | null>(null);
   loading$ = new BehaviorSubject<boolean>(false);
   campParams = new CampParams();
   pageSizeOptions = [2, 5, 10, 15, 20];
@@ -113,9 +113,12 @@ export class ReservationsComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (response) => {
+          console.log("response:", response);
           this.campsites$.next(response);
           this.campsiteCount = response.count;
           this.loading$.next(false);
+          console.log('campsites$:', this.campsites$);
+          console.log("campsiteCount:", this.campsiteCount);
         }
       });
   }

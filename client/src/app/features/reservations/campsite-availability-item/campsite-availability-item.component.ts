@@ -1,10 +1,11 @@
 import {Component, inject, Input, OnChanges} from '@angular/core';
-import {Campsite} from '../../../shared/models/campsite';
 import {CurrencyPipe, DatePipe, NgForOf, NgIf} from '@angular/common';
 import {MatButton} from '@angular/material/button';
 import {CartService} from '../../../core/services/cart.service';
 import {Router} from '@angular/router';
 import {ReservationService} from '../../../core/services/reservation.service';
+import {CampsiteAvailabilityDto} from '../../../shared/models/campsiteAvailabilityDto';
+import { normalizeDate } from '../../../shared/utils/date-utils';
 
 @Component({
   selector: 'app-campsite-availability-item',
@@ -19,7 +20,7 @@ import {ReservationService} from '../../../core/services/reservation.service';
   styleUrl: './campsite-availability-item.component.scss'
 })
 export class CampsiteAvailabilityItemComponent implements OnChanges{
-  @Input() campsite?: Campsite;
+  @Input() campsiteAvailabilityDto?: CampsiteAvailabilityDto;
   @Input() startDate?: Date;
   @Input() endDate?: Date;
 
@@ -36,24 +37,15 @@ export class CampsiteAvailabilityItemComponent implements OnChanges{
   }
 
   isDateReserved(date: Date): boolean {
-    if (!this.campsite || !this.campsite.reservations) return false;
+    if (!this.campsiteAvailabilityDto?.reservations?.length) return false;
 
-    // Normalize the check date to midnight for comparison
-    const checkDate = new Date(date);
-    checkDate.setHours(0, 0, 0, 0);
-    const checkTime = checkDate.getTime();
+    const compareDate = normalizeDate(date);
 
-    // Check if date falls within any reservation period
-    return this.campsite.reservations.some(reservation => {
-      // Get start and end dates from reservation
-      const startDate = new Date(reservation.startDate);
-      startDate.setHours(0, 0, 0, 0);
+    return this.campsiteAvailabilityDto.reservations.some(reservation => {
+      const startDate = normalizeDate(reservation.startDate);
+      const endDate = normalizeDate(reservation.endDate);
 
-      const endDate = new Date(reservation.endDate);
-      endDate.setHours(0, 0, 0, 0);
-
-      // Check if the date is between start and end dates (inclusive)
-      return checkTime >= startDate.getTime() && checkTime <= endDate.getTime();
+      return compareDate >= startDate && compareDate <= endDate;
     });
   }
 
@@ -61,31 +53,22 @@ export class CampsiteAvailabilityItemComponent implements OnChanges{
     // If startDate or endDate are not set, date can't be in range
     if (!this.startDate || !this.endDate) return false;
 
-    // Normalize all dates to midnight for date-only comparison
-    const checkDate = new Date(date);
-    checkDate.setHours(0, 0, 0, 0);
-    const checkTime = checkDate.getTime();
-
-    const startDate = new Date(this.startDate);
-    startDate.setHours(0, 0, 0, 0);
-    const startTime = startDate.getTime();
-
-    const endDate = new Date(this.endDate);
-    endDate.setHours(0, 0, 0, 0);
-    const endTime = endDate.getTime();
+    const checkDate = normalizeDate(date);
+    const startDate = normalizeDate(this.startDate);
+    const endDate = normalizeDate(this.endDate)
 
     // Check if date is between start and end dates (inclusive)
-    return checkTime >= startTime && checkTime <= endTime;
+    return checkDate >= startDate && checkDate <= endDate;
   }
 
   addReservationToCart() {
-    if (!this.campsite || !this.startDate || !this.endDate) return;
+    if (!this.campsiteAvailabilityDto || !this.startDate || !this.endDate) return;
 
     const cartItem = {
-      campsiteId: this.campsite.id,
-      campsiteName: this.campsite.name,
-      campsiteType: this.campsite.campsiteType.name,
-      campgroundName: this.campsite.campground.name,
+      campsiteId: this.campsiteAvailabilityDto.id,
+      campsiteName: this.campsiteAvailabilityDto.name,
+      campsiteType: this.campsiteAvailabilityDto.campsiteTypeName,
+      campgroundName: this.campsiteAvailabilityDto.campgroundName,
       startDate: this.startDate,
       endDate: this.endDate,
       price: this.totalPrice
@@ -97,14 +80,11 @@ export class CampsiteAvailabilityItemComponent implements OnChanges{
 
   isSelectedRangeUnavailable(): boolean {
     // Return true if any required data is missing
-    if (!this.campsite || !this.startDate || !this.endDate) return true;
+    if (!this.campsiteAvailabilityDto || !this.startDate || !this.endDate) return true;
     if (!this.reservationService.datesValid(this.startDate, this.endDate)) return true;
 
-    const currentDate = new Date(this.startDate);
-    currentDate.setHours(0, 0, 0, 0);
-
-    const endDate = new Date(this.endDate);
-    endDate.setHours(0, 0, 0, 0);
+    const currentDate = normalizeDate(this.startDate);
+    const endDate = normalizeDate(this.endDate);
 
     // Check each date in the range
     while (currentDate <= endDate) {
@@ -134,14 +114,14 @@ export class CampsiteAvailabilityItemComponent implements OnChanges{
   }
 
   private calculatePrice() {
-    if (!this.startDate || !this.endDate || !this.campsite)
+    if (!this.startDate || !this.endDate || !this.campsiteAvailabilityDto)
     {
       this.totalPrice = 0;
       return;
     }
 
-    const weekDayPrice = this.campsite.campsiteType.weekDayPrice;
-    const weekEndPrice = this.campsite.campsiteType.weekEndPrice;
+    const weekDayPrice = this.campsiteAvailabilityDto.weekDayPrice;
+    const weekEndPrice = this.campsiteAvailabilityDto.weekEndPrice;
 
     let totalWeekDays = 0;
     let totalWeekEnds = 0;

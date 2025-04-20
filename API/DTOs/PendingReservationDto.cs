@@ -1,8 +1,7 @@
 ﻿namespace API.DTOs;
 
-public class ReservationDto
+public class PendingReservationDto
 {
-    public int Id { get; set; }
     public int CampsiteId { get; set; }
     public DateOnly StartDate { get; set; }
     public DateOnly EndDate { get; set; }

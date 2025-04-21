@@ -55,8 +55,8 @@ public class CampsitesController(CampContext context, ICartService cartService) 
             
             // Exclude campsites with conflicting pending reservations
             var campsitesWithConflictingPendingReservations = pendingReservations
-                .Where(r => campParams.StartDate <= DateOnly.FromDateTime(r.EndDate) 
-                            && DateOnly.FromDateTime(r.StartDate) <= campParams.EndDate)
+                .Where(r => campParams.StartDate <= r.EndDate
+                            && r.StartDate <= campParams.EndDate)
                 .Select(r => r.CampsiteId);
             query = query.Where(e => !campsitesWithConflictingPendingReservations.Contains(e.Id));
         }
@@ -106,8 +106,8 @@ public class CampsitesController(CampContext context, ICartService cartService) 
                     .Select(r => new PendingReservationDto
                     {
                         CampsiteId = r.CampsiteId,
-                        StartDate = DateOnly.FromDateTime(r.StartDate), 
-                        EndDate = DateOnly.FromDateTime(r.EndDate)
+                        StartDate = r.StartDate, 
+                        EndDate = r.EndDate
                     })
                     .ToList()
             })

@@ -82,8 +82,8 @@ export class CampsiteAvailabilityItemComponent implements OnChanges{
       campsiteName: this.campsiteAvailabilityDto.name,
       campsiteType: this.campsiteAvailabilityDto.campsiteTypeName,
       campgroundName: this.campsiteAvailabilityDto.campgroundName,
-      startDate: this.startDate,
-      endDate: this.endDate,
+      startDate: normalizeDate(this.startDate),
+      endDate: normalizeDate(this.endDate),
       price: this.totalPrice
     };
 

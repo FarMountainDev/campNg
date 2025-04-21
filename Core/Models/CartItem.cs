@@ -6,7 +6,7 @@ public class CartItem
     public required string CampsiteName { get; set; }
     public required string CampsiteType { get; set; }
     public required string CampgroundName { get; set; }
-    public DateTime StartDate { get; set; }
-    public DateTime EndDate { get; set; }
+    public DateOnly StartDate { get; set; }
+    public DateOnly EndDate { get; set; }
     public decimal Price { get; set; }
 }

@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using API.Helpers;
 using API.Middleware;
 using Core.Entities;
 using Core.Interfaces;
@@ -14,6 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    options.JsonSerializerOptions.Converters.Add(new JsonStringDateOnlyConverter());
 });;
 builder.Services.AddDbContext<CampContext>(options =>
 {

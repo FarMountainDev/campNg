@@ -79,28 +79,37 @@ export class ReservationsComponent implements OnInit, OnDestroy {
   campsiteCount: number = 0;
   startDate = new Date();
   endDate = new Date();
+  searchStartDate = new Date(); // keep track of the last search start date
+  searchEndDate = new Date(); // keep track of the last search end date
 
   ngOnInit() {
     this.initializeServices();
     this.initializeDateRange();
-    this.getCampsites();
+    this.startNewSearch();
   }
 
   ngOnDestroy() {
     this.campsiteSubscription?.unsubscribe();
   }
 
-  getCampsites() {
-    if (!this.reservationService.datesValid()) {
+  startNewSearch() {
+    if (!this.reservationService.datesValid() || !this.reservationService.datesValid(this.startDate, this.endDate)) {
+      this.snackbar.error('Please select a valid date range.');
+      return;
+    }
+    this.campParams.campsiteTypes = this.campsiteTypes.value || [];
+    this.campParams.campgroundAmenities = this.campgroundAmenities.value || [];
+    this.searchStartDate = this.reservationService.selectedStartDate();
+    this.searchEndDate = this.reservationService.selectedEndDate();
+    this.getCampsites(this.searchStartDate, this.searchEndDate);
+  }
+
+  getCampsites(startDate: Date, endDate: Date) {
+    if (!this.reservationService.datesValid(startDate, endDate)) {
       this.snackbar.error('Please select a valid date range.');
       return;
     }
     this.loading$.next(true);
-    this.campParams.campsiteTypes = this.campsiteTypes.value || [];
-    this.campParams.campgroundAmenities = this.campgroundAmenities.value || [];
-    let startDate = this.reservationService.selectedStartDate();
-    let endDate = this.reservationService.selectedEndDate();
-
     this.campsiteSubscription?.unsubscribe();
     this.campsiteSubscription = this.campsiteService.getAvailableCampsites(startDate, endDate, this.campParams)
       .pipe(
@@ -137,16 +146,12 @@ export class ReservationsComponent implements OnInit, OnDestroy {
     this.reservationService.selectedEndDate.set(date);
   }
 
-  // TODO: when moving to a new page when the filters have been changed, sometimes the page is empty
-  //  Need to somehow keep track if filters have been changed since last search
   handlePageEvent(event: PageEvent) {
     this.campParams.pageNumber = event.pageIndex + 1;
     this.campParams.pageSize = event.pageSize;
-    this.getCampsites();
+    this.getCampsites(this.searchStartDate, this.searchEndDate);
   }
 
-  // TODO: Need to handle case when trying to clear filters when date range is invalid. Currently it shows an error,
-  //  but maybe it should clear the filters AND reset the date range? Or don't refresh campsites when clearing filters?
   clearFilters() {
     this.campsiteTypes = new FormControl([]);
     this.campgroundAmenities = new FormControl([]);
@@ -154,7 +159,7 @@ export class ReservationsComponent implements OnInit, OnDestroy {
     this.campParams.campsiteTypes = [];
     this.campParams.search = '';
     this.campParams.pageNumber = 1;
-    this.getCampsites();
+    this.startNewSearch();
   }
 
   getTypeNameById(id: number | null | undefined, types: CampsiteType[]): string {

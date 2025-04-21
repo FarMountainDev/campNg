@@ -92,6 +92,14 @@ export class ReservationsComponent implements OnInit, OnDestroy {
     this.campsiteSubscription?.unsubscribe();
   }
 
+  onSubmit(form: any) {
+    if (form.valid) {
+      this.startNewSearch();
+    } else {
+      this.snackbar.error('Invalid date range.');
+    }
+  }
+
   startNewSearch() {
     if (!this.reservationService.datesValid() || !this.reservationService.datesValid(this.startDate, this.endDate)) {
       this.snackbar.error('Please select a valid date range.');

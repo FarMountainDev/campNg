@@ -2,6 +2,7 @@ import {inject, Injectable, signal} from '@angular/core';
 import {environment} from '../../../environments/environment';
 import {HttpClient} from '@angular/common/http';
 import {CartItem} from '../../shared/models/shoppingCart';
+import {normalizeDate} from '../../shared/utils/date-utils';
 
 @Injectable({
   providedIn: 'root'
@@ -9,11 +10,11 @@ import {CartItem} from '../../shared/models/shoppingCart';
 export class ReservationService {
   private readonly baseUrl = environment.apiUrl;
   private readonly http = inject(HttpClient);
-  minDate = new Date();
+  minDate = normalizeDate(new Date());
   maxDate = (() => {
     const date = new Date();
     date.setFullYear(date.getFullYear() + 1);
-    return date;
+    return normalizeDate(date);
   })();
   maxDays = 14;
   checkInTime = '2:00 PM';

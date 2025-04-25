@@ -1,4 +1,6 @@
 ﻿using Core.Entities;
+using Core.Entities.OrderAggregate;
+using Core.Enums;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,6 +13,8 @@ public class CampContext(DbContextOptions options) : IdentityDbContext<AppUser>(
     public DbSet<CampsiteType> CampsiteTypes { get; set; }
     public DbSet<CampgroundAmenity> CampgroundAmenities { get; set; }
     public DbSet<Reservation> Reservations { get; set; }
+    public DbSet<Order> Orders { get; set; }
+    public DbSet<OrderItem> OrderItems { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -78,6 +82,27 @@ public class CampContext(DbContextOptions options) : IdentityDbContext<AppUser>(
                 .WithMany(e => e.Reservations)
                 .HasForeignKey(e => e.CampsiteId)
                 .OnDelete(DeleteBehavior.Cascade);
+        });
+        
+        // Order
+        modelBuilder.Entity<Order>(entity =>
+        {
+            entity.OwnsOne(e => e.PaymentSummary, o => o.WithOwner());
+            entity.Property(e => e.Status).HasConversion(
+                o => o.ToString(),
+                o => Enum.Parse<OrderStatus>(o));
+            entity.Property(e => e.Subtotal).HasColumnType("decimal(18,2)");
+            entity.HasMany(e => e.OrderItems).WithOne().OnDelete(DeleteBehavior.Cascade);
+            entity.Property(e => e.OrderDate).HasConversion(
+                d => d.ToUniversalTime(),
+                d => DateTime.SpecifyKind(d, DateTimeKind.Utc));
+        });
+        
+        // OrderItem
+        modelBuilder.Entity<OrderItem>(entity =>
+        {
+            entity.OwnsOne(e => e.ReservationOrdered, o => o.WithOwner());
+            entity.Property(e => e.Price).HasColumnType("decimal(18,2)");
         });
         
         base.OnModelCreating(modelBuilder);

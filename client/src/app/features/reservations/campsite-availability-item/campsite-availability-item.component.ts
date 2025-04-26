@@ -115,13 +115,11 @@ export class CampsiteAvailabilityItemComponent implements OnChanges{
 
   private calculateDateRange(): void {
     this.dateRange = [];
-    console.log('calculating date range with startDate:', this.startDate, 'and endDate:', this.endDate);
     if (!this.startDate) return;
 
     // Start one day before
     const dayBeforeStartDate = new Date(this.startDate);
     dayBeforeStartDate.setDate(dayBeforeStartDate.getDate() - 1);
-    console.log('dayBeforeStartDate:', dayBeforeStartDate);
 
     // Create 16 days (1 day before + 14 days after startDate + startDate itself)
     for (let i = 0; i < 16; i++) {

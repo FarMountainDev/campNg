@@ -18,6 +18,8 @@ import {CartService} from '../../core/services/cart.service';
 import {CurrencyPipe} from '@angular/common';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {ReservationService} from '../../core/services/reservation.service';
+import {OrderToCreate} from '../../shared/models/order';
+import {OrderService} from '../../core/services/order.service';
 
 @Component({
   selector: 'app-checkout',
@@ -37,6 +39,7 @@ import {ReservationService} from '../../core/services/reservation.service';
 export class CheckoutComponent implements OnInit, OnDestroy{
   private readonly stripeService = inject(StripeService);
   private readonly snackbar = inject(SnackbarService);
+  private readonly orderService = inject(OrderService);
   private readonly router = inject(Router);
   protected readonly cartService = inject(CartService);
   protected readonly reservationService = inject(ReservationService);
@@ -107,10 +110,20 @@ export class CheckoutComponent implements OnInit, OnDestroy{
     try {
       if (this.confirmationToken) {
         const result = await this.stripeService.confirmPayment(this.confirmationToken);
-        if (result.error) throw new Error(result.error.message);
-        else {
-          this.cartService.deleteCart();
-          void this.router.navigateByUrl('/checkout/success');
+        if (result.paymentIntent?.status === 'succeeded') {
+          const order = await this.createOrderModel();
+          const orderResult = await firstValueFrom(this.orderService.createOrder(order));
+          if (orderResult) {
+            this.orderService.orderComplete = true;
+            this.cartService.deleteCart();
+            void this.router.navigateByUrl('/checkout/success');
+          } else {
+            throw new Error('Order creation failed');
+          }
+        } else if (result.error) {
+          throw new Error(result.error.message);
+        } else {
+          throw new Error('Something went wrong with your payment');
         }
       }
     } catch (error: any) {
@@ -118,6 +131,25 @@ export class CheckoutComponent implements OnInit, OnDestroy{
       stepper.previous();
     } finally {
       this.loading = false;
+    }
+  }
+
+  private async createOrderModel(): Promise<OrderToCreate> {
+    const cart = this.cartService.cart();
+    const card = this.confirmationToken?.payment_method_preview.card;
+
+    if (!cart?.id || !card) {
+      throw new Error('Problem creating order');
+    }
+
+    return  {
+      cartId: cart.id,
+      paymentSummary: {
+        last4: +card.last4,
+        brand: card.brand,
+        expMonth: card.exp_month,
+        expYear: card.exp_year
+      }
     }
   }
 }

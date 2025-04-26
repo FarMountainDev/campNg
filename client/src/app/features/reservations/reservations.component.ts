@@ -101,8 +101,8 @@ export class ReservationsComponent implements OnInit, OnDestroy {
   }
 
   startNewSearch() {
-    if (!this.reservationService.datesValid() || !this.reservationService.datesValid(this.startDate, this.endDate)) {
-      this.snackbar.error('Please select a valid date range.');
+    if (!this.reservationService.datesValid()) {
+      this.snackbar.error('Invalid selected dates');
       return;
     }
     this.campParams.campsiteTypes = this.campsiteTypes.value || [];

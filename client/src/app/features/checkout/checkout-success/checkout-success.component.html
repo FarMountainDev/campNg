@@ -1,4 +1,4 @@
-<div class="mx-auto max-w-2xl py-4 px-6 div-backdrop">
+<div *ngIf="signalrService.orderSignal() as order" class="mx-auto max-w-2xl py-4 px-6 div-backdrop">
   <h2 class="font-semibold text-2xl mb-2">Thanks for your order!</h2>
   <p>
     Your order will never be processed, since this is a fake campground! Your card will not be charged. Please don't show up for this reservation!
@@ -6,27 +6,34 @@
   <div class="space-y-2 rounded-lg border border-gray-500 p-6 my-4">
     <dl class="flex items-center justify-between gap-4">
       <dt class="font-normal">Order Number</dt>
-      <dd class="font-medium text-end">#42</dd>
+      <dd class="font-medium text-end"># {{order.id}}</dd>
     </dl>
     <dl class="flex items-center justify-between gap-4">
       <dt class="font-normal">Date</dt>
-      <dd class="font-medium text-end">20 September 2025</dd>
+      <dd class="font-medium text-end">{{order.orderDate | date: 'medium'}}</dd>
     </dl>
     <dl class="flex items-center justify-between gap-4">
       <dt class="font-normal">Payment method</dt>
-      <dd class="font-medium text-end">visa</dd>
-    </dl>
-    <dl class="flex items-center justify-between gap-4">
-      <dt class="font-normal">Address</dt>
-      <dd class="font-medium text-end">address</dd>
+      <dd class="font-medium text-end">{{order.paymentSummary | paymentCard}}</dd>
     </dl>
     <dl class="flex items-center justify-between gap-4">
       <dt class="font-normal ">Amount</dt>
-      <dd class="font-medium text-end">$200.00</dd>
+      <dd class="font-medium text-end">{{order.total | currency}}</dd>
     </dl>
   </div>
   <div class="flex justify-center items-center space-x-4">
-    <button routerLink="/orders/42" mat-flat-button>View order</button>
+    <button routerLink="/orders/{{order.id}}" mat-flat-button>View order</button>
     <button routerLink="/reservations" mat-stroked-button>Find another reservation</button>
+  </div>
+</div>
+
+<div *ngIf="!signalrService.orderSignal()" class="mx-auto max-w-2xl py-4 px-6 div-backdrop">
+  <h2 class="font-semibold text-2xl mb-2">Order processing... please wait</h2>
+  <div class="space-y-2 rounded-lg border border-gray-500 p-6 my-4">
+    <div class="flex flex-col justify-center items-center">
+      <mat-spinner diameter="30"></mat-spinner>
+      <p class="text-xl">Loading order...</p>
+      <span>Your payment has been received. Creating order.</span>
+    </div>
   </div>
 </div>

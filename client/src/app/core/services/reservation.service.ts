@@ -80,7 +80,7 @@ export class ReservationService {
     this.selectedStartDate.set(nextFriday);
 
     // Set end date to next Sunday
-    const nextSunday = new Date();
+    const nextSunday = new Date(nextFriday);
     nextSunday.setDate(nextFriday.getDate() + 2);
     this.selectedEndDate.set(nextSunday);
   }

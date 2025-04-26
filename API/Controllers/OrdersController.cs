@@ -18,7 +18,7 @@ public class OrdersController(ICartService cartService, CampContext context, IRe
     public async Task<ActionResult<Order>> CreateOrder(CreateOrderDto orderDto)
     {
         var email = User.GetEmail();
-
+        
         var cart = await cartService.GetCartAsync(orderDto.CartId);
         
         if (cart is null) return BadRequest("Cart not found");
@@ -82,9 +82,7 @@ public class OrdersController(ICartService cartService, CampContext context, IRe
         
         if (await context.SaveChangesAsync() > 0)
         {
-            await cartService.DeleteCartAsync(cart.Id);
-            
-            return CreatedAtAction(nameof(CreateOrder), new { id = order.Id }, order);
+            return order;
         }
         
         return BadRequest("Problem creating order");

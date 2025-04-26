@@ -2,6 +2,8 @@
 
 public class CampParams : BaseParams
 {
+    public int? CampsiteId { get; set; } = null;
+    
     public int? CampgroundId { get; set; } = null;
     
     private List<int> campgroundAmenities = [];

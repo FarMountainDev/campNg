@@ -32,7 +32,7 @@ public class ErrorTestController : BaseApiController
     }
 
     [HttpPost("validationerror")]
-    public IActionResult GetValidationError(CreateReservationDto reservation)
+    public IActionResult GetValidationError(CreateOrderDto reservation)
     {
         return Ok();
     }

@@ -1,7 +1,9 @@
 ﻿using API.DTOs;
 using API.Extensions;
+using Core.Entities;
 using Core.Entities.OrderAggregate;
 using Core.Interfaces;
+using Core.Models;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 namespace API.Controllers;
 
 [Authorize]
-public class OrdersController(ICartService cartService, CampContext context) : BaseApiController
+public class OrdersController(ICartService cartService, CampContext context, IReservationService reservationService) : BaseApiController
 {
     [HttpPost]
     public async Task<ActionResult<Order>> CreateOrder(CreateOrderDto orderDto)
@@ -31,7 +33,7 @@ public class OrdersController(ICartService cartService, CampContext context) : B
             
             if (campsite is null) return BadRequest("Campsite not found");
 
-            var itemOrdered = new ReservationOrdered
+            var reservationOrdered = new ReservationOrdered
             {
                 CampsiteId = item.CampsiteId,
                 CampsiteName = item.CampsiteName,
@@ -40,10 +42,27 @@ public class OrdersController(ICartService cartService, CampContext context) : B
                 StartDate = item.StartDate,
                 EndDate = item.EndDate
             };
+
+            var reservationValid = await reservationService.ValidReservation(
+                reservationOrdered.CampsiteId, reservationOrdered.StartDate, reservationOrdered.EndDate);
+            
+            if (!reservationValid.IsValid)
+            {
+                return BadRequest($"{item.CampsiteName} is not available for the selected dates");
+            }
+            
+            var reservation = new Reservation
+            {
+                CampsiteId = item.CampsiteId,
+                StartDate = item.StartDate,
+                EndDate = item.EndDate
+            };
+            
+            await context.Reservations.AddAsync(reservation);
             
             var orderItem = new OrderItem
             {
-                ReservationOrdered = itemOrdered,
+                ReservationOrdered = reservationOrdered,
                 Price = item.Price
             };
             

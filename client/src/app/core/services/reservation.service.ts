@@ -2,7 +2,7 @@ import {inject, Injectable, signal} from '@angular/core';
 import {environment} from '../../../environments/environment';
 import {HttpClient} from '@angular/common/http';
 import {CartItem} from '../../shared/models/shoppingCart';
-import {normalizeDate} from '../../shared/utils/date-utils';
+import {getDateFromDateOnlyString, normalizeDate} from '../../shared/utils/date-utils';
 
 @Injectable({
   providedIn: 'root'
@@ -26,13 +26,19 @@ export class ReservationService {
     this.setToNextWeekend();
   }
 
-  getNumberOfNights(item: CartItem): number {
-    const startDate = new Date(item.startDate);
-    const endDate = new Date(item.endDate);
+  getNumberOfNightsForCartItem(item: CartItem): number {
+    const startDateString = item.startDate.toString();
+    const endDateString = item.endDate.toString();
 
+    const startDate = getDateFromDateOnlyString(startDateString);
+    const endDate = getDateFromDateOnlyString(endDateString);
+
+    return this.getNumberOfNights(startDate, endDate);
+  }
+
+  getNumberOfNights(startDate: Date, endDate: Date): number {
     const diffTime = endDate.getTime() - startDate.getTime();
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
     return diffDays + 1;
   }
 

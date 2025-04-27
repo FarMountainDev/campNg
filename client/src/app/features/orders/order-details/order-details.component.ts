@@ -6,6 +6,8 @@ import {MatCardModule} from '@angular/material/card';
 import {MatButton} from '@angular/material/button';
 import {CurrencyPipe, DatePipe} from '@angular/common';
 import {PaymentCardPipe} from '../../../shared/pipes/payment-card.pipe';
+import {ReservationService} from '../../../core/services/reservation.service';
+import {getDateFromDateOnlyString} from '../../../shared/utils/date-utils';
 
 @Component({
   selector: 'app-order-details',
@@ -21,8 +23,9 @@ import {PaymentCardPipe} from '../../../shared/pipes/payment-card.pipe';
   styleUrl: './order-details.component.scss'
 })
 export class OrderDetailsComponent implements OnInit{
-  private orderService = inject(OrderService);
-  private activatedRoute = inject(ActivatedRoute);
+  protected readonly reservationService = inject(ReservationService);
+  private readonly orderService = inject(OrderService);
+  private readonly activatedRoute = inject(ActivatedRoute);
   order?: Order;
 
   ngOnInit() {
@@ -36,4 +39,6 @@ export class OrderDetailsComponent implements OnInit{
       next: order => this.order = order
     })
   }
+
+  protected readonly getDateFromDateOnlyString = getDateFromDateOnlyString;
 }

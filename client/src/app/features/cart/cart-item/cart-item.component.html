@@ -3,7 +3,7 @@
     {{item().campsiteName}} - <span class="italic">({{item().campsiteType}})</span> - <span>{{item().campgroundName}}</span>
   </div>
   <div>
-    {{reservationService.getNumberOfNights(item())}} Night(s)
+    {{reservationService.getNumberOfNightsForCartItem(item())}} Night(s)
   </div>
   <div>
     <table>
@@ -14,7 +14,7 @@
       <tr>
       <tr>
         <td class="py-1 pr-4">Check Out:</td>
-        <td>{{reservationService.getCheckoutDate(item().endDate) | date}} {{reservationService.checkOutTime}}</td>
+        <td>{{reservationService.getCheckoutDate(normalizeDate(item().endDate)) | date}} {{reservationService.checkOutTime}}</td>
       </tr>
     </table>
   </div>

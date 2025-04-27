@@ -5,6 +5,7 @@ import {CartService} from '../../../core/services/cart.service';
 import {MatIcon} from '@angular/material/icon';
 import {MatButton} from '@angular/material/button';
 import {ReservationService} from '../../../core/services/reservation.service';
+import {normalizeDate} from '../../../shared/utils/date-utils';
 
 @Component({
   selector: 'app-cart-item',
@@ -25,4 +26,6 @@ export class CartItemComponent {
   removeItemFromCart() {
     this.cartService.removeItemFromCart(this.item());
   }
+
+  protected readonly normalizeDate = normalizeDate;
 }

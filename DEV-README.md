@@ -20,3 +20,18 @@
 
 ### Remove the containers and volumes:
 ***SolutionFolder> docker-compose down -v***
+
+
+## Testing Stripe Local Webhook:
+### 1. Install Stripe CLI:
+https://docs.stripe.com/stripe-cli
+
+### 2. Login to Stripe CLI:
+***PowerShell> stripe login***
+
+### 3. Listen to Stripe events:
+***PowerShell> stripe listen --forward-to https://localhost:5001/api/payments/webhook -e payment_intent.succeeded***
+
+Ensure that the webhook secret from the CLI matches the one in appSettings.json.
+
+**Note:** Does not seem to work from JetBrains IDE terminals. Windows PowerShell terminal works fine.

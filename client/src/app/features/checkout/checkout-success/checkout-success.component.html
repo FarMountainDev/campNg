@@ -28,12 +28,12 @@
 </div>
 
 <div *ngIf="!signalrService.orderSignal()" class="mx-auto max-w-2xl py-4 px-6 div-backdrop">
-  <h2 class="font-semibold text-2xl mb-2">Order processing... please wait</h2>
+  <h2 class="font-semibold text-2xl mb-2">Order processing... please wait...</h2>
   <div class="space-y-2 rounded-lg border border-gray-500 p-6 my-4">
     <div class="flex flex-col justify-center items-center">
       <mat-spinner diameter="30"></mat-spinner>
       <p class="text-xl">Loading order...</p>
-      <span>Your payment has been received. Creating order.</span>
+      <span>Your payment is being processed.</span>
     </div>
   </div>
 </div>

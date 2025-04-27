@@ -12,7 +12,7 @@
         @for (item of cartService.cart()?.items; track item) {
           <tr class="text-sm">
             <td class="py-4 text-left">
-              <span>{{item.campsiteName}}</span> - <span class="italic">{{reservationService.getNumberOfNights(item)}} night(s)</span>
+              <span>{{item.campsiteName}}</span> - <span class="italic">{{reservationService.getNumberOfNightsForCartItem(item)}} night(s)</span>
             </td>
             <td class="py-4 pl-4 pr-1"><span class="font-semibold">Check In:</span> {{item.startDate | date}} {{reservationService.checkInTime}}</td>
             <td class="py-4 pl-1 pr-4"><span class="font-semibold">Check Out:</span> {{reservationService.getCheckoutDate(item.endDate) | date}} {{reservationService.checkOutTime}}</td>

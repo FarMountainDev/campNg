@@ -12,8 +12,8 @@ using Stripe;
 
 namespace API.Controllers;
 
-public class PaymentsController(CampContext context, IPaymentService paymentService,
-    IHubContext<NotificationHub> hubContext, IConfiguration configuration) 
+public class PaymentsController(CampContext context, IPaymentService paymentService, IHubContext<NotificationHub> hubContext,
+    IConfiguration configuration, ILogger<PaymentsController> logger)
     : BaseApiController
 {
     private readonly string whSecret = configuration["StripeSettings:WhSecret"]!;
@@ -49,10 +49,12 @@ public class PaymentsController(CampContext context, IPaymentService paymentServ
         }
         catch (StripeException ex)
         {
+            logger.LogError(ex, "Stripe webhook error: {Message}", ex.Message);
             return StatusCode(StatusCodes.Status500InternalServerError, "Webhook error");
         }
         catch (Exception ex)
         {
+            logger.LogError(ex, "Unexpected error: {Message}", ex.Message);
             return StatusCode(StatusCodes.Status500InternalServerError, "Unexpected error occurred");
         }
     }

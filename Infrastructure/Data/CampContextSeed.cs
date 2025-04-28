@@ -202,6 +202,7 @@ public static class CampContextSeed
                         
                         var reservation = new Reservation
                         {
+                            ReservationEmail = "seedData@test.com",
                             StartDate = reservationStart,
                             EndDate = reservationEnd,
                             CampsiteId = campsite.Id

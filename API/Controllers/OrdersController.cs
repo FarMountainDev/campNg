@@ -33,18 +33,8 @@ public class OrdersController(ICartService cartService, CampContext context, IRe
             
             if (campsite is null) return BadRequest("Campsite not found");
 
-            var reservationOrdered = new ReservationOrdered
-            {
-                CampsiteId = item.CampsiteId,
-                CampsiteName = item.CampsiteName,
-                CampgroundName = item.CampgroundName,
-                CampsiteType = item.CampsiteType,
-                StartDate = item.StartDate,
-                EndDate = item.EndDate
-            };
-
             var reservationValid = await reservationService.ValidReservation(
-                reservationOrdered.CampsiteId, reservationOrdered.StartDate, reservationOrdered.EndDate);
+                item.CampsiteId, item.StartDate, item.EndDate);
             
             if (!reservationValid.IsValid)
             {
@@ -53,19 +43,30 @@ public class OrdersController(ICartService cartService, CampContext context, IRe
             
             var reservation = new Reservation
             {
+                ReservationEmail = email,
                 CampsiteId = item.CampsiteId,
                 StartDate = item.StartDate,
                 EndDate = item.EndDate
             };
-            
-            await context.Reservations.AddAsync(reservation);
-            
+    
             var orderItem = new OrderItem
             {
-                ReservationOrdered = reservationOrdered,
+                ReservationOrdered = new ReservationOrdered
+                {
+                    CampsiteId = item.CampsiteId,
+                    CampsiteName = item.CampsiteName,
+                    CampgroundName = item.CampgroundName,
+                    CampsiteType = item.CampsiteType,
+                    StartDate = item.StartDate,
+                    EndDate = item.EndDate
+                },
                 Price = item.Price
             };
-            
+    
+            reservation.OrderItem = orderItem;
+            orderItem.Reservation = reservation;
+    
+            await context.Reservations.AddAsync(reservation);
             items.Add(orderItem);
         }
         

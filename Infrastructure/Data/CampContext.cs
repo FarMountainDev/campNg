@@ -24,10 +24,8 @@ public class CampContext(DbContextOptions options) : IdentityDbContext<AppUser>(
             entity.Property(e => e.Name).IsRequired().HasMaxLength(50);
             entity.Property(e => e.Description).IsRequired().HasMaxLength(1000);
             entity.Property(e => e.PictureUrl).IsRequired().HasMaxLength(100);
-
             entity.HasMany(e => e.Amenities)
                 .WithMany();
-        
             entity.HasMany(e => e.Campsites)
                 .WithOne(e => e.Campground)
                 .HasForeignKey(e => e.CampgroundId)
@@ -47,16 +45,13 @@ public class CampContext(DbContextOptions options) : IdentityDbContext<AppUser>(
         {
             entity.Property(e => e.Name).IsRequired().HasMaxLength(50);
             entity.Property(e => e.Description).IsRequired().HasMaxLength(500);
-        
             entity.HasOne(e => e.Campground)
                 .WithMany(e => e.Campsites)
                 .HasForeignKey(e => e.CampgroundId);
-            
             entity.HasOne(e => e.CampsiteType)
                 .WithMany()
                 .HasForeignKey(e => e.CampsiteTypeId)
                 .OnDelete(DeleteBehavior.Restrict);
-            
             entity.HasMany(e => e.Reservations)
                 .WithOne(e => e.Campsite)
                 .HasForeignKey(e => e.CampsiteId)
@@ -77,13 +72,16 @@ public class CampContext(DbContextOptions options) : IdentityDbContext<AppUser>(
         {
             entity.Property(e => e.StartDate).IsRequired();
             entity.Property(e => e.EndDate).IsRequired();
-        
             entity.HasOne(e => e.Campsite)
                 .WithMany(e => e.Reservations)
                 .HasForeignKey(e => e.CampsiteId)
                 .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(e => e.OrderItem)
+                .WithOne(e => e.Reservation)
+                .HasForeignKey<OrderItem>(e => e.ReservationId)
+                .OnDelete(DeleteBehavior.SetNull);
         });
-        
+            
         // Order
         modelBuilder.Entity<Order>(entity =>
         {

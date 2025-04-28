@@ -1,5 +1,6 @@
 ﻿using API.Extensions;
 using API.SignalR;
+using Core.Entities.OrderAggregate;
 using Core.Enums;
 using Core.Interfaces;
 using Core.Models;
@@ -63,12 +64,24 @@ public class PaymentsController(CampContext context, IPaymentService paymentServ
     {
         if (intent.Status == "succeeded")
         {
-            // find order by payment intent id
-            var order = context.Orders
-                .Include(o => o.OrderItems)
-                .ThenInclude(oi => oi.ReservationOrdered)
-                .FirstOrDefault(o => o.PaymentIntentId == intent.Id)
-                ?? throw new Exception("Order not found");
+            // When testing locally, a race condition can occur where the order is not yet created for the first attempt.
+            Order? order = null;
+            var retrievalAttempt = 1;
+            while (order == null && retrievalAttempt < 5)
+            {
+                order = await context.Orders
+                    .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.ReservationOrdered)
+                    .FirstOrDefaultAsync(o => o.PaymentIntentId == intent.Id);
+                
+                if (order != null) continue;
+                logger.LogWarning("Order not found for PaymentIntent ID: {PaymentIntentId} (Attempt {RetrievalAttempt})", intent.Id, retrievalAttempt);
+                await Task.Delay(1000);
+                retrievalAttempt++;
+            }
+            
+            if (order == null)
+                throw new Exception("Order not found");
 
             if ((long)order.GetTotal() * 100 != intent.Amount)
             {

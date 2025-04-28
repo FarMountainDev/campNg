@@ -109,21 +109,21 @@ export class CheckoutComponent implements OnInit, OnDestroy{
     this.loading = true;
     try {
       if (this.confirmationToken) {
-        const order = await this.createOrderModel();
-        const orderResult = await firstValueFrom(this.orderService.createOrder(order));
-        if (orderResult) {
-          const result = await this.stripeService.confirmPayment(this.confirmationToken);
-          if (result.paymentIntent?.status === 'succeeded') {
+        const result = await this.stripeService.confirmPayment(this.confirmationToken);
+        if (result.paymentIntent?.status === 'succeeded') {
+          const order = await this.createOrderModel();
+          const orderResult = await firstValueFrom(this.orderService.createOrder(order));
+          if (orderResult) {
             this.orderService.orderComplete = true;
             this.cartService.deleteCart();
             void this.router.navigateByUrl('/checkout/success');
-          } else if (result.error) {
-            throw new Error(result.error.message);
           } else {
-            throw new Error('Something went wrong with your payment');
+            throw new Error('Order creation failed');
           }
+        } else if (result.error) {
+          throw new Error(result.error.message);
         } else {
-          throw new Error('Order creation failed');
+          throw new Error('Something went wrong with your payment');
         }
       }
     } catch (error: any) {

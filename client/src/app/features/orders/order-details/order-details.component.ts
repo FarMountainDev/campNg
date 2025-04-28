@@ -8,6 +8,7 @@ import {CurrencyPipe, DatePipe} from '@angular/common';
 import {PaymentCardPipe} from '../../../shared/pipes/payment-card.pipe';
 import {ReservationService} from '../../../core/services/reservation.service';
 import {getDateFromDateOnlyString} from '../../../shared/utils/date-utils';
+import {PascalCaseToWordsPipe} from '../../../shared/pipes/pascal-to-words';
 
 @Component({
   selector: 'app-order-details',
@@ -17,7 +18,8 @@ import {getDateFromDateOnlyString} from '../../../shared/utils/date-utils';
     DatePipe,
     CurrencyPipe,
     RouterLink,
-    PaymentCardPipe
+    PaymentCardPipe,
+    PascalCaseToWordsPipe
   ],
   templateUrl: './order-details.component.html',
   styleUrl: './order-details.component.scss'

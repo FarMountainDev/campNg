@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Reflection;
+using System.Text.Json;
 using Core.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,16 +7,20 @@ namespace Infrastructure.Data;
 
 public static class CampContextSeed
 {
+
     public static async Task SeedAsync(CampContext context)
     {
-        await SeedCampgroundAmenitiesAsync(context);
-        await SeedCampgroundsAsync(context);
-        await SeedCampsiteTypesAsync(context);
-        await SeedCampsitesAsync(context);
+        var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        if (path == null) throw new DirectoryNotFoundException("Path to assembly location not found.");
+        
+        await SeedCampgroundAmenitiesAsync(context, path);
+        await SeedCampgroundsAsync(context, path);
+        await SeedCampsiteTypesAsync(context, path);
+        await SeedCampsitesAsync(context, path);
         await SeedReservationsAsync(context);
     }
 
-    private static async Task SeedCampgroundAmenitiesAsync(CampContext context)
+    private static async Task SeedCampgroundAmenitiesAsync(CampContext context, string path)
     {
         if (!context.CampgroundAmenities.Any())
         {
@@ -23,7 +28,7 @@ public static class CampContextSeed
 
             try
             {
-                var amenitiesData = await File.ReadAllTextAsync("../Infrastructure/Data/SeedData/campgroundAmenities.json");
+                var amenitiesData = await File.ReadAllTextAsync(path + @"/Data/SeedData/campgroundAmenities.json");
                 var amenities = JsonSerializer.Deserialize<List<CampgroundAmenity>>(amenitiesData);
                 
                 if (amenities == null) return;
@@ -45,7 +50,7 @@ public static class CampContextSeed
         }
     }
 
-    private static async Task SeedCampgroundsAsync(CampContext context)
+    private static async Task SeedCampgroundsAsync(CampContext context, string path)
     {
         if (!context.Campgrounds.Any())
         {
@@ -53,7 +58,7 @@ public static class CampContextSeed
         
             try
             {
-                var campgroundsData = await File.ReadAllTextAsync("../Infrastructure/Data/SeedData/campgrounds.json");
+                var campgroundsData = await File.ReadAllTextAsync(path + @"/Data/SeedData/campgrounds.json");
                 
                 // Custom JSON converter to handle the AmenityIds array
                 var options = new JsonSerializerOptions
@@ -108,7 +113,7 @@ public static class CampContextSeed
         }
     }
 
-    private static async Task SeedCampsiteTypesAsync(CampContext context)
+    private static async Task SeedCampsiteTypesAsync(CampContext context, string path)
     {
         if (!context.CampsiteTypes.Any())
         {
@@ -116,7 +121,7 @@ public static class CampContextSeed
 
             try
             {
-                var campsiteTypesData = await File.ReadAllTextAsync("../Infrastructure/Data/SeedData/campsiteTypes.json");
+                var campsiteTypesData = await File.ReadAllTextAsync(path + @"/Data/SeedData/campsiteTypes.json");
                 var campsiteTypes = JsonSerializer.Deserialize<List<CampsiteType>>(campsiteTypesData);
 
                 if (campsiteTypes is null) return;
@@ -138,7 +143,7 @@ public static class CampContextSeed
         }
     }
 
-    private static async Task SeedCampsitesAsync(CampContext context)
+    private static async Task SeedCampsitesAsync(CampContext context, string path)
     {
         if (!context.Campsites.Any())
         {
@@ -146,7 +151,7 @@ public static class CampContextSeed
 
             try
             {
-                var campsitesData = await File.ReadAllTextAsync("../Infrastructure/Data/SeedData/campsites.json");
+                var campsitesData = await File.ReadAllTextAsync(path + @"/Data/SeedData/campsites.json");
                 var campsites = JsonSerializer.Deserialize<List<Campsite>>(campsitesData);
 
                 if (campsites is null) return;

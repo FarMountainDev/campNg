@@ -7,8 +7,8 @@ import {Order} from '../../shared/models/order';
   providedIn: 'root'
 })
 export class SignalrService {
-  hubUrl = environment.hubUrl;
-  hubConnection?: HubConnection;
+  private readonly hubUrl = environment.hubUrl;
+  private hubConnection?: HubConnection;
   orderSignal = signal<Order | null>(null);
 
   createHubConnection() {

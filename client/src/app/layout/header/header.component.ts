@@ -3,7 +3,6 @@ import {MatBadge} from '@angular/material/badge';
 import {MatIcon} from '@angular/material/icon';
 import {MatButton} from '@angular/material/button';
 import {Router, RouterLink, RouterLinkActive} from '@angular/router';
-import {MatProgressBar} from '@angular/material/progress-bar';
 import {CartService} from '../../core/services/cart.service';
 import {AccountService} from '../../core/services/account.service';
 import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
@@ -11,6 +10,7 @@ import {MatDivider} from '@angular/material/divider';
 import {ThemeService} from '../../core/services/theme.service';
 import {NgIf} from '@angular/common';
 import {MatTooltip} from '@angular/material/tooltip';
+import {IsAdminDirective} from '../../shared/directives/is-admin.directive';
 
 @Component({
   selector: 'app-header',
@@ -25,7 +25,8 @@ import {MatTooltip} from '@angular/material/tooltip';
     RouterLink,
     RouterLinkActive,
     NgIf,
-    MatTooltip
+    MatTooltip,
+    IsAdminDirective
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'

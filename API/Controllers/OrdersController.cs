@@ -96,6 +96,7 @@ public class OrdersController(ICartService cartService, CampContext context, IRe
             .Include(x => x.OrderItems)
             .ThenInclude(x => x.ReservationOrdered)
             .Where(x => x.BuyerEmail == User.GetEmail())
+            .OrderByDescending(o => o.OrderDate)
             .ToListAsync();
         
         var orderDtoList = orders.Select(order => order.ToDto()).ToList();

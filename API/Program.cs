@@ -6,13 +6,13 @@ using Core.Entities;
 using Core.Interfaces;
 using Infrastructure.Data;
 using Infrastructure.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
@@ -38,6 +38,7 @@ builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IReservationService, ReservationService>();
 builder.Services.AddAuthorization();
 builder.Services.AddIdentityApiEndpoints<AppUser>()
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<CampContext>();
 builder.Services.AddSignalR();
 
@@ -66,7 +67,7 @@ try
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<CampContext>();
     await context.Database.MigrateAsync();
-    await CampContextSeed.SeedAsync(context);
+    await CampContextSeed.SeedAsync(services);
 }
 catch (Exception ex)
 {

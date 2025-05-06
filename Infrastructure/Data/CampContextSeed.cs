@@ -1,23 +1,75 @@
 ﻿using System.Reflection;
 using System.Text.Json;
 using Core.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Infrastructure.Data;
 
 public static class CampContextSeed
 {
-
-    public static async Task SeedAsync(CampContext context)
+    private const string AdminRole = "Admin";
+    private const string MemberRole = "Member";
+    
+    public static async Task SeedAsync(IServiceProvider serviceProvider)
     {
         var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         if (path == null) throw new DirectoryNotFoundException("Path to assembly location not found.");
         
+        var context = serviceProvider.GetRequiredService<CampContext>();
+        var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+        var userManager = serviceProvider.GetRequiredService<UserManager<AppUser>>();
+
+        await SeedRolesAsync(roleManager);
+        await SeedUsersAsync(userManager);
         await SeedCampgroundAmenitiesAsync(context, path);
         await SeedCampgroundsAsync(context, path);
         await SeedCampsiteTypesAsync(context, path);
         await SeedCampsitesAsync(context, path);
         await SeedReservationsAsync(context);
+    }
+    
+    private static async Task SeedRolesAsync(RoleManager<IdentityRole> roleManager)
+    {
+        var roles = new List<string> { AdminRole, MemberRole };
+        
+        foreach (var role in roles)
+        {
+            if (!await roleManager.RoleExistsAsync(role))
+            {
+                await roleManager.CreateAsync(new IdentityRole(role));
+            }
+        }
+    }
+
+    private static async Task SeedUsersAsync(UserManager<AppUser> userManager)
+    {
+        if (!userManager.Users.Any(x => x.UserName == "admin"))
+        {
+            var adminUser = new AppUser
+            {
+                UserName = "admin",
+                Email = "admin@test.com",
+            };
+            
+            await userManager.CreateAsync(adminUser, "Pa$$w0rd");
+            await userManager.AddToRoleAsync(adminUser, AdminRole);
+        }
+
+        if (!userManager.Users.Any(x => x.UserName == "happyCamper"))
+        {
+            var memberUser = new AppUser
+            {
+                UserName = "HappyCamper",
+                Email = "HappyCamper@test.com",
+                FirstName = "Happy",
+                LastName = "Camper"
+            };
+            
+            await userManager.CreateAsync(memberUser, "Pa$$w0rd");
+            await userManager.AddToRoleAsync(memberUser, MemberRole);
+        }
     }
 
     private static async Task SeedCampgroundAmenitiesAsync(CampContext context, string path)
@@ -265,7 +317,7 @@ public static class CampContextSeed
                 ,
                 3 or 11 => 0.2 // Early spring, late fall (March, November)
                 ,
-                _ => 0.1
+                _ => 0.1 // Winter (December-February)
             };
 
             // Add some randomness

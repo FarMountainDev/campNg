@@ -1,4 +1,5 @@
-﻿using Core.Parameters;
+﻿using API.Attributes;
+using Core.Parameters;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -22,10 +23,11 @@ public class CampgroundsController(CampContext context) : BaseApiController
         
         if (!string.IsNullOrWhiteSpace(campParams.Search))
             query = query.Where(e => e.Name.Contains(campParams.Search));
-        
+
         query = query.Include(e => e.Amenities)
             .Include(e => e.Campsites)
-            .ThenInclude(e => e.CampsiteType);
+            .ThenInclude(e => e.CampsiteType)
+            .OrderBy(e => e.Name);
         
         return await CreatePagedResult(query, campParams.PageNumber, campParams.PageSize);
     }

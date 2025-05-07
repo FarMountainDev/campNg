@@ -1,4 +1,5 @@
-﻿using API.DTOs;
+﻿using API.Attributes;
+using API.DTOs;
 using API.Extensions;
 using Core.Entities;
 using Core.Entities.OrderAggregate;
@@ -14,6 +15,7 @@ namespace API.Controllers;
 [Authorize]
 public class OrdersController(ICartService cartService, CampContext context, IReservationService reservationService) : BaseApiController
 {
+    [InvalidateCache("api/orders")]
     [HttpPost]
     public async Task<ActionResult<Order>> CreateOrder(CreateOrderDto orderDto)
     {
@@ -89,6 +91,7 @@ public class OrdersController(ICartService cartService, CampContext context, IRe
         return BadRequest("Problem creating order");
     }
 
+    [Cache((int)TimeSpan.SecondsPerDay)]
     [HttpGet]
     public async Task<ActionResult<IReadOnlyList<OrderDto>>> GetOrdersForUser()
     {
@@ -104,6 +107,7 @@ public class OrdersController(ICartService cartService, CampContext context, IRe
         return Ok(orderDtoList);
     }
     
+    [Cache((int)TimeSpan.SecondsPerDay)]
     [HttpGet("{id:int}")]
     public async Task<ActionResult<OrderDto>> GetOrderById(int id)
     {

@@ -45,23 +45,25 @@ public static class CampContextSeed
 
     private static async Task SeedUsersAsync(UserManager<AppUser> userManager)
     {
-        if (!userManager.Users.Any(x => x.UserName == "admin"))
+        if (!userManager.Users.Any(x => x.UserName == "admin@test.com"))
         {
             var adminUser = new AppUser
             {
-                UserName = "admin",
+                UserName = "admin@test.com",
                 Email = "admin@test.com",
+                FirstName = "Admin",
+                LastName = "User"
             };
             
             await userManager.CreateAsync(adminUser, "Pa$$w0rd");
             await userManager.AddToRoleAsync(adminUser, AdminRole);
         }
 
-        if (!userManager.Users.Any(x => x.UserName == "happyCamper"))
+        if (!userManager.Users.Any(x => x.UserName == "HappyCamper@test.com"))
         {
             var memberUser = new AppUser
             {
-                UserName = "HappyCamper",
+                UserName = "HappyCamper@test.com",
                 Email = "HappyCamper@test.com",
                 FirstName = "Happy",
                 LastName = "Camper"

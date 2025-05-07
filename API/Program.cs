@@ -18,6 +18,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     options.JsonSerializerOptions.Converters.Add(new JsonStringDateOnlyConverter());
 });;
+
 builder.Services.AddDbContext<CampContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
@@ -26,6 +27,7 @@ builder.Services.AddDbContext<CampContext>(options =>
             sqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(30), null);
         });
 });
+
 builder.Services.AddSingleton<IConnectionMultiplexer>(config =>
 {
     var connectionString = builder.Configuration.GetConnectionString("Redis") 
@@ -33,13 +35,18 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(config =>
     var configOptions = ConfigurationOptions.Parse(connectionString, true);
     return ConnectionMultiplexer.Connect(configOptions);
 });
+
 builder.Services.AddSingleton<ICartService, CartService>();
+builder.Services.AddSingleton<IResponseCacheService, ResponseCacheService>();
+
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IReservationService, ReservationService>();
+
 builder.Services.AddAuthorization();
 builder.Services.AddIdentityApiEndpoints<AppUser>()
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<CampContext>();
+
 builder.Services.AddSignalR();
 
 var app = builder.Build();

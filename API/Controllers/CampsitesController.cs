@@ -1,4 +1,5 @@
-﻿using API.DTOs;
+﻿using API.Attributes;
+using API.DTOs;
 using Core.Interfaces;
 using Core.Models;
 using Core.Parameters;
@@ -10,6 +11,7 @@ namespace API.Controllers;
 
 public class CampsitesController(CampContext context, ICartService cartService) : BaseApiController
 {
+    [Cache((int)TimeSpan.SecondsPerDay * 7)]
     [HttpGet]
     public async Task<IActionResult> GetCampsites()
     {
@@ -21,6 +23,7 @@ public class CampsitesController(CampContext context, ICartService cartService) 
         return Ok(campsites);
     }
     
+    [Cache((int)TimeSpan.SecondsPerDay * 7)]
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetCampsite(int id)
     {

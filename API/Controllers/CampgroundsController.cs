@@ -1,4 +1,5 @@
 ﻿using API.Attributes;
+using API.Extensions;
 using Core.Parameters;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,7 @@ namespace API.Controllers;
 
 public class CampgroundsController(CampContext context) : BaseApiController
 {
+    [Cache((int)TimeSpan.SecondsPerDay * 7)]
     [HttpGet]
     public async Task<IActionResult> GetCampgrounds([FromQuery] CampParams campParams)
     {
@@ -29,9 +31,10 @@ public class CampgroundsController(CampContext context) : BaseApiController
             .ThenInclude(e => e.CampsiteType)
             .OrderBy(e => e.Name);
         
-        return await CreatePagedResult(query, campParams.PageNumber, campParams.PageSize);
+        return await CreatePagedResult(query, campParams.PageNumber, campParams.PageSize, c => c.ToDto());
     }
     
+    [Cache((int)TimeSpan.SecondsPerDay * 7)]
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetCampground(int id)
     {
@@ -44,6 +47,6 @@ public class CampgroundsController(CampContext context) : BaseApiController
         if (campground is null)
             return NotFound();
         
-        return Ok(campground);
+        return Ok(campground.ToDto());
     }
 }

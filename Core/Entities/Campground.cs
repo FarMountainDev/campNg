@@ -1,6 +1,8 @@
-﻿namespace Core.Entities;
+﻿using Core.Interfaces;
 
-public class Campground : BaseEntity
+namespace Core.Entities;
+
+public class Campground : BaseEntity, IDtoConvertible
 {
     public required string Name { get; set; }
     public required string Description { get; set; }

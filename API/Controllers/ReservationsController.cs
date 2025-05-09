@@ -1,4 +1,5 @@
-﻿using Core.Entities;
+﻿using API.Extensions;
+using Core.Entities;
 using Core.Interfaces;
 using Core.Parameters;
 using Infrastructure.Data;
@@ -15,7 +16,7 @@ public class ReservationsController(CampContext context, IReservationService res
         var reservations = await context.Reservations
             .ToListAsync();
         
-        return Ok(reservations);
+        return Ok(reservations.Select(r => r.ToDto()).ToList());
     }
     
     [HttpGet("{id:int}")]
@@ -28,7 +29,7 @@ public class ReservationsController(CampContext context, IReservationService res
         if (reservation is null)
             return NotFound();
         
-        return Ok(reservation);
+        return Ok(reservation.ToDto());
     }
 
     [HttpGet("valid")]

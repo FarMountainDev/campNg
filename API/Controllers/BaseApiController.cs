@@ -29,7 +29,6 @@ public class BaseApiController : ControllerBase
     /// Creates a <see cref="PagedResult{TDto}" /> from a queryable <see cref="IDtoConvertible"/> source and returns it
     /// as an <see cref="OkObjectResult" />.
     /// </summary>
-    /// <param name="toDto">The function that converts the <see cref="IDtoConvertible"/> into its Dto</param>
     /// <returns>An <see cref="OkObjectResult" /> of type <see cref="PagedResult{TDto}" /></returns>
     protected async Task<ActionResult> CreatePagedResult<T, TDto>(IQueryable<T> query, int pageNumber, int pageSize, 
         Func<T, TDto> toDto) where T : BaseEntity, IDtoConvertible

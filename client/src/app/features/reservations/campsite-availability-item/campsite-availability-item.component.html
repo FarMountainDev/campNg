@@ -11,7 +11,8 @@
       <span class="font-semibold underline text-lg">({{campsiteAvailabilityDto.id}}) {{campsiteAvailabilityDto.name}}</span>&nbsp;
       <span class="italic">({{campsiteAvailabilityDto.campsiteTypeName}})</span> - <span class="font-light">{{campsiteAvailabilityDto.campgroundName}}</span> -
       <span class="font-light">Week Day Price: {{campsiteAvailabilityDto.weekDayPrice | currency}}</span> | <span class="font-light">Week End Price: {{campsiteAvailabilityDto.weekEndPrice | currency}}</span> -
-      <span class="font-semibold">Total Price: <u>{{this.totalPrice | currency}}</u></span>
+      <span class="font-semibold">Total Price: <u>{{totalPrice | currency}}</u></span> -
+      <span class="font-light">{{reservationService.getNumberOfNights(startDate!, endDate!)}} night(s)</span>
     </div>
     <div class="date-grid">
       <div *ngFor="let date of dateRange" class="flex flex-col">

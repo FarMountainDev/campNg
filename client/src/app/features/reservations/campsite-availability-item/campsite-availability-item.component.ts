@@ -26,7 +26,7 @@ export class CampsiteAvailabilityItemComponent implements OnChanges{
 
   private readonly router = inject(Router);
   private readonly cartService = inject(CartService);
-  private readonly reservationService = inject(ReservationService);
+  protected readonly reservationService = inject(ReservationService);
 
   dateRange: Date[] = [];
   totalPrice: number = 0;

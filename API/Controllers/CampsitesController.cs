@@ -1,5 +1,6 @@
 ﻿using API.Attributes;
 using API.DTOs;
+using API.Extensions;
 using Core.Interfaces;
 using Core.Models;
 using Core.Parameters;
@@ -20,7 +21,7 @@ public class CampsitesController(CampContext context, ICartService cartService) 
             .Include(e => e.CampsiteType)
             .ToListAsync();
         
-        return Ok(campsites);
+        return Ok(campsites.Select(x => x.ToDto()));
     }
     
     [Cache((int)TimeSpan.SecondsPerDay * 7)]
@@ -36,7 +37,7 @@ public class CampsitesController(CampContext context, ICartService cartService) 
         if (campsite is null)
             return NotFound();
         
-        return Ok(campsite);
+        return Ok(campsite.ToDto());
     }
 
     [HttpGet("available")]
@@ -98,23 +99,16 @@ public class CampsitesController(CampContext context, ICartService cartService) 
                 CampsiteTypeName = campsite.CampsiteType?.Name ?? string.Empty,
                 WeekDayPrice = campsite.CampsiteType?.WeekDayPrice,
                 WeekEndPrice = campsite.CampsiteType?.WeekEndPrice,
-                Reservations = campsite.Reservations?.Select(r => new ReservationDto
-                {
-                    Id = r.Id, 
-                    CampsiteId = r.CampsiteId,
-                    StartDate = r.StartDate, 
-                    EndDate = r.EndDate
-                }).ToList() ?? [],
+                Reservations = campsite.Reservations?.Select(r => r.ToDto()).ToList() ?? [],
                 PendingReservations = pendingReservations.Where(r => r.CampsiteId == campsite.Id)
                     .Select(r => new PendingReservationDto
                     {
                         CampsiteId = r.CampsiteId,
                         StartDate = r.StartDate, 
                         EndDate = r.EndDate
-                    })
-                    .ToList()
-            })
-            .ToList();
+                    }).ToList()
+            }
+        ).ToList();
 
         // Create the paged result
         var pagedCampsiteAvailabilityDtoList = new PagedResult<CampsiteAvailabilityDto>(

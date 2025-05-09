@@ -6,9 +6,7 @@ export type Campsite = {
   id: number;
   name: string;
   description: string;
-  campgroundId: number;
-  campground: Campground;
-  campsiteTypeId: number;
-  campsiteType: CampsiteType;
+  campground: string;
+  campsiteType: string;
   reservations: Reservation[];
 }

@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {Campground} from '../../../shared/models/campground';
 import {MatButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
@@ -16,10 +16,23 @@ import {RouterLink} from '@angular/router';
   templateUrl: './campground-item.component.html',
   styleUrl: './campground-item.component.scss'
 })
-export class CampgroundItemComponent {
+export class CampgroundItemComponent implements OnInit {
   @Input() campground?: Campground;
+  protected campsiteTypes: string[] = [];
 
-  hasCampsiteType(typeId: number): boolean {
-    return this.campground?.campsites.some(site => site.campsiteType.id === typeId) || false;
+  ngOnInit(): void {
+    this.loadCampsiteTypes();
+  }
+
+  loadCampsiteTypes() {
+    if (!this.campground?.campsites) return;
+
+    // Extract unique campsite types using a Set
+    const uniqueTypesSet = new Set(
+      this.campground.campsites.map(campsite => campsite.campsiteType)
+    );
+
+    // Convert Set back to array
+    this.campsiteTypes = Array.from(uniqueTypesSet);
   }
 }

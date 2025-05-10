@@ -12,7 +12,7 @@ namespace API.Controllers;
 
 public class CampsitesController(CampContext context, ICartService cartService) : BaseApiController
 {
-    //[Cache((int)TimeSpan.SecondsPerDay * 7)]
+    [Cache((int)TimeSpan.SecondsPerDay * 7)]
     [HttpGet]
     public async Task<IActionResult> GetCampsites()
     {
@@ -24,7 +24,7 @@ public class CampsitesController(CampContext context, ICartService cartService) 
         return Ok(campsites.Select(x => x.ToDto()));
     }
     
-    //[Cache((int)TimeSpan.SecondsPerDay * 7)]
+    [Cache((int)TimeSpan.SecondsPerDay * 7)]
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetCampsite(int id)
     {

@@ -38,7 +38,7 @@ public class CartService(IConnectionMultiplexer redis) : ICartService
         var pendingReservations = new List<PendingReservation>();
 
         var server = redis.GetServer(redis.GetEndPoints().First());
-        var cartKeys = server.Keys(database: database.Database).ToList();
+        var cartKeys = server.Keys(pattern: "cart_*",database: database.Database).ToList();
 
         foreach (var cartKey in cartKeys)
         {

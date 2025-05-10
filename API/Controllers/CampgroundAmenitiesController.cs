@@ -7,7 +7,7 @@ namespace API.Controllers;
 
 public class CampgroundAmenitiesController(CampContext context) : BaseApiController
 {
-    //[Cache((int)TimeSpan.SecondsPerDay * 7)]
+    [Cache((int)TimeSpan.SecondsPerDay * 7)]
     [HttpGet]
     public async Task<IActionResult> GetCampgroundAmenities()
     {

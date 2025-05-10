@@ -4,5 +4,5 @@ import {authGuard} from '../../core/guards/auth.guard';
 import {adminGuard} from '../../core/guards/admin.guard';
 
 export const adminRoutes: Route[] = [
-  {path: 'admin', component: AdminComponent, canActivate: [authGuard, adminGuard]},
+  {path: '', component: AdminComponent, canActivate: [authGuard, adminGuard]},
 ]

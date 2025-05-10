@@ -9,7 +9,7 @@ namespace API.Controllers;
 
 public class CampgroundsController(CampContext context) : BaseApiController
 {
-    [Cache((int)TimeSpan.SecondsPerDay * 7)]
+    //[Cache((int)TimeSpan.SecondsPerDay * 7)]
     [HttpGet]
     public async Task<IActionResult> GetCampgrounds([FromQuery] CampParams campParams)
     {
@@ -34,7 +34,7 @@ public class CampgroundsController(CampContext context) : BaseApiController
         return await CreatePagedResult(query, campParams.PageNumber, campParams.PageSize, c => c.ToDto());
     }
     
-    [Cache((int)TimeSpan.SecondsPerDay * 7)]
+    //[Cache((int)TimeSpan.SecondsPerDay * 7)]
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetCampground(int id)
     {

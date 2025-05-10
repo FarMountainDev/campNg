@@ -56,10 +56,6 @@ export class AdminComponent implements OnInit {
     });
   }
 
-  onViewOrder(id: number) {
-    console.log()
-  }
-
   onPageChange(event: PageEvent) {
     this.orderParams.pageNumber = event.pageIndex + 1;
     this.orderParams.pageSize = event.pageSize;

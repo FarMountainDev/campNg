@@ -485,3 +485,4 @@ $RECYCLE.BIN/
 
 # Extra files
 API/appsettings.json
+API/wwwroot/*

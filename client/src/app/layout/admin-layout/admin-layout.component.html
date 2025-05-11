@@ -1,1 +1,54 @@
-<router-outlet />
+<div class="flex flex-col h-screen">
+  <mat-toolbar class="flex-shrink-0 border-b-2">
+    <div class="flex align-middle items-center py-2 px-4 cursor-pointer min-w-72" routerLink="/">
+      <img src="/images/tent.svg" alt="app logo" class="max-h-16 max-w-16 mr-2">
+      <div class="flex-col">
+        <h4 class="text-2xl font-bold">CampNg</h4>
+      </div>
+    </div>
+    <div class="pl-2 font-light">
+      Admin Panel
+    </div>
+    <div class="flex-grow"></div>
+    <a (click)="this.themeService.toggleTheme()" class="mt-2 mr-4 cursor-pointer">
+      <mat-icon *ngIf="this.themeService.currentTheme() === 'light'" matTooltip="Toggle theme">light_mode</mat-icon>
+      <mat-icon *ngIf="this.themeService.currentTheme() === 'dark'" matTooltip="Toggle theme">dark_mode</mat-icon>
+    </a>
+    <div class="flex align-middle items-center px-4">
+      {{accountService.currentUser()?.email}}
+    </div>
+  </mat-toolbar>
+  <div class="flex flex-grow overflow-hidden">
+    <div class="min-w-72 border-r-2 overflow-y-auto">
+      <ul class="py-2">
+        <li class="mb-1">
+          <a routerLink="./" routerLinkActive="nav-link-active font-medium" [routerLinkActiveOptions]="{exact: true}"
+             class="nav-link block px-4 py-2 rounded-md mx-2">Dashboard</a>
+        </li>
+        <li class="mb-1">
+          <a routerLink="./orders" routerLinkActive="nav-link-active font-medium"
+             class="nav-link block px-4 py-2 rounded-md mx-2">Orders</a>
+        </li>
+        <li class="mb-1">
+          <a routerLink="./reservations" routerLinkActive="nav-link-active font-medium"
+             class="nav-link block px-4 py-2 rounded-md mx-2">Reservations</a>
+        </li>
+        <li class="mb-1">
+          <a routerLink="./users" routerLinkActive="nav-link-active font-medium"
+             class="nav-link block px-4 py-2 rounded-md mx-2">Users</a>
+        </li>
+        <li class="mb-1">
+          <a routerLink="./campgrounds" routerLinkActive="nav-link-active font-medium"
+             class="nav-link block px-4 py-2 rounded-md mx-2">Campgrounds</a>
+        </li>
+        <li class="mb-1">
+          <a routerLink="./announcements" routerLinkActive="nav-link-active font-medium"
+             class="nav-link block px-4 py-2 rounded-md mx-2">Announcements</a>
+        </li>
+      </ul>
+    </div>
+    <div class="flex-grow overflow-y-auto">
+      <router-outlet />
+    </div>
+  </div>
+</div>

@@ -15,6 +15,7 @@ A live demo is available at the link above. The demo is hosted using free versio
   - Create/update/delete campgrounds and campsites
   - Improve Order / Reservation management
     - Should be able to refund individual reservations
+  - Add news and announcements
 - Reservation improvements
   - Allow users to view reservations and request cancellations
 - Cart and Checkout improvements

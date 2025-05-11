@@ -1,0 +1,108 @@
+@use '@angular/material' as mat;
+
+html {
+  & {
+    background-image: url("/images/day-sky-bg.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+  }
+
+  .div-backdrop {
+    background-color: rgba(240, 248, 255, 0.8);
+    @apply rounded-lg backdrop-blur;
+  }
+
+  .home-image {
+    width: 720px;
+    height: 340px;
+    background-image: url('/images/photos/campsite-people.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    @apply rounded-lg;
+  }
+
+  .date-cell {
+    &.available {
+      background-color: #e8ecf5;
+      color: #38438e;
+    }
+
+    &.selectedAvailable {
+      background-color: #c8e6c9;
+      color: #2e7d32;
+    }
+
+    &.reserved {
+      background-color: #ffe2cd;
+      color: #c66a28;
+    }
+
+    &.selectedReserved {
+      background-color: #ffcdd2;
+      color: #c62828;
+    }
+
+    &.pending {
+      background-color: #c6a628;
+      color: #fff8cd;
+    }
+
+    &.selectedPending {
+      background-color: #fff8cd;
+      color: #c6a628;
+    }
+  }
+}
+
+html.dark-mode {
+  & {
+    background-image: url("/images/night-sky-bg.jpg");
+  }
+
+  .home-image {
+    background-image: url('/images/photos/campfire-people.jpg');
+  }
+
+  .date-cell {
+    &.available {
+      background-color: #38438e;
+      color: #e8ecf5;
+    }
+
+    &.selectedAvailable {
+      background-color: #2e7d32;
+      color: #c8e6c9;
+    }
+
+    &.reserved {
+      background-color: #c66a28;
+      color: #ffe2cd;
+    }
+
+    &.selectedReserved {
+      background-color: #c62828;
+      color: #ffcdd2;
+    }
+
+    &.pending {
+      background-color: #c6a628;
+      color: #fff8cd;
+    }
+
+    &.selectedPending {
+      background-color: #fff8cd;
+      color: #c6a628;
+    }
+  }
+
+  .div-backdrop {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+}
+
+.container {
+  @apply mx-auto max-w-screen-xl;
+}

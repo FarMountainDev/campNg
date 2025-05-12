@@ -1,22 +1,47 @@
 @use '@angular/material' as mat;
 
 html {
+  color-scheme: light;
+  @include mat.theme((
+    color: mat.$azure-palette,
+    typography: Roboto,
+    density: 0
+  ));
+
   .nav-link {
-    @apply hover:bg-gray-100;
+    @apply hover:bg-gray-100 text-lg;
   }
 
   .nav-link-active {
     @apply bg-blue-100 text-blue-800;
   }
+
+  .dashboard-card {
+    @apply rounded-lg p-4 shadow-md border-2;
+  }
 }
 
 html.dark-mode {
+  color-scheme: dark;
+
+  .mat-toolbar {
+    background-color: #121821 !important;
+  }
+
+  .admin-content {
+    background-color: #0e1218 !important;
+  }
+
+  .nav-bar {
+    background-color: #0e1218 !important;
+  }
+
   .nav-link {
     @apply hover:bg-gray-800;
   }
 
   .nav-link-active {
-    @apply bg-green-900 text-green-100;
+    @apply bg-blue-900 text-blue-100;
   }
 
   .border-b-2 {
@@ -25,6 +50,11 @@ html.dark-mode {
 
   .border-r-2 {
     @apply border-gray-500;
+  }
+
+  .dashboard-card {
+    @apply border-gray-500;
+    background-color: #121821 !important;
   }
 }
 

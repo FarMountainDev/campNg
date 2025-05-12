@@ -5,13 +5,6 @@
 @tailwind utilities;
 
 html {
-  color-scheme: light;
-  @include mat.theme((
-    color: mat.$azure-palette,
-    typography: Roboto,
-    density: 0
-  ));
-
   .error-text {
     @apply text-red-800;
   }
@@ -78,13 +71,6 @@ html {
 }
 
 html.dark-mode {
-  color-scheme: dark;
-  @include mat.theme((
-    color: mat.$spring-green-palette,
-    typography: Roboto,
-    density: 0
-  ));
-
   .error-text {
     @apply text-red-300;
   }

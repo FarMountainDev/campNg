@@ -1,6 +1,13 @@
 @use '@angular/material' as mat;
 
 html {
+  color-scheme: light;
+  @include mat.theme((
+    color: mat.$azure-palette,
+    typography: Roboto,
+    density: 0
+  ));
+
   & {
     background-image: url("/images/day-sky-bg.jpg");
     background-size: cover;
@@ -58,6 +65,13 @@ html {
 }
 
 html.dark-mode {
+  color-scheme: dark;
+  @include mat.theme((
+    color: mat.$spring-green-palette,
+    typography: Roboto,
+    density: 0
+  ));
+
   & {
     background-image: url("/images/night-sky-bg.jpg");
   }

@@ -2,11 +2,10 @@
 
 html {
   color-scheme: light;
-  @include mat.theme((
-    color: mat.$azure-palette,
-    typography: Roboto,
-    density: 0
-  ));
+
+  & {
+    background: #FFF;
+  }
 
   .nav-link {
     @apply hover:bg-gray-100 text-lg;
@@ -23,6 +22,15 @@ html {
 
 html.dark-mode {
   color-scheme: dark;
+  @include mat.theme((
+    color: mat.$azure-palette,
+    typography: Roboto,
+    density: 0
+  ));
+
+  & {
+    background: #000;
+  }
 
   .mat-toolbar {
     background-color: #121821 !important;

@@ -15,6 +15,7 @@ namespace API.Controllers;
 [Authorize]
 public class OrdersController(ICartService cartService, CampContext context, IReservationService reservationService) : BaseApiController
 {
+    [InvalidateCache("/api/admin/orders")]
     [HttpPost]
     public async Task<ActionResult<Order>> CreateOrder(CreateOrderDto orderDto)
     {
@@ -44,7 +45,7 @@ public class OrdersController(ICartService cartService, CampContext context, IRe
             
             var reservation = new Reservation
             {
-                ReservationEmail = email,
+                Email = email,
                 CampsiteId = item.CampsiteId,
                 StartDate = item.StartDate,
                 EndDate = item.EndDate

@@ -10,7 +10,6 @@ import {MatSelectChange, MatSelectModule} from '@angular/material/select';
 import {CurrencyPipe, DatePipe} from '@angular/common';
 import {MatLabel} from '@angular/material/form-field';
 import {MatTooltipModule} from '@angular/material/tooltip';
-import {MatTabsModule} from '@angular/material/tabs';
 import {RouterLink} from '@angular/router';
 import {DialogService} from '../../../core/services/dialog.service';
 
@@ -22,7 +21,6 @@ import {DialogService} from '../../../core/services/dialog.service';
     MatIcon,
     MatIconButton,
     MatTooltipModule,
-    MatTabsModule,
     MatSelectModule,
     MatTableModule,
     MatPaginatorModule,

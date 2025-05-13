@@ -1,10 +1,11 @@
 ﻿using Core.Entities.OrderAggregate;
+using Core.Interfaces;
 
 namespace Core.Entities;
 
-public class Reservation : BaseEntity
+public class Reservation : BaseEntity, IDtoConvertible
 {
-    public required string ReservationEmail { get; set; }
+    public required string Email { get; set; }
     public DateOnly StartDate { get; set; } // First night
     public DateOnly EndDate { get; set; } // Last night (check-out next day)
     public int CampsiteId { get; set; }

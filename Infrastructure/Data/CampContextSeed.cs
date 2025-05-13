@@ -78,29 +78,32 @@ public static class CampContextSeed
     {
         if (!context.CampgroundAmenities.Any())
         {
-            await using var transaction = await context.Database.BeginTransactionAsync();
+            await context.Database.CreateExecutionStrategy().ExecuteAsync(async () =>
+            {
+                await using var transaction = await context.Database.BeginTransactionAsync();
 
-            try
-            {
-                var amenitiesData = await File.ReadAllTextAsync(path + @"/Data/SeedData/campgroundAmenities.json");
-                var amenities = JsonSerializer.Deserialize<List<CampgroundAmenity>>(amenitiesData);
+                try
+                {
+                    var amenitiesData = await File.ReadAllTextAsync(path + @"/Data/SeedData/campgroundAmenities.json");
+                    var amenities = JsonSerializer.Deserialize<List<CampgroundAmenity>>(amenitiesData);
                 
-                if (amenities == null) return;
+                    if (amenities == null) return;
                 
-                await context.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT dbo.CampgroundAmenities ON");
+                    await context.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT dbo.CampgroundAmenities ON");
                 
-                context.CampgroundAmenities.AddRange(amenities);
-                await context.SaveChangesAsync();
+                    context.CampgroundAmenities.AddRange(amenities);
+                    await context.SaveChangesAsync();
                 
-                await context.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT dbo.CampgroundAmenities OFF");
+                    await context.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT dbo.CampgroundAmenities OFF");
                 
-                await transaction.CommitAsync();
-            }
-            catch
-            {
-                await transaction.RollbackAsync();
-                throw;
-            }
+                    await transaction.CommitAsync();
+                }
+                catch
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            });
         }
     }
 
@@ -108,62 +111,65 @@ public static class CampContextSeed
     {
         if (!context.Campgrounds.Any())
         {
-            await using var transaction = await context.Database.BeginTransactionAsync();
-        
-            try
+            await context.Database.CreateExecutionStrategy().ExecuteAsync(async () => 
             {
-                var campgroundsData = await File.ReadAllTextAsync(path + @"/Data/SeedData/campgrounds.json");
-                
-                // Custom JSON converter to handle the AmenityIds array
-                var options = new JsonSerializerOptions
+                await using var transaction = await context.Database.BeginTransactionAsync();
+            
+                try
                 {
-                    PropertyNameCaseInsensitive = true
-                };
-
-                var campgroundsWithAmenities = JsonSerializer.Deserialize<List<CampgroundSeedData>>(campgroundsData, options);
-
-                if (campgroundsWithAmenities is null) return;
-                
-                await context.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT dbo.Campgrounds ON");
-                
-                foreach (var item in campgroundsWithAmenities)
-                {
-                    var campground = new Campground
+                    var campgroundsData = await File.ReadAllTextAsync(path + @"/Data/SeedData/campgrounds.json");
+                    
+                    // Custom JSON converter to handle the AmenityIds array
+                    var options = new JsonSerializerOptions
                     {
-                        Id = item.Id,
-                        Name = item.Name,
-                        Description = item.Description,
-                        PictureUrl = item.PictureUrl,
-                        Amenities = new List<CampgroundAmenity>()
+                        PropertyNameCaseInsensitive = true
                     };
 
-                    // Add amenities to campground
-                    if (item.AmenityIds != null)
+                    var campgroundsWithAmenities = JsonSerializer.Deserialize<List<CampgroundSeedData>>(campgroundsData, options);
+
+                    if (campgroundsWithAmenities is null) return;
+                    
+                    await context.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT dbo.Campgrounds ON");
+                    
+                    foreach (var item in campgroundsWithAmenities)
                     {
-                        foreach (var amenityId in item.AmenityIds)
+                        var campground = new Campground
                         {
-                            var amenity = await context.CampgroundAmenities.FindAsync(amenityId);
-                            if (amenity != null)
+                            Id = item.Id,
+                            Name = item.Name,
+                            Description = item.Description,
+                            PictureUrl = item.PictureUrl,
+                            Amenities = new List<CampgroundAmenity>()
+                        };
+
+                        // Add amenities to campground
+                        if (item.AmenityIds != null)
+                        {
+                            foreach (var amenityId in item.AmenityIds)
                             {
-                                campground.Amenities.Add(amenity);
+                                var amenity = await context.CampgroundAmenities.FindAsync(amenityId);
+                                if (amenity != null)
+                                {
+                                    campground.Amenities.Add(amenity);
+                                }
                             }
                         }
-                    }
 
-                    context.Campgrounds.Add(campground);
+                        context.Campgrounds.Add(campground);
+                    }
+                    
+                    await context.SaveChangesAsync();
+                    
+                    await context.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT dbo.Campgrounds OFF");
+                    
+                    await transaction.CommitAsync();
                 }
-                
-                await context.SaveChangesAsync();
-                
-                await context.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT dbo.Campgrounds OFF");
-                
-                await transaction.CommitAsync();
-            }
-            catch
-            {
-                await transaction.RollbackAsync();
-                throw;
-            }
+                catch
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            });
         }
     }
 
@@ -171,29 +177,32 @@ public static class CampContextSeed
     {
         if (!context.CampsiteTypes.Any())
         {
-            await using var transaction = await context.Database.BeginTransactionAsync();
-
-            try
+            await context.Database.CreateExecutionStrategy().ExecuteAsync(async () =>
             {
-                var campsiteTypesData = await File.ReadAllTextAsync(path + @"/Data/SeedData/campsiteTypes.json");
-                var campsiteTypes = JsonSerializer.Deserialize<List<CampsiteType>>(campsiteTypesData);
+                await using var transaction = await context.Database.BeginTransactionAsync();
 
-                if (campsiteTypes is null) return;
-                
-                await context.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT dbo.CampsiteTypes ON");
+                try
+                {
+                    var campsiteTypesData = await File.ReadAllTextAsync(path + @"/Data/SeedData/campsiteTypes.json");
+                    var campsiteTypes = JsonSerializer.Deserialize<List<CampsiteType>>(campsiteTypesData);
 
-                context.CampsiteTypes.AddRange(campsiteTypes);
-                await context.SaveChangesAsync();
+                    if (campsiteTypes is null) return;
                 
-                await context.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT dbo.CampsiteTypes OFF");
+                    await context.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT dbo.CampsiteTypes ON");
+
+                    context.CampsiteTypes.AddRange(campsiteTypes);
+                    await context.SaveChangesAsync();
                 
-                await transaction.CommitAsync();
-            }
-            catch
-            {
-                await transaction.RollbackAsync();
-                throw;
-            }
+                    await context.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT dbo.CampsiteTypes OFF");
+                
+                    await transaction.CommitAsync();
+                }
+                catch
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            });
         }
     }
 
@@ -201,29 +210,32 @@ public static class CampContextSeed
     {
         if (!context.Campsites.Any())
         {
-            await using var transaction = await context.Database.BeginTransactionAsync();
-
-            try
+            await context.Database.CreateExecutionStrategy().ExecuteAsync(async () =>
             {
-                var campsitesData = await File.ReadAllTextAsync(path + @"/Data/SeedData/campsites.json");
-                var campsites = JsonSerializer.Deserialize<List<Campsite>>(campsitesData);
+                await using var transaction = await context.Database.BeginTransactionAsync();
 
-                if (campsites is null) return;
+                try
+                {
+                    var campsitesData = await File.ReadAllTextAsync(path + @"/Data/SeedData/campsites.json");
+                    var campsites = JsonSerializer.Deserialize<List<Campsite>>(campsitesData);
+
+                    if (campsites is null) return;
                 
-                await context.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT dbo.Campsites ON");
+                    await context.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT dbo.Campsites ON");
             
-                context.Campsites.AddRange(campsites);
-                await context.SaveChangesAsync();
+                    context.Campsites.AddRange(campsites);
+                    await context.SaveChangesAsync();
                 
-                await context.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT dbo.Campsites OFF");
+                    await context.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT dbo.Campsites OFF");
                 
-                await transaction.CommitAsync();
-            }
-            catch
-            {
-                await transaction.RollbackAsync();
-                throw;
-            }
+                    await transaction.CommitAsync();
+                }
+                catch
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            });
         }
     }
     
@@ -233,61 +245,64 @@ public static class CampContextSeed
     {
         if (!context.Reservations.Any())
         {
-            await using var transaction = await context.Database.BeginTransactionAsync();
-
-            try
+            await context.Database.CreateExecutionStrategy().ExecuteAsync(async () =>
             {
-                var campsites = await context.Campsites.ToListAsync();
-                var startDate = DateTime.UtcNow.Date.AddYears(-1);
-                var endDate = DateTime.UtcNow.Date.AddYears(1);
-                var random = new Random(42); // Fixed seed for reproducibility
-                var reservations = new List<Reservation>();
+                await using var transaction = await context.Database.BeginTransactionAsync();
 
-                foreach (var campsite in campsites)
+                try
                 {
-                    // Generate between 10-25 reservations per campsite
-                    var targetReservationCount = random.Next(10, 26);
-                    var attempts = 0;
-                    const int maxAttempts = 100; // Limit attempts to avoid infinite loops
-                    
-                    while (reservations.Count(r => r.CampsiteId == campsite.Id) < targetReservationCount && attempts < maxAttempts)
+                    var campsites = await context.Campsites.ToListAsync();
+                    var startDate = DateTime.UtcNow.Date.AddYears(-1);
+                    var endDate = DateTime.UtcNow.Date.AddYears(1);
+                    var random = new Random(42); // Fixed seed for reproducibility
+                    var reservations = new List<Reservation>();
+
+                    foreach (var campsite in campsites)
                     {
-                        attempts++;
+                        // Generate between 10-25 reservations per campsite
+                        var targetReservationCount = random.Next(10, 26);
+                        var attempts = 0;
+                        const int maxAttempts = 100; // Limit attempts to avoid infinite loops
                         
-                        // Generate start date and duration
-                        var reservationStart = GetWeightedRandomDate(random, startDate, endDate);
-                        var duration = GetWeightedDuration(random);
-                        var reservationEnd = reservationStart.AddDays(duration);
-                        
-                        var reservation = new Reservation
+                        while (reservations.Count(r => r.CampsiteId == campsite.Id) < targetReservationCount && attempts < maxAttempts)
                         {
-                            ReservationEmail = "seedData@test.com",
-                            StartDate = reservationStart,
-                            EndDate = reservationEnd,
-                            CampsiteId = campsite.Id
-                        };
-                        
-                        // Check for overlapping reservations
-                        var overlaps = reservations
-                            .Where(r => r.CampsiteId == campsite.Id)
-                            .Any(r => r.StartDate < reservation.EndDate && r.EndDate > reservation.StartDate);
-                        
-                        if (!overlaps)
-                        {
-                            reservations.Add(reservation);
+                            attempts++;
+                            
+                            // Generate start date and duration
+                            var reservationStart = GetWeightedRandomDate(random, startDate, endDate);
+                            var duration = GetWeightedDuration(random);
+                            var reservationEnd = reservationStart.AddDays(duration);
+                            
+                            var reservation = new Reservation
+                            {
+                                Email = "seedData@test.com",
+                                StartDate = reservationStart,
+                                EndDate = reservationEnd,
+                                CampsiteId = campsite.Id
+                            };
+                            
+                            // Check for overlapping reservations
+                            var overlaps = reservations
+                                .Where(r => r.CampsiteId == campsite.Id)
+                                .Any(r => r.StartDate < reservation.EndDate && r.EndDate > reservation.StartDate);
+                            
+                            if (!overlaps)
+                            {
+                                reservations.Add(reservation);
+                            }
                         }
                     }
+                
+                    context.Reservations.AddRange(reservations);
+                    await context.SaveChangesAsync();
+                    await transaction.CommitAsync();
                 }
-            
-                context.Reservations.AddRange(reservations);
-                await context.SaveChangesAsync();
-                await transaction.CommitAsync();
-            }
-            catch
-            {
-                await transaction.RollbackAsync();
-                throw;
-            }
+                catch
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            });
         }
     }
     

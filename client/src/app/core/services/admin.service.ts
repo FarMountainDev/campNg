@@ -4,6 +4,8 @@ import {HttpClient, HttpParams} from '@angular/common/http';
 import {OrderParams} from '../../shared/models/orderParams';
 import {Pagination} from '../../shared/models/pagination';
 import {Order} from '../../shared/models/order';
+import {PaginationParams} from '../../shared/models/paginationParams';
+import {ReservationDto} from '../../shared/models/reservationDto';
 
 @Injectable({
   providedIn: 'root'
@@ -28,5 +30,19 @@ export class AdminService {
 
   refundOrder(id: number) {
     return this.http.post<Order>(this.baseUrl + 'admin/orders/refund/' + id, {});
+  }
+
+  getTodayCheckIns(paginationParams: PaginationParams) {
+    let params = new HttpParams();
+    params = params.append('pageNumber', paginationParams.pageNumber);
+    params = params.append('pageSize', paginationParams.pageSize);
+    return this.http.get<Pagination<ReservationDto>>(this.baseUrl + 'admin/check-ins', {params});
+  }
+
+  getTodayCheckOuts(paginationParams: PaginationParams) {
+    let params = new HttpParams();
+    params = params.append('pageNumber', paginationParams.pageNumber);
+    params = params.append('pageSize', paginationParams.pageSize);
+    return this.http.get<Pagination<ReservationDto>>(this.baseUrl + 'admin/check-outs', {params});
   }
 }

@@ -41,9 +41,10 @@ public static class ToDtoMappingExtensions
         return new ReservationDto()
         {
             Id = reservation.Id,
-            CampsiteId = reservation.CampsiteId,
+            Email = reservation.Email,
             StartDate = reservation.StartDate,
             EndDate = reservation.EndDate,
+            CampsiteId = reservation.CampsiteId,
         };
     }
 

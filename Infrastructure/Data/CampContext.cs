@@ -18,6 +18,13 @@ public class CampContext(DbContextOptions options) : IdentityDbContext<AppUser>(
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        // AppUser
+        modelBuilder.Entity<AppUser>(entity =>
+        {
+            entity.Property(e => e.FirstName).HasMaxLength(50);
+            entity.Property(e => e.LastName).HasMaxLength(50);
+        });
+        
         // Campground
         modelBuilder.Entity<Campground>(entity =>
         {
@@ -70,6 +77,7 @@ public class CampContext(DbContextOptions options) : IdentityDbContext<AppUser>(
         // Reservation
         modelBuilder.Entity<Reservation>(entity =>
         {
+            entity.Property(e => e.Email).IsRequired().HasMaxLength(100);
             entity.Property(e => e.StartDate).IsRequired();
             entity.Property(e => e.EndDate).IsRequired();
             entity.HasOne(e => e.Campsite)

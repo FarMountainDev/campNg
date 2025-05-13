@@ -12,6 +12,10 @@
     <None Include="Data\SeedData\**" CopyToOutputDirectory="PreserveNewest" />
     <ProjectReference Include="..\Core\Core.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
   
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>

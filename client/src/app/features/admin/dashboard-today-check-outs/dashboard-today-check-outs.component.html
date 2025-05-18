@@ -29,6 +29,11 @@
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell text-center text-xl py-4" [attr.colspan]="displayedColumns.length">
+          No check-outs for today.
+        </td>
+      </tr>
     </table>
   </div>
   <mat-paginator

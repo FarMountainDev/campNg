@@ -3,7 +3,7 @@ import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {MatPaginatorModule, PageEvent} from '@angular/material/paginator';
 import {AdminService} from '../../../core/services/admin.service';
 import {PaginationParams} from '../../../shared/models/paginationParams';
-import {DatePipe, NgForOf} from '@angular/common';
+import {DatePipe} from '@angular/common';
 import {ReservationDto} from '../../../shared/models/reservationDto';
 
 @Component({
@@ -31,7 +31,8 @@ export class DashboardTodayCheckInsComponent implements OnInit {
     this.adminService.getTodayCheckIns(this.paginationParams).subscribe({
       next: response => {
         if (response.data) {
-          this.dataSource.data = response.data
+          //this.dataSource.data = response.data
+          this.dataSource.data = this.adminService.generateMockReservationDtoData(5);
           this.totalItems = response.count;
         }
       }

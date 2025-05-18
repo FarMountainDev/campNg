@@ -1,13 +1,14 @@
-<div>
+<div class="chartDiv flex-col p-4">
   <div class="w-full text-xl text-center">Tonight's Occupancy by Campsite Type</div>
-  <div id="chart">
-    <apx-chart
-      [series]="chartOptions.series!"
-      [chart]="chartOptions.chart!"
-      [plotOptions]="chartOptions.plotOptions!"
-      [labels]="chartOptions.labels!"
-      [legend]="chartOptions.legend!"
-      [colors]="chartOptions.colors!"
-    ></apx-chart>
-  </div>
+  <div class="flex-grow"></div>
+  <apx-chart
+    #chart
+    [series]="chartOptions.series!"
+    [chart]="chartOptions.chart!"
+    [plotOptions]="chartOptions.plotOptions!"
+    [labels]="chartOptions.labels!"
+    [legend]="chartOptions.legend!"
+    [colors]="chartOptions.colors!"
+  ></apx-chart>
+  <div class="flex-grow"></div>
 </div>

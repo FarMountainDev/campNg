@@ -117,35 +117,56 @@ public class AdminController(CampContext context, IPaymentService paymentService
         var totalCabins = await context.Campsites
             .CountAsync(x => x.CampsiteType != null && x.CampsiteType.Id == 3);
 
+        var tentSitesOccupied = 0;
+        var rvSitesOccupied = 0;
+        var cabinsOccupied = 0;
         var percentTentSitesOccupied = 0;
         var percentRvSitesOccupied = 0;
         var percentCabinsOccupied = 0;
         
         if (totalTentSites > 0)
         {
-            percentTentSitesOccupied = (int)((double)reservationsToday.Count(x => x.Campsite.CampsiteType.Id == 1) / totalTentSites * 100);
+            tentSitesOccupied = reservationsToday.Count(x => x.Campsite!.CampsiteType!.Id == 1);
+            percentTentSitesOccupied = (int)((double)tentSitesOccupied / totalTentSites * 100);
         }
         
         if (totalRvSites > 0)
         {
-            percentRvSitesOccupied = (int)((double)reservationsToday.Count(x => x.Campsite.CampsiteType.Id == 2) / totalRvSites * 100);
+            rvSitesOccupied = reservationsToday.Count(x => x.Campsite!.CampsiteType!.Id == 2);
+            percentRvSitesOccupied = (int)((double)rvSitesOccupied / totalRvSites * 100);
         }
         
         if (totalCabins > 0)
         {
-            percentCabinsOccupied = (int)((double)reservationsToday.Count(x => x.Campsite.CampsiteType.Id == 3) / totalCabins * 100);
+            cabinsOccupied = reservationsToday.Count(x => x.Campsite!.CampsiteType!.Id == 3);
+            percentCabinsOccupied = (int)((double)cabinsOccupied / totalCabins * 100);
         }
-        
-        var occupancy = new
+
+        var occupancyRates = new List<OccupancyRate>
         {
-            TotalTentSites = totalTentSites,
-            TotalRvSites = totalRvSites,
-            TotalCabins = totalCabins,
-            PercentTentSitesOccupied = percentTentSitesOccupied,
-            PercentRvSitesOccupied = percentRvSitesOccupied,
-            PercentCabinsOccupied = percentCabinsOccupied
+            new()
+            {
+                Label = "Tent Sites",
+                Total = totalTentSites,
+                Occupied = tentSitesOccupied,
+                Percentage = percentTentSitesOccupied
+            },
+            new()
+            {
+                Label = "RV Sites",
+                Total = totalRvSites,
+                Occupied = rvSitesOccupied,
+                Percentage = percentRvSitesOccupied
+            },
+            new()
+            {
+                Label = "Cabins",
+                Total = totalCabins,
+                Occupied = cabinsOccupied,
+                Percentage = percentCabinsOccupied
+            }
         };
         
-        return Ok(occupancy);
+        return Ok(occupancyRates);
     }
 }

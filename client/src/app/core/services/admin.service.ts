@@ -6,6 +6,7 @@ import {Pagination} from '../../shared/models/pagination';
 import {Order} from '../../shared/models/order';
 import {PaginationParams} from '../../shared/models/paginationParams';
 import {ReservationDto} from '../../shared/models/reservationDto';
+import {OccupancyRate} from '../../shared/models/occupancyRate';
 
 @Injectable({
   providedIn: 'root'
@@ -44,5 +45,34 @@ export class AdminService {
     params = params.append('pageNumber', paginationParams.pageNumber);
     params = params.append('pageSize', paginationParams.pageSize);
     return this.http.get<Pagination<ReservationDto>>(this.baseUrl + 'admin/check-outs', {params});
+  }
+
+  getTodayOccupancy() {
+    return this.http.get<OccupancyRate[]>(this.baseUrl + 'admin/occupancy');
+  }
+
+  generateMockReservationDtoData(count: number) {
+    const mockData: ReservationDto[] = [];
+    const today = new Date();
+
+    for (let i = 1; i <= count; i++) {
+      // Create a start date (today)
+      const startDate = new Date(today);
+
+      // Create an end date (3-7 days after start date)
+      const endDate = new Date(today);
+      endDate.setDate(endDate.getDate() + 3 + Math.floor(Math.random() * 5));
+
+      mockData.push({
+        id: i,
+        campsiteId: 100 + Math.floor(Math.random() * 50),
+        email: `camper${i}@test.com`,
+        startDate: startDate,
+        endDate: endDate,
+        // Add any other required properties from ReservationDto
+      });
+    }
+
+    return mockData;
   }
 }

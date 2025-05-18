@@ -1,9 +1,11 @@
-import { Component, ViewChild } from "@angular/core";
-
+import {Component, effect, inject, OnInit, ViewChild} from "@angular/core";
+import {AdminService} from '../../../core/services/admin.service';
+import {ThemeService} from '../../../core/services/theme.service';
 import {
   ApexNonAxisChartSeries,
   ApexPlotOptions,
   ApexChart,
+  ApexTheme,
   ApexLegend,
   ApexResponsive,
   ChartComponent
@@ -12,6 +14,7 @@ import {
 export type ChartOptions = {
   series: ApexNonAxisChartSeries;
   chart: ApexChart;
+  theme: ApexTheme;
   labels: string[];
   colors: string[];
   legend: ApexLegend;
@@ -27,67 +30,117 @@ export type ChartOptions = {
   templateUrl: './dashboard-today-occupancy.component.html',
   styleUrl: './dashboard-today-occupancy.component.scss'
 })
-export class DashboardTodayOccupancyComponent {
+export class DashboardTodayOccupancyComponent implements OnInit {
   @ViewChild("chart") chart!: ChartComponent;
-  public chartOptions: Partial<ChartOptions>;
+  protected readonly adminService = inject(AdminService);
+  protected readonly themeService = inject(ThemeService);
+  protected chartOptions: Partial<ChartOptions>;
 
   constructor() {
     this.chartOptions = {
-      series: [76, 67, 61],
+      series: [],
       chart: {
-        height: 390,
-        type: "radialBar"
+        height: 420,
+        type: "radialBar",
+        foreColor: this.getChartForeColor(),
+        background: "none"
       },
       plotOptions: {
         radialBar: {
-          offsetY: 0,
-          startAngle: 0,
-          endAngle: 270,
-          hollow: {
-            margin: 5,
-            size: "30%",
-            background: "transparent",
-            image: undefined
-          },
           dataLabels: {
             name: {
-              show: false
+              fontSize: "22px"
             },
             value: {
-              show: false
+              fontSize: "16px",
+              formatter(val: number): string {
+                return val + "%";
+              }
+            },
+            total: {
+              show: true,
+              label: "Total",
+              formatter: function() {
+                return "0";
+              }
             }
           }
         }
       },
       colors: ["#1ab7ea", "#0084ff", "#39539E"],
-      labels: ["Vimeo", "Messenger", "Facebook"],
+      labels: [],
+      theme: {
+        mode: this.themeService.currentTheme()
+      },
       legend: {
         show: true,
-        floating: true,
+        floating: false,
         fontSize: "16px",
-        position: "left",
-        offsetX: 50,
-        offsetY: 10,
+        position: "bottom",
         labels: {
           useSeriesColors: true
         },
         formatter: function(seriesName, opts) {
-          return seriesName + ":  " + opts.w.globals.series[opts.seriesIndex];
+          return seriesName + ":  " + opts.w.globals.series[opts.seriesIndex] + "%";
         },
         itemMargin: {
-          horizontal: 3
-        }
+          horizontal: 5
+        },
+        onItemClick: {
+          toggleDataSeries: false
+        },
+        onItemHover: {
+          highlightDataSeries: true
+        },
       },
-      responsive: [
-        {
-          breakpoint: 480,
-          options: {
-            legend: {
-              show: false
-            }
-          }
-        }
-      ]
     };
+
+    effect(() => {
+      const theme = this.themeService.currentTheme();
+      this.chart.updateOptions({
+        chart: {
+          foreColor: this.getChartForeColor(theme),
+          background: "none"
+        },
+        theme: {
+          mode: theme
+        }
+      }, false, false);
+    });
+  }
+
+  ngOnInit(): void {
+    this.getChartData();
+  }
+
+  private getChartData() {
+    this.adminService.getTodayOccupancy().subscribe(occupancyRates => {
+      if (occupancyRates && occupancyRates.length > 0) {
+        this.chartOptions.series = occupancyRates.map(rate => rate.percentage);
+        this.chartOptions.labels = occupancyRates.map(rate => rate.label);
+
+        // Calculate total occupied and total capacity
+        const totalOccupied = occupancyRates.reduce((sum, rate) =>
+          sum + (rate.occupied || 0), 0);
+        const totalCapacity = occupancyRates.reduce((sum, rate) =>
+          sum + (rate.total || 0), 0);
+
+        // Calculate the overall percentage
+        const overallPercentage = totalCapacity > 0
+          ? Math.round((totalOccupied / totalCapacity) * 100)
+          : 0;
+
+        if (this.chartOptions.plotOptions?.radialBar?.dataLabels?.total) {
+          this.chartOptions.plotOptions.radialBar.dataLabels.total.formatter = function() {
+            return `${totalOccupied} (${overallPercentage}%)`;
+          };
+        }
+      }
+    });
+  }
+
+  private getChartForeColor(theme?: string): string {
+    const currentTheme = theme || this.themeService.currentTheme();
+    return currentTheme === 'dark' ? '#ccc' : '#444'; // 7D7F7C
   }
 }

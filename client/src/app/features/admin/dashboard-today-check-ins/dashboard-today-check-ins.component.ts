@@ -3,7 +3,7 @@ import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {MatPaginatorModule, PageEvent} from '@angular/material/paginator';
 import {AdminService} from '../../../core/services/admin.service';
 import {PaginationParams} from '../../../shared/models/paginationParams';
-import {DatePipe} from '@angular/common';
+import {DatePipe, NgForOf} from '@angular/common';
 import {ReservationDto} from '../../../shared/models/reservationDto';
 
 @Component({

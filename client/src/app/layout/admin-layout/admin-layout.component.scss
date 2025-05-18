@@ -5,6 +5,7 @@ html {
 
   & {
     background: #FFF;
+    --card-bg-color: "#fff";
   }
 
   .nav-link {
@@ -17,6 +18,7 @@ html {
 
   .dashboard-card {
     @apply rounded-lg p-4 shadow-md border-2;
+    background-color: var(--card-bg-color) !important;
   }
 }
 
@@ -30,6 +32,7 @@ html.dark-mode {
 
   & {
     background: #000;
+    --card-bg-color: #121821;
   }
 
   .mat-toolbar {
@@ -62,7 +65,7 @@ html.dark-mode {
 
   .dashboard-card {
     @apply border-gray-500;
-    background-color: #121821 !important;
+    background-color: var(--card-bg-color) !important;
   }
 }
 

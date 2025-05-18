@@ -5,11 +5,16 @@ html {
 
   & {
     background: #FFF;
-    --card-bg-color: "#fff";
+    --content-bg-color: #f1f1f1;
+    --card-bg-color: #fff;
+  }
+
+  .admin-content {
+    background-color: var(--content-bg-color);
   }
 
   .nav-link {
-    @apply hover:bg-gray-100 text-lg;
+    @apply hover:bg-gray-100 text-lg flex items-center gap-2 pr-[25px] 2xl:pr-[50px];
   }
 
   .nav-link-active {
@@ -18,7 +23,7 @@ html {
 
   .dashboard-card {
     @apply rounded-lg p-4 shadow-md border-2;
-    background-color: var(--card-bg-color) !important;
+    background-color: var(--card-bg-color);
   }
 }
 
@@ -32,19 +37,16 @@ html.dark-mode {
 
   & {
     background: #000;
+    --content-bg-color: #0e1218;
     --card-bg-color: #121821;
   }
 
   .mat-toolbar {
-    background-color: #121821 !important;
-  }
-
-  .admin-content {
-    background-color: #0e1218 !important;
+    background-color: var(--card-bg-color);
   }
 
   .nav-bar {
-    background-color: #0e1218 !important;
+    background-color: var(--content-bg-color);
   }
 
   .nav-link {
@@ -65,7 +67,6 @@ html.dark-mode {
 
   .dashboard-card {
     @apply border-gray-500;
-    background-color: var(--card-bg-color) !important;
   }
 }
 

@@ -29,7 +29,6 @@ export type ChartOptions = {
   styleUrl: './dashboard-monthly-columns.component.scss'
 })
 export class DashboardMonthlyColumnsComponent {
-  @ViewChild("chart") chart!: ChartComponent;
   public chartOptions: Partial<ChartOptions>;
 
   constructor() {
@@ -54,10 +53,11 @@ export class DashboardMonthlyColumnsComponent {
       ],
       chart: {
         type: "bar",
-        height: '500px',
+        height: "100%",
+        width: "100%",
         stacked: true,
         toolbar: {
-          show: true,
+          show: false,
         },
         zoom: {
           enabled: true

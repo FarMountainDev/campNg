@@ -1,0 +1,17 @@
+:host {
+  display:block;
+  height:100%;
+  width:100%;
+}
+
+.chartDiv {
+  display: flex;
+  width:100% !important;
+  height:100% !important;
+}
+
+.chartDiv apx-chart {
+  flex: 1;
+  height:100%;
+  width:100%;
+}

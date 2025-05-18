@@ -6,7 +6,7 @@
         <h4 class="text-2xl font-bold">CampNg</h4>
       </div>
     </div>
-    <div class="pl-2 font-light">
+    <div class="font-light">
       Admin Panel
     </div>
     <div class="flex-grow"></div>
@@ -19,31 +19,49 @@
     </div>
   </mat-toolbar>
   <div class="flex flex-grow overflow-hidden">
-    <div class="nav-bar min-w-72 border-r-2 overflow-y-auto">
+    <div class="nav-bar border-r-2 overflow-y-auto">
       <ul class="py-2">
         <li class="mb-1">
           <a routerLink="./" routerLinkActive="nav-link-active" [routerLinkActiveOptions]="{exact: true}"
-             class="nav-link block px-4 py-2 rounded-md mx-2">Dashboard</a>
+             class="nav-link block px-4 py-2 rounded-md mx-2">
+            <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="dashboard"></mat-icon>
+            Dashboard
+          </a>
         </li>
         <li class="mb-1">
           <a routerLink="./orders" routerLinkActive="nav-link-active"
-             class="nav-link block px-4 py-2 rounded-md mx-2">Orders</a>
+             class="nav-link block px-4 py-2 rounded-md mx-2">
+            <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="shopping_cart"></mat-icon>
+            Orders
+          </a>
         </li>
         <li class="mb-1">
           <a routerLink="./reservations" routerLinkActive="nav-link-active"
-             class="nav-link block px-4 py-2 rounded-md mx-2">Reservations</a>
+             class="nav-link block px-4 py-2 rounded-md mx-2">
+            <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="calendar_month"></mat-icon>
+            Reservations
+          </a>
         </li>
         <li class="mb-1">
           <a routerLink="./users" routerLinkActive="nav-link-active"
-             class="nav-link block px-4 py-2 rounded-md mx-2">Users</a>
+             class="nav-link block px-4 py-2 rounded-md mx-2">
+            <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="group"></mat-icon>
+            Users
+          </a>
         </li>
         <li class="mb-1">
           <a routerLink="./campgrounds" routerLinkActive="nav-link-active"
-             class="nav-link block px-4 py-2 rounded-md mx-2">Campgrounds</a>
+             class="nav-link block px-4 py-2 rounded-md mx-2">
+            <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="park"></mat-icon>
+            Campgrounds
+          </a>
         </li>
         <li class="mb-1">
           <a routerLink="./announcements" routerLinkActive="nav-link-active"
-             class="nav-link block px-4 py-2 rounded-md mx-2">Announcements</a>
+             class="nav-link block px-4 py-2 rounded-md mx-2">
+            <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="campaign"></mat-icon>
+            Announcements
+          </a>
         </li>
       </ul>
     </div>

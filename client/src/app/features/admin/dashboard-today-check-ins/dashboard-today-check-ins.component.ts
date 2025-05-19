@@ -31,8 +31,8 @@ export class DashboardTodayCheckInsComponent implements OnInit {
     this.adminService.getTodayCheckIns(this.paginationParams).subscribe({
       next: response => {
         if (response.data) {
-          //this.dataSource.data = response.data
-          this.dataSource.data = this.adminService.generateMockReservationDtoData(5);
+          this.dataSource.data = response.data
+          //this.dataSource.data = this.adminService.generateMockReservationDtoData(5);
           this.totalItems = response.count;
         }
       }

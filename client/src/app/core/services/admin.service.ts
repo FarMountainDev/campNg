@@ -7,6 +7,7 @@ import {Order} from '../../shared/models/order';
 import {PaginationParams} from '../../shared/models/paginationParams';
 import {ReservationDto} from '../../shared/models/reservationDto';
 import {OccupancyRate} from '../../shared/models/occupancyRate';
+import {MonthlyRevenue} from '../../shared/models/monthlyRevenue';
 
 @Injectable({
   providedIn: 'root'
@@ -49,6 +50,10 @@ export class AdminService {
 
   getTodayOccupancy() {
     return this.http.get<OccupancyRate[]>(this.baseUrl + 'admin/occupancy');
+  }
+
+  getMonthlyRevenue() {
+    return this.http.get<MonthlyRevenue>(this.baseUrl + 'admin/revenue');
   }
 
   generateMockReservationDtoData(count: number) {

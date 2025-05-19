@@ -169,4 +169,82 @@ public class AdminController(CampContext context, IPaymentService paymentService
         
         return Ok(occupancyRates);
     }
+
+    [HttpGet("revenue")]
+    public async Task<ActionResult> GetMonthlyRevenue()
+    {
+        var currentMonth = DateTime.Now.Month;
+        var currentYear = DateTime.Now.Year;
+
+        // Get all orders from 5 months ago until 6 months from now
+        var firstDayOfTheMonthFiveMonthsAgo = new DateTime(currentYear, currentMonth, 1).AddMonths(-5);
+        var lastDayOfTheMonthSixMonthsFromNow = new DateTime(currentYear, currentMonth, 1).AddMonths(7).AddDays(-1);
+
+        var orders = await context.Orders
+            .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Reservation)
+                    .ThenInclude(r => r!.Campsite)
+                        .ThenInclude(c => c!.Campground)
+            .Where(o => o.OrderDate >= firstDayOfTheMonthFiveMonthsAgo && 
+                        o.OrderDate <= lastDayOfTheMonthSixMonthsFromNow && 
+                        o.Status != OrderStatus.Refunded)
+            .ToListAsync();
+
+        // Create a dictionary to store revenue by month and campground
+        var revenueData = new Dictionary<string, Dictionary<string, decimal>>();
+
+        // Create month list for the timeframe
+        var months = new List<string>();
+        for (int i = -5; i <= 6; i++)
+        {
+            var month = new DateTime(currentYear, currentMonth, 1).AddMonths(i);
+            months.Add(month.ToString("MM/yyyy"));
+        }
+        
+        // Get all campgrounds
+        var campgrounds = await context.Campgrounds
+            .ToListAsync();
+
+        // Initialize all campgrounds with zero revenue for each month
+        foreach (var campground in campgrounds)
+        {
+            foreach (var month in months)
+            {
+                if (!revenueData.ContainsKey(month))
+                    revenueData[month] = new Dictionary<string, decimal>();
+                
+                revenueData[month][campground.Name] = 0;
+            }
+        }
+
+        // Calculate revenue for each month and campground
+        foreach (var order in orders)
+        {
+            foreach (var item in order.OrderItems)
+            {
+                if (item.Reservation?.Campsite?.Campground == null) continue;
+
+                var orderMonth = order.OrderDate.ToString("MM/yyyy");
+                var campgroundName = item.Reservation.Campsite.Campground.Name;
+
+                if (revenueData.ContainsKey(orderMonth) && revenueData[orderMonth].ContainsKey(campgroundName))
+                {
+                    revenueData[orderMonth][campgroundName] += item.Price;
+                }
+            }
+        }
+
+        // Transform data to a format suitable for charts
+        var result = new
+        {
+            Months = months,
+            Datasets = campgrounds.Select(c => new
+            {
+                Campground = c.Name,
+                Revenue = months.Select(m => revenueData[m].GetValueOrDefault(c.Name, 0)).ToList()
+            }).ToList()
+        };
+
+        return Ok(result);
+    }
 }

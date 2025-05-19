@@ -119,13 +119,10 @@ export class DashboardTodayOccupancyComponent implements OnInit {
         this.chartOptions.series = occupancyRates.map(rate => rate.percentage);
         this.chartOptions.labels = occupancyRates.map(rate => rate.label);
 
-        // Calculate total occupied and total capacity
         const totalOccupied = occupancyRates.reduce((sum, rate) =>
           sum + (rate.occupied || 0), 0);
         const totalCapacity = occupancyRates.reduce((sum, rate) =>
           sum + (rate.total || 0), 0);
-
-        // Calculate the overall percentage
         const overallPercentage = totalCapacity > 0
           ? Math.round((totalOccupied / totalCapacity) * 100)
           : 0;
@@ -141,6 +138,6 @@ export class DashboardTodayOccupancyComponent implements OnInit {
 
   private getChartForeColor(theme?: string): string {
     const currentTheme = theme || this.themeService.currentTheme();
-    return currentTheme === 'dark' ? '#ccc' : '#444'; // 7D7F7C
+    return currentTheme === 'dark' ? '#DDD' : '#333';
   }
 }

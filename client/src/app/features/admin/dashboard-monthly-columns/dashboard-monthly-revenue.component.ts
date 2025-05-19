@@ -1,14 +1,15 @@
-import {Component, effect, inject, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, effect, inject, ViewChild} from '@angular/core';
 import {AdminService} from '../../../core/services/admin.service';
 import {ThemeService} from '../../../core/services/theme.service';
 
 import {
-  ApexPlotOptions,
   ApexChart,
-  ApexLegend,
-  ApexResponsive,
   ApexDataLabels,
+  ApexLegend,
+  ApexPlotOptions,
+  ApexResponsive,
   ApexTheme,
+  ApexTooltip,
   ChartComponent
 } from "ng-apexcharts";
 
@@ -18,10 +19,11 @@ export type ChartOptions = {
   dataLabels: ApexDataLabels;
   plotOptions: ApexPlotOptions;
   responsive: ApexResponsive[];
-  xaxis: ApexXAxis;
+  xAxis: ApexXAxis;
   legend: ApexLegend;
   fill: ApexFill;
   theme: ApexTheme;
+  tooltip: ApexTooltip;
   colors: string[];
 };
 
@@ -33,27 +35,29 @@ export type ChartOptions = {
   templateUrl: './dashboard-monthly-revenue.component.html',
   styleUrl: './dashboard-monthly-revenue.component.scss'
 })
-export class DashboardMonthlyRevenueComponent implements OnInit {
+export class DashboardMonthlyRevenueComponent implements AfterViewInit {
   @ViewChild("chart") chart!: ChartComponent;
   private readonly adminService = inject(AdminService);
   private readonly themeService = inject(ThemeService);
   protected chartOptions: Partial<ChartOptions>;
+  protected colors: string[] = ["#008FFB", "#4caf50", "#FF9800", "#FF4560"];
 
   constructor() {
+    const theme = this.themeService.currentTheme();
     this.chartOptions = {
       series: [],
       chart: {
         type: "bar",
         height: "100%",
         width: "100%",
-        foreColor: this.getChartForeColor(),
+        foreColor: this.getChartForeColor(theme),
         background: "none",
         stacked: true,
         toolbar: {
           show: false,
         },
         zoom: {
-          enabled: true
+          enabled: false
         }
       },
       responsive: [
@@ -71,10 +75,23 @@ export class DashboardMonthlyRevenueComponent implements OnInit {
       plotOptions: {
         bar: {
           horizontal: false,
-          distributed: false
+          distributed: false,
+          dataLabels: {
+            total: {
+              enabled: true,
+              style: {
+                fontSize: '13px',
+                fontWeight: 600,
+                color: theme === 'dark' ? '#fff' : '#000'
+              },
+              formatter: (val) => {
+                return "$" + val;
+              }
+            }
+          }
         }
       },
-      xaxis: {
+      xAxis: {
         type: "category",
         categories: []
       },
@@ -83,7 +100,7 @@ export class DashboardMonthlyRevenueComponent implements OnInit {
         offsetY: 20
       },
       theme: {
-        mode: this.themeService.currentTheme()
+        mode: theme
       },
       fill: {
         opacity: 1
@@ -92,34 +109,47 @@ export class DashboardMonthlyRevenueComponent implements OnInit {
 
     effect(() => {
       const theme = this.themeService.currentTheme();
-      this.chart.updateOptions({
-        chart: {
-          foreColor: this.getChartForeColor(theme),
-          background: "none"
-        },
-        theme: {
-          mode: theme
-        }
-      }, false, false);
+      this.setChartThemeOptions(theme);
+      if (this.chart) {
+        this.chart.updateOptions(this.chartOptions, false, true)
+          .then(() => {})
+          .catch(err => console.error('Error updating chart:', err));
+      }
     });
   }
 
-  ngOnInit() {
+  ngAfterViewInit() {
     this.getMonthlyRevenueData();
   }
 
   getMonthlyRevenueData() {
     this.adminService.getMonthlyRevenue().subscribe(revenueData =>{
-      if (revenueData.months.length > 0 && revenueData.datasets.length > 0) {
-        const colors: string[] = ["#008FFB", "#4caf50", "#FF9800", "#FF4560"];
-        this.chartOptions.series = revenueData.datasets.map((dataset, index) => ({
-          name: dataset.campground,
-          data: dataset.revenue,
-          color: colors[index % colors.length]
-        }));
-        this.chartOptions.xaxis!.categories = revenueData.months;
+      this.chartOptions.series = revenueData.datasets.map((dataset, index) => ({
+        name: dataset.campground,
+        data: dataset.revenue,
+        color: this.colors[index % this.colors.length]
+      }));
+      this.chartOptions.xAxis = {
+        type: "category",
+        categories: revenueData.months
+      };
+      if (this.chart && this.chart.updateOptions) {
+        this.chart.updateOptions(this.chartOptions, false, true)
+          .then(() => {})
+          .catch(err => console.error('Error updating chart:', err));
       }
     });
+  }
+
+  private setChartThemeOptions(theme: 'dark' | 'light') {
+    document.documentElement.style.setProperty('--tooltip-bg', theme === 'dark' ? '#424242' : '#fff');
+    document.documentElement.style.setProperty('--tooltip-color', theme === 'dark' ? '#fff' : '#333');
+    document.documentElement.style.setProperty('--tooltip-title-bg', theme === 'dark' ? '#373737' : '#f8f8f8');
+    document.documentElement.style.setProperty('--grid-line-color', theme === 'dark' ? '#424242' : '#e0e0e0');
+    this.chartOptions.plotOptions!.bar!.dataLabels!.total!.style!.color = theme === 'dark' ? '#fff' : '#000';
+    this.chartOptions.chart!.foreColor = this.getChartForeColor(theme);
+    this.chartOptions.chart!.background = "none";
+    this.chartOptions.theme!.mode = theme;
   }
 
   private getChartForeColor(theme?: string): string {

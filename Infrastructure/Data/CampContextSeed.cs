@@ -263,10 +263,9 @@ public static class CampContextSeed
 
                     foreach (var campsite in campsites)
                     {
-                        // Generate between 10-25 reservations per campsite
-                        var targetReservationCount = random.Next(10, 26);
+                        var targetReservationCount = random.Next(25, 50);
                         var attempts = 0;
-                        const int maxAttempts = 100; // Limit attempts to avoid infinite loops
+                        const int maxAttempts = 150; // Limit attempts to avoid infinite loops
 
                         while (reservations.Count(r => r.CampsiteId == campsite.Id) < targetReservationCount && attempts < maxAttempts)
                         {
@@ -298,12 +297,14 @@ public static class CampContextSeed
                                 var orderDate = reservationStart.ToDateTime(TimeOnly.MinValue)
                                     .AddDays(-random.Next(1, 31));
                                 
-                                decimal price = CalculateReservationPrice(campsite, reservation, random);
+                                var price = CalculateReservationPrice(campsite, reservation, random);
                                 
+                                // One seed order and OrderItem per reservation
                                 var order = new Order
                                 {
                                     BuyerEmail = "seedData@test.com",
                                     OrderDate = orderDate,
+                                    Subtotal = price,
                                     Status = OrderStatus.PaymentReceived,
                                     PaymentIntentId = $"pi_seed_{Guid.NewGuid():N}",
                                     PaymentSummary = new PaymentSummary
@@ -315,7 +316,7 @@ public static class CampContextSeed
                                     },
                                     OrderItems = new List<OrderItem>
                                     {
-                                        new OrderItem
+                                        new()
                                         {
                                             Price = price,
                                             Reservation = reservation,
@@ -351,7 +352,6 @@ public static class CampContextSeed
         }
     }
     
-    // Helper method to generate random date with seasonal weighting
     private static DateOnly GetWeightedRandomDate(Random random, DateTime start, DateTime end)
     {
         var totalDays = (int)(end - start).TotalDays;
@@ -373,13 +373,13 @@ public static class CampContextSeed
                 // Score based on season (higher = more preferred)
                 >= 6 and <= 8 => 1.0 // Peak summer (June-August)
                 ,
-                5 or 9 => 0.7 // Late spring, early fall (May, September)
+                5 or 9 => 0.9 // Late spring, early fall (May, September)
                 ,
-                4 or 10 => 0.4 // Mid-spring/fall (April, October)
+                4 or 10 => 0.8 // Mid-spring/fall (April, October)
                 ,
-                3 or 11 => 0.2 // Early spring, late fall (March, November)
+                3 or 11 => 0.7 // Early spring, late fall (March, November)
                 ,
-                _ => 0.1 // Winter (December-February)
+                _ => 0.3 // Winter (December-February)
             };
 
             // Add some randomness
@@ -397,7 +397,6 @@ public static class CampContextSeed
         return candidateDates[bestIndex];
     }
 
-    // Helper method for weighted duration distribution
     private static int GetWeightedDuration(Random random)
     {
         var value = random.NextDouble();
@@ -417,7 +416,6 @@ public static class CampContextSeed
         };
     }
     
-    // Helper method to calculate reservation price based on campsite type
     private static decimal CalculateReservationPrice(Campsite campsite, Reservation reservation, Random random)
     {
         if (campsite.CampsiteType == null)
@@ -428,15 +426,12 @@ public static class CampContextSeed
     
         // Calculate total price by iterating through each day
         decimal totalPrice = 0;
-        DateOnly current = reservation.StartDate;
+        var current = reservation.StartDate;
     
         while (current <= reservation.EndDate)
         {
-            // Check if it's a weekend (Friday or Saturday)
-            bool isWeekend = current.DayOfWeek == DayOfWeek.Friday || 
-                             current.DayOfWeek == DayOfWeek.Saturday;
+            var isWeekend = current.DayOfWeek is DayOfWeek.Friday or DayOfWeek.Saturday;
         
-            // Apply appropriate price
             if (isWeekend)
                 totalPrice += weekendPrice;
             else
@@ -445,7 +440,6 @@ public static class CampContextSeed
             current = current.AddDays(1);
         }
 
-        // Round to two decimal places
         return Math.Round(totalPrice, 2);
     }
     

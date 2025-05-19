@@ -22,99 +22,351 @@
   },
   {
     "Id": 4,
+    "Name": "Cedar Ridge Tent Site 4",
+    "Description": "Nestled among towering cedars, this secluded tent site offers a peaceful retreat with dappled shade.",
+    "CampgroundId": 1,
+    "CampsiteTypeId": 1
+  },
+  {
+    "Id": 5,
+    "Name": "Cedar Ridge Tent Site 5",
+    "Description": "A spacious tent site surrounded by cedar trees, providing privacy and a true wilderness experience.",
+    "CampgroundId": 1,
+    "CampsiteTypeId": 1
+  },
+  {
+    "Id": 6,
+    "Name": "Cedar Ridge Tent Site 6",
+    "Description": "This elevated tent site offers stunning views of the surrounding forest and excellent drainage.",
+    "CampgroundId": 1,
+    "CampsiteTypeId": 1
+  },
+  {
+    "Id": 7,
+    "Name": "Cedar Ridge Tent Site 7",
+    "Description": "A private tent site tucked away in a grove of cedars, perfect for those seeking solitude in nature.",
+    "CampgroundId": 1,
+    "CampsiteTypeId": 1
+  },
+  {
+    "Id": 8,
+    "Name": "Cedar Ridge Tent Site 8",
+    "Description": "This premium tent site features a natural clearing surrounded by cedar trees, offering both sun and shade.",
+    "CampgroundId": 1,
+    "CampsiteTypeId": 1
+  },
+  {
+    "Id": 9,
     "Name": "Lakeside RV Site 1",
     "Description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa.",
     "CampgroundId": 2,
     "CampsiteTypeId": 2
   },
   {
-    "Id": 5,
+    "Id": 10,
     "Name": "Lakeside RV Site 2",
     "Description": "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.",
     "CampgroundId": 2,
     "CampsiteTypeId": 2
   },
   {
-    "Id": 6,
+    "Id": 11,
     "Name": "Lakeside RV Site 3",
     "Description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa.",
     "CampgroundId": 2,
     "CampsiteTypeId": 2
   },
   {
-    "Id": 7,
+    "Id": 12,
+    "Name": "Lakeside RV Site 4",
+    "Description": "A spacious RV site with partial lake views and convenient access to water and electrical hookups.",
+    "CampgroundId": 2,
+    "CampsiteTypeId": 2
+  },
+  {
+    "Id": 13,
+    "Name": "Lakeside RV Site 5",
+    "Description": "This premium RV site offers full hookups and a direct path to the lakeshore just steps away.",
+    "CampgroundId": 2,
+    "CampsiteTypeId": 2
+  },
+  {
+    "Id": 14,
+    "Name": "Lakeside RV Site 6",
+    "Description": "A level, paved RV site with shade trees and excellent access to campground amenities.",
+    "CampgroundId": 2,
+    "CampsiteTypeId": 2
+  },
+  {
+    "Id": 15,
+    "Name": "Lakeside RV Site 7",
+    "Description": "This spacious RV site features a private picnic area and access to shower facilities.",
+    "CampgroundId": 2,
+    "CampsiteTypeId": 2
+  },
+  {
+    "Id": 16,
+    "Name": "Lakeside RV Site 8",
+    "Description": "A premium corner RV site offering extra space and privacy with partial views of the lake.",
+    "CampgroundId": 2,
+    "CampsiteTypeId": 2
+  },
+  {
+    "Id": 17,
+    "Name": "Lakeside RV Site 9",
+    "Description": "This pull-through RV site makes parking easy and offers full hookups for a comfortable stay.",
+    "CampgroundId": 2,
+    "CampsiteTypeId": 2
+  },
+  {
+    "Id": 18,
+    "Name": "Lakeside RV Site 10",
+    "Description": "Our largest RV site can accommodate big rigs and features a paved patio area with lake views.",
+    "CampgroundId": 2,
+    "CampsiteTypeId": 2
+  },
+  {
+    "Id": 19,
     "Name": "Lakeside Cabin 1",
     "Description": "Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
     "CampgroundId": 2,
     "CampsiteTypeId": 3
   },
   {
-    "Id": 8,
+    "Id": 20,
     "Name": "Lakeside Cabin 2",
     "Description": "Suspendisse dui purus, scelerisque at, vulputate vitae. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
     "CampgroundId": 2,
     "CampsiteTypeId": 3
   },
   {
-    "Id": 9,
+    "Id": 21,
     "Name": "Lakeside Cabin 3",
     "Description": "Suspendisse dui purus, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
     "CampgroundId": 2,
     "CampsiteTypeId": 3
   },
   {
-    "Id": 10,
-    "Name": "Granite Tent Site 1",
-    "Description": "Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
+    "Id": 22,
+    "Name": "Lakeside Cabin 4",
+    "Description": "This cozy cabin features rustic decor, comfortable beds, and a small covered porch overlooking the lake.",
+    "CampgroundId": 2,
+    "CampsiteTypeId": 3
+  },
+  {
+    "Id": 23,
+    "Name": "Lakeside Cabin 5",
+    "Description": "Our premium cabin offers a kitchenette, private bathroom, and a deck with panoramic lake views.",
+    "CampgroundId": 2,
+    "CampsiteTypeId": 3
+  },
+  {
+    "Id": 24,
+    "Name": "Granite Tent Site 4",
+    "Description": "A secluded tent site nestled among granite boulders, offering natural windbreaks and stunning views of the surrounding landscape.",
     "CampgroundId": 3,
     "CampsiteTypeId": 1
   },
   {
-    "Id": 11,
-    "Name": "Granite Tent Site 2",
-    "Description": "Suspendisse dui purus, scelerisque at, vulputate vitae. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
+    "Id": 25,
+    "Name": "Granite Tent Site 5",
+    "Description": "This large tent site features a level clearing surrounded by granite formations, providing both privacy and scenic beauty.",
     "CampgroundId": 3,
     "CampsiteTypeId": 1
   },
   {
-    "Id": 12,
-    "Name": "Granite Tent Site 3",
-    "Description": "Suspendisse dui purus, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
+    "Id": 26,
+    "Name": "Granite Tent Site 6",
+    "Description": "Perched on a slight rise, this tent site offers excellent drainage and panoramic views of the surrounding hills.",
     "CampgroundId": 3,
     "CampsiteTypeId": 1
   },
   {
-    "Id": 13,
-    "Name": "Granite RV Site 1",
-    "Description": "Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
+    "Id": 27,
+    "Name": "Granite Tent Site 7",
+    "Description": "A cozy tent site tucked between large granite boulders, creating a natural enclosure for added privacy.",
+    "CampgroundId": 3,
+    "CampsiteTypeId": 1
+  },
+  {
+    "Id": 28,
+    "Name": "Granite Tent Site 8",
+    "Description": "This premium tent site sits atop a granite shelf, offering spectacular sunset views and cooling breezes.",
+    "CampgroundId": 3,
+    "CampsiteTypeId": 1
+  },
+  {
+    "Id": 29,
+    "Name": "Granite Tent Site 9",
+    "Description": "A spacious tent site with a natural stone fire ring and convenient access to hiking trails.",
+    "CampgroundId": 3,
+    "CampsiteTypeId": 1
+  },
+  {
+    "Id": 30,
+    "Name": "Granite Tent Site 10",
+    "Description": "Surrounded by wildflowers in spring, this tent site combines the beauty of granite outcroppings with meadow views.",
+    "CampgroundId": 3,
+    "CampsiteTypeId": 1
+  },
+  {
+    "Id": 31,
+    "Name": "Granite Tent Site 11",
+    "Description": "This tent site features a natural granite shelf perfect for cooking equipment, with morning shade and afternoon sun.",
+    "CampgroundId": 3,
+    "CampsiteTypeId": 1
+  },
+  {
+    "Id": 32,
+    "Name": "Granite Tent Site 12",
+    "Description": "A secluded corner tent site offering maximum privacy and a short walk to the nearby stream.",
+    "CampgroundId": 3,
+    "CampsiteTypeId": 1
+  },
+  {
+    "Id": 33,
+    "Name": "Granite Tent Site 13",
+    "Description": "This tent site sits in a small clearing surrounded by granite boulders that sparkle in the morning light.",
+    "CampgroundId": 3,
+    "CampsiteTypeId": 1
+  },
+  {
+    "Id": 34,
+    "Name": "Granite Tent Site 14",
+    "Description": "A tent site with a remarkable granite backdrop that offers excellent protection from prevailing winds.",
+    "CampgroundId": 3,
+    "CampsiteTypeId": 1
+  },
+  {
+    "Id": 35,
+    "Name": "Granite Tent Site 15",
+    "Description": "This tent site features an open view to the stars with smooth granite surfaces surrounding the tent area.",
+    "CampgroundId": 3,
+    "CampsiteTypeId": 1
+  },
+  {
+    "Id": 36,
+    "Name": "Granite Tent Site 16",
+    "Description": "A premium tent site with easy access and nearby granite outcroppings perfect for watching wildlife.",
+    "CampgroundId": 3,
+    "CampsiteTypeId": 1
+  },
+  {
+    "Id": 37,
+    "Name": "Granite Tent Site 17",
+    "Description": "Nestled between two large granite boulders, this site offers natural shade throughout much of the day.",
+    "CampgroundId": 3,
+    "CampsiteTypeId": 1
+  },
+  {
+    "Id": 38,
+    "Name": "Granite Tent Site 18",
+    "Description": "This tent site features a level area for tents and a granite slab perfect for enjoying morning coffee.",
+    "CampgroundId": 3,
+    "CampsiteTypeId": 1
+  },
+  {
+    "Id": 39,
+    "Name": "Granite Tent Site 19",
+    "Description": "A secluded tent site with a unique granite formation that creates a natural sitting area.",
+    "CampgroundId": 3,
+    "CampsiteTypeId": 1
+  },
+  {
+    "Id": 40,
+    "Name": "Granite Tent Site 20",
+    "Description": "Our most remote tent site offers unparalleled privacy and stunning views of granite landscapes.",
+    "CampgroundId": 3,
+    "CampsiteTypeId": 1
+  },
+  {
+    "Id": 41,
+    "Name": "Granite RV Site 3",
+    "Description": "A spacious RV site with a level parking pad and striking views of surrounding granite formations.",
     "CampgroundId": 3,
     "CampsiteTypeId": 2
   },
   {
-    "Id": 14,
-    "Name": "Granite RV Site 2",
-    "Description": "Suspendisse dui purus, scelerisque at, vulputate vitae. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
+    "Id": 42,
+    "Name": "Granite RV Site 4",
+    "Description": "This pull-through RV site offers easy access and a private picnic area surrounded by granite boulders.",
     "CampgroundId": 3,
     "CampsiteTypeId": 2
   },
   {
-    "Id": 15,
-    "Name": "Silver Pine Tent Site 1",
-    "Description": "Suspendisse dui purus, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
+    "Id": 43,
+    "Name": "Granite RV Site 5",
+    "Description": "A premium RV site featuring full hookups and a large patio area with views of granite landscapes.",
+    "CampgroundId": 3,
+    "CampsiteTypeId": 2
+  },
+  {
+    "Id": 44,
+    "Name": "Granite RV Site 6",
+    "Description": "Our largest RV site with a private granite-slab patio and excellent access to campground amenities.",
+    "CampgroundId": 3,
+    "CampsiteTypeId": 2
+  },
+  {
+    "Id": 45,
+    "Name": "Silver Pine Tent Site 4",
+    "Description": "A peaceful tent site nestled among towering silver pines, offering dappled shade and natural beauty.",
     "CampgroundId": 4,
     "CampsiteTypeId": 1
   },
   {
-    "Id": 16,
-    "Name": "Silver Pine Tent Site 2",
-    "Description": "Suspendisse dui purus, scelerisque at, vulputate vitae. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
+    "Id": 46,
+    "Name": "Silver Pine Tent Site 5",
+    "Description": "This tent site features a soft pine needle floor and the soothing sounds of wind through the silver pines.",
     "CampgroundId": 4,
     "CampsiteTypeId": 1
   },
   {
-    "Id": 17,
-    "Name": "Silver Pine Tent Site 3",
-    "Description": "Suspendisse dui purus, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
+    "Id": 47,
+    "Name": "Silver Pine Tent Site 6",
+    "Description": "A spacious tent site surrounded by silver pines with afternoon shade and morning sunlight.",
+    "CampgroundId": 4,
+    "CampsiteTypeId": 1
+  },
+  {
+    "Id": 48,
+    "Name": "Silver Pine Tent Site 7",
+    "Description": "This tent site sits in a small clearing with silver pines providing a natural privacy screen.",
+    "CampgroundId": 4,
+    "CampsiteTypeId": 1
+  },
+  {
+    "Id": 49,
+    "Name": "Silver Pine Tent Site 8",
+    "Description": "A premium tent site with level ground and the calming scent of silver pine surrounding you.",
+    "CampgroundId": 4,
+    "CampsiteTypeId": 1
+  },
+  {
+    "Id": 50,
+    "Name": "Silver Pine Tent Site 9",
+    "Description": "This tent site offers easy access and the gentle rustling of silver pine boughs overhead.",
+    "CampgroundId": 4,
+    "CampsiteTypeId": 1
+  },
+  {
+    "Id": 51,
+    "Name": "Silver Pine Tent Site 10",
+    "Description": "A secluded tent site beneath mature silver pines, offering cool shade during summer days.",
+    "CampgroundId": 4,
+    "CampsiteTypeId": 1
+  },
+  {
+    "Id": 52,
+    "Name": "Silver Pine Tent Site 11",
+    "Description": "This tent site features a natural grove of silver pines creating an intimate camping experience.",
+    "CampgroundId": 4,
+    "CampsiteTypeId": 1
+  },
+  {
+    "Id": 53,
+    "Name": "Silver Pine Tent Site 12",
+    "Description": "Our most private silver pine site, located at the edge of the meadow with stunning sunrise views.",
     "CampgroundId": 4,
     "CampsiteTypeId": 1
   }

@@ -54,7 +54,7 @@ export class OrderDetailsComponent implements OnInit{
 
   onReturnClick() {
     this.accountService.isAdmin()
-      ? this.router.navigateByUrl('/admin')
+      ? this.router.navigateByUrl('/admin/orders')
       : this.router.navigateByUrl('/orders');
   }
 

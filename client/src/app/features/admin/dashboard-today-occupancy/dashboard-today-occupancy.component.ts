@@ -97,15 +97,14 @@ export class DashboardTodayOccupancyComponent implements OnInit {
 
     effect(() => {
       const theme = this.themeService.currentTheme();
-      this.chart.updateOptions({
-        chart: {
-          foreColor: this.getChartForeColor(theme),
-          background: "none"
-        },
-        theme: {
-          mode: theme
-        }
-      }, false, false);
+      this.chartOptions.chart!.foreColor = this.getChartForeColor(theme);
+      this.chartOptions.chart!.background = "none";
+      this.chartOptions.theme!.mode = theme;
+      if (this.chart) {
+        this.chart.updateOptions(this.chartOptions, false, true)
+          .then(() => {})
+          .catch(err => console.error('Error updating chart:', err));
+      }
     });
   }
 

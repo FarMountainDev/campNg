@@ -4,6 +4,23 @@
   width:100%;
 }
 
+:host ::ng-deep {
+  .apexcharts-tooltip {
+    background-color: var(--tooltip-bg, #424242) !important;
+    color: var(--tooltip-color, #fff) !important;
+    border: none !important;
+  }
+
+  .apexcharts-tooltip-title {
+    background-color: var(--tooltip-title-bg, #373737) !important;
+    border-bottom: 1px solid #525252 !important;
+  }
+
+  .apexcharts-gridline {
+    stroke: var(--grid-line-color) !important;
+  }
+}
+
 .chartDiv {
   display: flex;
   width:100% !important;

@@ -13,6 +13,7 @@ public class BaseParams
     }
 
     public string? Sort { get; set; }
+    public string? SortDirection { get; set; }
     
     private string? search;
     public string Search

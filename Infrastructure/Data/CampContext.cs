@@ -93,7 +93,11 @@ public class CampContext(DbContextOptions options) : IdentityDbContext<AppUser>(
         // Order
         modelBuilder.Entity<Order>(entity =>
         {
-            entity.OwnsOne(e => e.PaymentSummary, o => o.WithOwner());
+            entity.OwnsOne(e => e.PaymentSummary, o =>
+            {
+                o.Property(p => p.Brand).HasMaxLength(50);
+                o.WithOwner();
+            });
             entity.Property(e => e.Status).HasConversion(
                 o => o.ToString(),
                 o => Enum.Parse<OrderStatus>(o));
@@ -102,12 +106,20 @@ public class CampContext(DbContextOptions options) : IdentityDbContext<AppUser>(
             entity.Property(e => e.OrderDate).HasConversion(
                 d => d.ToUniversalTime(),
                 d => DateTime.SpecifyKind(d, DateTimeKind.Utc));
+            entity.Property(e => e.BuyerEmail).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.PaymentIntentId).IsRequired().HasMaxLength(512);
         });
         
         // OrderItem
         modelBuilder.Entity<OrderItem>(entity =>
         {
-            entity.OwnsOne(e => e.ReservationOrdered, o => o.WithOwner());
+            entity.OwnsOne(e => e.ReservationOrdered, o =>
+            {
+                o.Property(p => p.CampsiteName).HasMaxLength(50);
+                o.Property(p => p.CampgroundName).HasMaxLength(50);
+                o.Property(p => p.CampsiteType).HasMaxLength(50);
+                o.WithOwner();
+            });
             entity.Property(e => e.Price).HasColumnType("decimal(18,2)");
         });
         

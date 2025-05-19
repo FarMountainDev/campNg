@@ -1,5 +1,5 @@
 <div class="chartDiv flex-col p-4">
-  <div class="w-full text-xl text-center">Monthly Revenue</div>
+  <div class="w-full text-xl text-center">Revenue by Month and Campground</div>
   <apx-chart
     #chart
     [series]="chartOptions.series!"
@@ -7,7 +7,7 @@
     [dataLabels]="chartOptions.dataLabels!"
     [plotOptions]="chartOptions.plotOptions!"
     [responsive]="chartOptions.responsive!"
-    [xaxis]="chartOptions.xaxis!"
+    [xaxis]="chartOptions.xAxis!"
     [legend]="chartOptions.legend!"
     [fill]="chartOptions.fill!"
   ></apx-chart>

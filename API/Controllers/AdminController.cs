@@ -1,7 +1,6 @@
 ﻿using API.Attributes;
 using API.DTOs;
 using API.Extensions;
-using Core.Entities.OrderAggregate;
 using Core.Enums;
 using Core.Interfaces;
 using Core.Models;
@@ -175,6 +174,7 @@ public class AdminController(CampContext context, IPaymentService paymentService
     {
         var currentMonth = DateTime.Now.Month;
         var currentYear = DateTime.Now.Year;
+        var monthFormat = "MM/yyyy";
 
         // Get all orders from 5 months ago until 6 months from now
         var firstDayOfTheMonthFiveMonthsAgo = new DateTime(currentYear, currentMonth, 1).AddMonths(-5);
@@ -190,20 +190,19 @@ public class AdminController(CampContext context, IPaymentService paymentService
                         o.Status != OrderStatus.Refunded)
             .ToListAsync();
 
-        // Create a dictionary to store revenue by month and campground
+        // Get list of campgrounds and initialize revenue data
+        var campgrounds = await context.Campgrounds
+            .ToListAsync();
         var revenueData = new Dictionary<string, Dictionary<string, decimal>>();
 
-        // Create month list for the timeframe
+        // Create a month list for the timeframe
         var months = new List<string>();
         for (int i = -5; i <= 6; i++)
         {
             var month = new DateTime(currentYear, currentMonth, 1).AddMonths(i);
-            months.Add(month.ToString("MM/yyyy"));
+            months.Add(month.ToString(monthFormat));
         }
         
-        // Get all campgrounds
-        var campgrounds = await context.Campgrounds
-            .ToListAsync();
 
         // Initialize all campgrounds with zero revenue for each month
         foreach (var campground in campgrounds)
@@ -224,7 +223,7 @@ public class AdminController(CampContext context, IPaymentService paymentService
             {
                 if (item.Reservation?.Campsite?.Campground == null) continue;
 
-                var orderMonth = order.OrderDate.ToString("MM/yyyy");
+                var orderMonth = order.OrderDate.ToString(monthFormat);
                 var campgroundName = item.Reservation.Campsite.Campground.Name;
 
                 if (revenueData.ContainsKey(orderMonth) && revenueData[orderMonth].ContainsKey(campgroundName))

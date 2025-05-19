@@ -1,6 +1,8 @@
 ﻿using System.Reflection;
 using System.Text.Json;
 using Core.Entities;
+using Core.Entities.OrderAggregate;
+using Core.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,7 +29,7 @@ public static class CampContextSeed
         await SeedCampgroundsAsync(context, path);
         await SeedCampsiteTypesAsync(context, path);
         await SeedCampsitesAsync(context, path);
-        await SeedReservationsAsync(context);
+        await SeedReservationsWithOrdersAsync(context);
     }
     
     private static async Task SeedRolesAsync(RoleManager<IdentityRole> roleManager)
@@ -239,9 +241,7 @@ public static class CampContextSeed
         }
     }
     
-    
-
-    private static async Task SeedReservationsAsync(CampContext context)
+    private static async Task SeedReservationsWithOrdersAsync(CampContext context)
     {
         if (!context.Reservations.Any())
         {
@@ -251,11 +251,15 @@ public static class CampContextSeed
 
                 try
                 {
-                    var campsites = await context.Campsites.ToListAsync();
+                    var campsites = await context.Campsites
+                        .Include(c => c.CampsiteType)
+                        .Include(c => c.Campground)
+                        .ToListAsync();
                     var startDate = DateTime.UtcNow.Date.AddYears(-1);
                     var endDate = DateTime.UtcNow.Date.AddYears(1);
                     var random = new Random(42); // Fixed seed for reproducibility
                     var reservations = new List<Reservation>();
+                    var orders = new List<Order>();
 
                     foreach (var campsite in campsites)
                     {
@@ -263,16 +267,16 @@ public static class CampContextSeed
                         var targetReservationCount = random.Next(10, 26);
                         var attempts = 0;
                         const int maxAttempts = 100; // Limit attempts to avoid infinite loops
-                        
+
                         while (reservations.Count(r => r.CampsiteId == campsite.Id) < targetReservationCount && attempts < maxAttempts)
                         {
                             attempts++;
-                            
+
                             // Generate start date and duration
                             var reservationStart = GetWeightedRandomDate(random, startDate, endDate);
                             var duration = GetWeightedDuration(random);
                             var reservationEnd = reservationStart.AddDays(duration);
-                            
+
                             var reservation = new Reservation
                             {
                                 Email = "seedData@test.com",
@@ -280,20 +284,61 @@ public static class CampContextSeed
                                 EndDate = reservationEnd,
                                 CampsiteId = campsite.Id
                             };
-                            
+
                             // Check for overlapping reservations
                             var overlaps = reservations
                                 .Where(r => r.CampsiteId == campsite.Id)
                                 .Any(r => r.StartDate < reservation.EndDate && r.EndDate > reservation.StartDate);
-                            
+
                             if (!overlaps)
                             {
                                 reservations.Add(reservation);
+                                
+                                // Create order 1-30 days before the reservation start date
+                                var orderDate = reservationStart.ToDateTime(TimeOnly.MinValue)
+                                    .AddDays(-random.Next(1, 31));
+                                
+                                decimal price = CalculateReservationPrice(campsite, reservation, random);
+                                
+                                var order = new Order
+                                {
+                                    BuyerEmail = "seedData@test.com",
+                                    OrderDate = orderDate,
+                                    Status = OrderStatus.PaymentReceived,
+                                    PaymentIntentId = $"pi_seed_{Guid.NewGuid():N}",
+                                    PaymentSummary = new PaymentSummary
+                                    {
+                                        Last4 = 4242,
+                                        Brand = "Visa",
+                                        ExpMonth = 12,
+                                        ExpYear = 2025
+                                    },
+                                    OrderItems = new List<OrderItem>
+                                    {
+                                        new OrderItem
+                                        {
+                                            Price = price,
+                                            Reservation = reservation,
+                                            ReservationOrdered = new ReservationOrdered
+                                            {
+                                                CampgroundName = campsite.Campground!.Name,
+                                                CampsiteId = campsite.Id,
+                                                CampsiteName = campsite.Name,
+                                                CampsiteType = campsite.CampsiteType!.Name,
+                                                StartDate = reservation.StartDate,
+                                                EndDate = reservation.EndDate
+                                            }
+                                        }
+                                    }
+                                };
+                                
+                                orders.Add(order);
                             }
                         }
                     }
-                
+
                     context.Reservations.AddRange(reservations);
+                    context.Orders.AddRange(orders);
                     await context.SaveChangesAsync();
                     await transaction.CommitAsync();
                 }
@@ -370,6 +415,38 @@ public static class CampContextSeed
             < 0.95 => random.Next(8, 11),
             _ => random.Next(11, 15)
         };
+    }
+    
+    // Helper method to calculate reservation price based on campsite type
+    private static decimal CalculateReservationPrice(Campsite campsite, Reservation reservation, Random random)
+    {
+        if (campsite.CampsiteType == null)
+            throw new ArgumentNullException(nameof(campsite.CampsiteType), "Campsite type cannot be null.");
+
+        var weekdayPrice = campsite.CampsiteType.WeekDayPrice;
+        var weekendPrice = campsite.CampsiteType.WeekEndPrice;
+    
+        // Calculate total price by iterating through each day
+        decimal totalPrice = 0;
+        DateOnly current = reservation.StartDate;
+    
+        while (current <= reservation.EndDate)
+        {
+            // Check if it's a weekend (Friday or Saturday)
+            bool isWeekend = current.DayOfWeek == DayOfWeek.Friday || 
+                             current.DayOfWeek == DayOfWeek.Saturday;
+        
+            // Apply appropriate price
+            if (isWeekend)
+                totalPrice += weekendPrice;
+            else
+                totalPrice += weekdayPrice;
+            
+            current = current.AddDays(1);
+        }
+
+        // Round to two decimal places
+        return Math.Round(totalPrice, 2);
     }
     
     // Helper class for deserialization

@@ -1,5 +1,5 @@
-﻿export class OrderParams {
-  pageNumber = 1;
-  pageSize = 10;
+﻿import { PaginationParams } from './paginationParams';
+
+export class OrderParams extends PaginationParams {
   status = '';
 }

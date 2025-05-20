@@ -22,14 +22,31 @@ public class AdminController(CampContext context, IPaymentService paymentService
         var query = context.Orders.AsQueryable();
         
         if (orderParams.Status != null && Enum.TryParse<OrderStatus>(orderParams.Status, true, out var orderStatus))
-        {
             query = query.Where(o => o.Status == orderStatus);
-        }
+        
+        if (!string.IsNullOrWhiteSpace(orderParams.Search))
+            query = query.Where(x => x.BuyerEmail.Contains(orderParams.Search) 
+                                     || x.Id.ToString().Contains(orderParams.Search));
 
         query = query.Include(x => x.OrderItems)
             .ThenInclude(x => x.ReservationOrdered);
         
-        query = query.OrderByDescending(o => o.OrderDate);
+        if (!string.IsNullOrEmpty(orderParams.Sort))
+        {
+            var sortField = orderParams.Sort.ToLower();
+            var isDescending = orderParams.SortDirection?.ToLower() == "desc";
+    
+            query = sortField switch
+            {
+                "id" => isDescending ? query.OrderByDescending(o => o.Id) : query.OrderBy(o => o.Id),
+                "buyeremail" => isDescending ? query.OrderByDescending(o => o.BuyerEmail) : query.OrderBy(o => o.BuyerEmail),
+                "orderdate" => isDescending ? query.OrderByDescending(o => o.OrderDate) : query.OrderBy(o => o.OrderDate),
+                "status" => isDescending ? query.OrderByDescending(o => o.Status) : query.OrderBy(o => o.Status),
+                "total" => isDescending ? query.OrderByDescending(o => o.Subtotal) : query.OrderBy(o => o.Subtotal),
+                _ => isDescending ? query.OrderByDescending(o => o.OrderDate) : query.OrderBy(o => o.OrderDate)
+            };
+        }
+        else query = query.OrderByDescending(o => o.OrderDate);
         
         return await CreatePagedResult(query, orderParams.PageNumber, orderParams.PageSize, o => o.ToDto());
     }

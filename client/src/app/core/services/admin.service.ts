@@ -21,6 +21,13 @@ export class AdminService {
     if (orderParams.status && orderParams.status !== 'All') {
         params = params.append('status', orderParams.status);
     }
+    if (orderParams.search) {
+        params = params.append('search', orderParams.search);
+    }
+    if (orderParams.sort && orderParams.sortDirection) {
+        params = params.append('sort', orderParams.sort);
+        params = params.append('sortDirection', orderParams.sortDirection);
+    }
     params = params.append('pageNumber', orderParams.pageNumber);
     params = params.append('pageSize', orderParams.pageSize);
     return this.http.get<Pagination<Order>>(this.baseUrl + 'admin/orders', {params});

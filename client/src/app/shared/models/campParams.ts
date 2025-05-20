@@ -1,10 +1,6 @@
 ﻿import {PaginationParams} from './paginationParams';
 
-export class CampParams implements PaginationParams {
-  pageNumber = 1;
-  pageSize = 10;
-  sort = 'name';
-  search = '';
+export class CampParams extends PaginationParams {
   campgroundAmenities: number[] = [];
   campsiteTypes: number[] = [];
 }

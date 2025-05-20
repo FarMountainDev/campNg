@@ -13,7 +13,7 @@ import {MatOption, provideNativeDateAdapter} from '@angular/material/core';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {Pagination} from '../../shared/models/pagination';
 import {CampParams} from '../../shared/models/campParams';
-import {FormControl, FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {FormControl, FormsModule, NgForm, ReactiveFormsModule} from '@angular/forms';
 import {MatSelect, MatSelectTrigger} from '@angular/material/select';
 import {MatDivider} from '@angular/material/divider';
 import {CampsiteTypeService} from '../../core/services/campsite-type.service';
@@ -92,7 +92,7 @@ export class ReservationsComponent implements OnInit, OnDestroy {
     this.campsiteSubscription?.unsubscribe();
   }
 
-  onSubmit(form: any) {
+  onSubmit(form: NgForm) {
     if (form.valid) {
       this.startNewSearch();
     } else {

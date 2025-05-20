@@ -4,14 +4,17 @@ import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {Order} from '../../../shared/models/order';
 import {AdminService} from '../../../core/services/admin.service';
 import {OrderParams} from '../../../shared/models/orderParams';
-import {MatIconButton} from '@angular/material/button';
+import {MatButton, MatIconButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
 import {MatSelectChange, MatSelectModule} from '@angular/material/select';
-import {CurrencyPipe, DatePipe} from '@angular/common';
+import {CurrencyPipe, DatePipe, NgIf} from '@angular/common';
 import {MatLabel} from '@angular/material/form-field';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {RouterLink} from '@angular/router';
 import {DialogService} from '../../../core/services/dialog.service';
+import {MatInput} from '@angular/material/input';
+import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
+import {MatSort, MatSortHeader, Sort} from '@angular/material/sort';
 
 @Component({
   selector: 'app-admin-orders',
@@ -25,7 +28,14 @@ import {DialogService} from '../../../core/services/dialog.service';
     MatTableModule,
     MatPaginatorModule,
     MatLabel,
-    RouterLink
+    RouterLink,
+    MatInput,
+    MatButton,
+    FormsModule,
+    ReactiveFormsModule,
+    NgIf,
+    MatSortHeader,
+    MatSort
   ],
   templateUrl: './admin-orders.component.html',
   styleUrl: './admin-orders.component.scss'
@@ -38,6 +48,12 @@ export class AdminOrdersComponent implements OnInit {
   orderParams = new OrderParams();
   totalItems = 0;
   statusOptions = ['All', 'PaymentReceived', 'PaymentMismatch', 'Refunded', 'Pending'];
+  searchForm = new FormGroup({
+    searchInput: new FormControl<string>('', [
+      Validators.pattern(/^[a-zA-Z0-9._%+-@]*$/)
+    ]),
+    orderStatusSelect: new FormControl()
+  });
 
   ngOnInit() {
     this.loadOrders();
@@ -63,6 +79,36 @@ export class AdminOrdersComponent implements OnInit {
   onFilterSelect(event: MatSelectChange) {
     this.orderParams.status = event.value;
     this.orderParams.pageNumber = 1;
+    this.loadOrders();
+  }
+
+  onSearch(searchTerm: string) {
+    this.orderParams.search = searchTerm;
+    this.orderParams.pageNumber = 1;
+    this.loadOrders();
+  }
+
+  onSort(event: Sort) {
+    this.orderParams.sort = event.active;
+    this.orderParams.sortDirection = event.direction;
+    this.loadOrders();
+  }
+
+  onSubmit() {
+    if (this.searchForm.valid) {
+      this.orderParams.search = this.searchForm.controls.searchInput.value!;
+      this.orderParams.status = this.searchForm.controls.orderStatusSelect.value;
+      this.orderParams.pageNumber = 1;
+      this.loadOrders();
+    }
+  }
+
+  onResetFilters() {
+    this.orderParams.pageNumber = 1;
+    this.orderParams.search = '';
+    this.orderParams.status = '';
+    this.searchForm.controls.searchInput.setValue('');
+    this.searchForm.controls.orderStatusSelect.setValue('');
     this.loadOrders();
   }
 

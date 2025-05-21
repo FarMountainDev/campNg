@@ -18,7 +18,8 @@ public class AccountController(SignInManager<AppUser> signInManager) : BaseApiCo
             FirstName = registerDto.FirstName,
             LastName = registerDto.LastName,
             UserName = registerDto.Email,
-            Email = registerDto.Email
+            Email = registerDto.Email,
+            CreatedAt = DateTime.UtcNow
         };
         
         var result = await signInManager.UserManager.CreateAsync(user, registerDto.Password);

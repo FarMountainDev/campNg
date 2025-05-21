@@ -63,14 +63,12 @@ export class CampsiteAvailabilityItemComponent implements OnChanges{
   }
 
   isDateInSelectedRange(date: Date): boolean {
-    // If startDate or endDate are not set, date can't be in range
     if (!this.startDate || !this.endDate) return false;
 
     const checkDate = normalizeDate(date);
     const startDate = normalizeDate(this.startDate);
     const endDate = normalizeDate(this.endDate)
 
-    // Check if date is between start and end dates (inclusive)
     return checkDate >= startDate && checkDate <= endDate;
   }
 

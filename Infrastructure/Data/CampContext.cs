@@ -23,6 +23,9 @@ public class CampContext(DbContextOptions options) : IdentityDbContext<AppUser>(
         {
             entity.Property(e => e.FirstName).HasMaxLength(50);
             entity.Property(e => e.LastName).HasMaxLength(50);
+            entity.Property(e => e.CreatedAt).IsRequired().HasConversion(
+                d => d.ToUniversalTime(),
+                d => DateTime.SpecifyKind(d, DateTimeKind.Utc));;
         });
         
         // Campground

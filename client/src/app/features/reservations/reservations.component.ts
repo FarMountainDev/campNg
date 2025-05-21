@@ -105,6 +105,7 @@ export class ReservationsComponent implements OnInit, OnDestroy {
       this.snackbar.error('Invalid selected dates');
       return;
     }
+    this.campParams.pageNumber = 1;
     this.campParams.campsiteTypes = this.campsiteTypes.value || [];
     this.campParams.campgroundAmenities = this.campgroundAmenities.value || [];
     this.searchStartDate = this.reservationService.selectedStartDate();

@@ -8,6 +8,7 @@ import {PaginationParams} from '../../shared/models/paginationParams';
 import {ReservationDto} from '../../shared/models/reservationDto';
 import {OccupancyRate} from '../../shared/models/occupancyRate';
 import {MonthlyRevenue} from '../../shared/models/monthlyRevenue';
+import {User} from '../../shared/models/user';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +16,20 @@ import {MonthlyRevenue} from '../../shared/models/monthlyRevenue';
 export class AdminService {
   private readonly baseUrl = environment.apiUrl;
   private readonly http = inject(HttpClient);
+
+  getUsers(paginationParams: PaginationParams) {
+    let params = new HttpParams();
+    if (paginationParams.search) {
+        params = params.append('search', paginationParams.search);
+    }
+    if (paginationParams.sort && paginationParams.sortDirection) {
+        params = params.append('sort', paginationParams.sort);
+        params = params.append('sortDirection', paginationParams.sortDirection);
+    }
+    params = params.append('pageNumber', paginationParams.pageNumber);
+    params = params.append('pageSize', paginationParams.pageSize);
+    return this.http.get<Pagination<User>>(this.baseUrl + 'admin/users', {params});
+  }
 
   getOrders(orderParams: OrderParams) {
     let params = new HttpParams();
@@ -45,22 +60,22 @@ export class AdminService {
     let params = new HttpParams();
     params = params.append('pageNumber', paginationParams.pageNumber);
     params = params.append('pageSize', paginationParams.pageSize);
-    return this.http.get<Pagination<ReservationDto>>(this.baseUrl + 'admin/check-ins', {params});
+    return this.http.get<Pagination<ReservationDto>>(this.baseUrl + 'admin/dashboard/check-ins', {params});
   }
 
   getTodayCheckOuts(paginationParams: PaginationParams) {
     let params = new HttpParams();
     params = params.append('pageNumber', paginationParams.pageNumber);
     params = params.append('pageSize', paginationParams.pageSize);
-    return this.http.get<Pagination<ReservationDto>>(this.baseUrl + 'admin/check-outs', {params});
+    return this.http.get<Pagination<ReservationDto>>(this.baseUrl + 'admin/dashboard/check-outs', {params});
   }
 
   getTodayOccupancy() {
-    return this.http.get<OccupancyRate[]>(this.baseUrl + 'admin/occupancy');
+    return this.http.get<OccupancyRate[]>(this.baseUrl + 'admin/dashboard/occupancy');
   }
 
   getMonthlyRevenue() {
-    return this.http.get<MonthlyRevenue>(this.baseUrl + 'admin/revenue');
+    return this.http.get<MonthlyRevenue>(this.baseUrl + 'admin/dashboard/revenue');
   }
 
   generateMockReservationDtoData(count: number) {

@@ -19,7 +19,7 @@
     </div>
   </mat-toolbar>
   <div class="flex flex-grow overflow-hidden">
-    <div class="nav-bar border-r-2 overflow-y-auto">
+    <nav class="nav-bar border-r-2 overflow-y-auto">
       <ul class="py-2">
         <li class="mb-1">
           <a routerLink="./" routerLinkActive="nav-link-active" [routerLinkActiveOptions]="{exact: true}"
@@ -64,9 +64,9 @@
           </a>
         </li>
       </ul>
-    </div>
-    <div class="admin-content flex-grow overflow-y-auto">
+    </nav>
+    <main class="admin-content flex-grow overflow-y-auto">
       <router-outlet />
-    </div>
+    </main>
   </div>
 </div>

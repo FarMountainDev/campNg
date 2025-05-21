@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {DashboardMonthlyRevenueComponent} from './dashboard-monthly-columns/dashboard-monthly-revenue.component';
+import {DashboardMonthlyRevenueComponent} from './dashboard-monthly-revenue/dashboard-monthly-revenue.component';
 import {DashboardTodayOccupancyComponent} from './dashboard-today-occupancy/dashboard-today-occupancy.component';
 import {DashboardTodayCheckInsComponent} from './dashboard-today-check-ins/dashboard-today-check-ins.component';
 import {DashboardTodayCheckOutsComponent} from './dashboard-today-check-outs/dashboard-today-check-outs.component';

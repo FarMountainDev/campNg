@@ -64,6 +64,7 @@ public class AdminController(CampContext context, IPaymentService paymentService
         return order.ToDto();
     }
 
+    [InvalidateCache("api/admin/orders", "api/admin/revenue")]
     [HttpPost("orders/refund/{id:int}")]
     public async Task<ActionResult<OrderDto>> RefundOrder(int id)
     {
@@ -186,12 +187,13 @@ public class AdminController(CampContext context, IPaymentService paymentService
         return Ok(occupancyRates);
     }
 
+    [Cache((int)TimeSpan.SecondsPerDay)]
     [HttpGet("revenue")]
     public async Task<ActionResult> GetMonthlyRevenue()
     {
+        const string monthFormat = "MM/yyyy";
         var currentMonth = DateTime.Now.Month;
         var currentYear = DateTime.Now.Year;
-        var monthFormat = "MM/yyyy";
 
         // Get all orders from 5 months ago until 6 months from now
         var firstDayOfTheMonthFiveMonthsAgo = new DateTime(currentYear, currentMonth, 1).AddMonths(-5);
@@ -220,7 +222,6 @@ public class AdminController(CampContext context, IPaymentService paymentService
             months.Add(month.ToString(monthFormat));
         }
         
-
         // Initialize all campgrounds with zero revenue for each month
         foreach (var campground in campgrounds)
         {

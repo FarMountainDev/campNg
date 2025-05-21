@@ -4,8 +4,20 @@ using Microsoft.AspNetCore.Mvc.Filters;
 namespace API.Attributes;
 
 [AttributeUsage(AttributeTargets.Method)]
-public class InvalidateCacheAttribute(string pattern) : Attribute, IAsyncActionFilter
+public class InvalidateCacheAttribute : Attribute, IAsyncActionFilter
 {
+    private readonly IEnumerable<string> patterns;
+
+    public InvalidateCacheAttribute(string pattern)
+    {
+        patterns = [pattern];
+    }
+
+    public InvalidateCacheAttribute(params string[] patterns)
+    {
+        this.patterns = patterns;
+    }
+
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
         var resultContext = await next();
@@ -14,7 +26,10 @@ public class InvalidateCacheAttribute(string pattern) : Attribute, IAsyncActionF
         {
             var cacheService = context.HttpContext.RequestServices.GetRequiredService<IResponseCacheService>();
 
-            await cacheService.RemoveCacheByPatternAsync(pattern);
+            foreach (var pattern in patterns)
+            {
+                await cacheService.RemoveCacheByPatternAsync(pattern);
+            }
         }
     }
 }

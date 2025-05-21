@@ -28,7 +28,7 @@ export type ChartOptions = {
 };
 
 @Component({
-  selector: 'app-dashboard-monthly-columns',
+  selector: 'app-dashboard-monthly-revenue',
   imports: [
     ChartComponent
   ],
@@ -85,7 +85,7 @@ export class DashboardMonthlyRevenueComponent implements AfterViewInit {
                 color: theme === 'dark' ? '#fff' : '#000'
               },
               formatter: (val) => {
-                return "$" + val;
+                return "$" + val!.toLocaleString();
               }
             }
           }

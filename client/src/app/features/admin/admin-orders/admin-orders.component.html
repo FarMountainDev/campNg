@@ -1,5 +1,5 @@
-<div class="dashboard-card m-4">
-  <div class="flex justify-between items-start">
+<div class="dashboard-card table-container m-4 ">
+  <div class="table-header flex justify-between items-start">
     <h2 class="text-2xl font-semibold p-2">Customer Orders</h2>
     <form [formGroup]="searchForm" (ngSubmit)="onSubmit()" class="flex gap-4">
       <mat-form-field appearance="outline">
@@ -37,7 +37,7 @@
 
     </form>
   </div>
-  <div>
+  <div class="table-scroll-container">
     <table mat-table [dataSource]="dataSource" matSort matSortActive="orderDate" matSortDirection="desc"
            matSortDisableClear="true" (matSortChange)="onSort($event)">
 
@@ -80,7 +80,7 @@
         </td>
       </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
       <tr class="mat-row" *matNoDataRow>
         <td class="mat-cell text-center text-xl py-4" [attr.colspan]="displayedColumns.length">
@@ -88,13 +88,13 @@
         </td>
       </tr>
     </table>
-
-    <mat-paginator [pageSizeOptions]="[5, 10, 20]"
-                   [length]="totalItems"
-                   [pageSize]="orderParams.pageSize"
-                   (page)="onPageChange($event)"
-                   showFirstLastButtons
-                   aria-label="Select page of orders">
-    </mat-paginator>
   </div>
+
+  <mat-paginator [pageSizeOptions]="[5, 10, 15, 20, 50]"
+                 [length]="totalItems"
+                 [pageSize]="orderParams.pageSize"
+                 (page)="onPageChange($event)"
+                 showFirstLastButtons
+                 aria-label="Select page of orders">
+  </mat-paginator>
 </div>

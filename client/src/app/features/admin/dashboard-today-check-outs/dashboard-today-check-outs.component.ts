@@ -31,8 +31,8 @@ export class DashboardTodayCheckOutsComponent implements OnInit {
     this.adminService.getTodayCheckOuts(this.paginationParams).subscribe({
       next: response => {
         if (response.data) {
-          //this.dataSource.data = response.data
-          this.dataSource.data = this.adminService.generateMockReservationDtoData(10);
+          this.dataSource.data = response.data
+          //this.dataSource.data = this.adminService.generateMockReservationDtoData(10);
           this.totalItems = response.count;
         }
       }

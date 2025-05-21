@@ -412,7 +412,7 @@ public static class CampContextSeed
             < 0.85 => 6,
             < 0.90 => 7,
             < 0.95 => random.Next(8, 11),
-            _ => random.Next(11, 15)
+            _ => random.Next(11, 14)
         };
     }
     
@@ -424,7 +424,6 @@ public static class CampContextSeed
         var weekdayPrice = campsite.CampsiteType.WeekDayPrice;
         var weekendPrice = campsite.CampsiteType.WeekEndPrice;
     
-        // Calculate total price by iterating through each day
         decimal totalPrice = 0;
         var current = reservation.StartDate;
     
@@ -443,7 +442,6 @@ public static class CampContextSeed
         return Math.Round(totalPrice, 2);
     }
     
-    // Helper class for deserialization
     private class CampgroundSeedData
     {
         public int Id { get; set; }

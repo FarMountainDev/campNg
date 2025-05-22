@@ -15,6 +15,8 @@ import {User} from '../../../shared/models/user';
 import {DialogService} from '../../../core/services/dialog.service';
 import {UserParams} from '../../../shared/models/params/userParams';
 import {IsAdminDirective} from '../../../shared/directives/is-admin.directive';
+import {AccountService} from '../../../core/services/account.service';
+import {SnackbarService} from '../../../core/services/snackbar.service';
 
 @Component({
   selector: 'app-admin-users',
@@ -40,8 +42,10 @@ import {IsAdminDirective} from '../../../shared/directives/is-admin.directive';
   styleUrl: './admin-users.component.scss'
 })
 export class AdminUsersComponent implements OnInit{
+  protected readonly accountService = inject(AccountService);
   private readonly adminService = inject(AdminService);
   private readonly dialogService = inject(DialogService);
+  private readonly snackbar = inject(SnackbarService);
   displayedColumns: string[] = ['id', 'userName', 'email', 'firstName', 'lastName', 'createdAt', 'isEmailConfirmed', 'actions'];
   dataSource = new MatTableDataSource<User>([]);
   userParams = new UserParams();
@@ -120,6 +124,25 @@ export class AdminUsersComponent implements OnInit{
     this.searchForm.controls.userRoleSelect.setValue('');
     this.searchForm.controls.userStatusSelect.setValue('');
     this.loadUsers();
+  }
+
+  async openUserDetailsDialog(user: User) {
+    const userDetails = {...user};
+    const userResult: User = await this.dialogService.openAdminUserDetails(userDetails);
+    if (userResult) {
+      this.updateUser(userResult);
+    }
+  }
+
+  updateUser(user: User) {
+    this.adminService.updateUser(user).subscribe({
+      next: (updatedUser) => {
+        this.dataSource.data = this.dataSource.data.map(u =>
+          u.id === updatedUser.id ? updatedUser : u
+        );
+        this.snackbar.success('User updated successfully');
+      }
+    });
   }
 
   async openLockConfirmDialog(id: string) {

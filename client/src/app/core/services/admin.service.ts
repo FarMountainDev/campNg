@@ -1,6 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import {environment} from '../../../environments/environment';
-import {HttpClient, HttpParams} from '@angular/common/http';
+import {HttpClient, HttpParams } from '@angular/common/http';
 import {OrderParams} from '../../shared/models/params/orderParams';
 import {Pagination} from '../../shared/models/pagination';
 import {Order} from '../../shared/models/order';
@@ -10,6 +10,7 @@ import {OccupancyRate} from '../../shared/models/occupancyRate';
 import {MonthlyRevenue} from '../../shared/models/monthlyRevenue';
 import {User} from '../../shared/models/user';
 import {UserParams} from '../../shared/models/params/userParams';
+import { tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -52,6 +53,14 @@ export class AdminService {
 
   removeModerator(id: string) {
     return this.http.post<User>(this.baseUrl + 'admin/users/remove-mod/' + id, {});
+  }
+
+  updateUser(user: User) {
+    return this.http.put<User>(this.baseUrl + 'admin/users/update/', user).pipe(
+      tap((updatedItem) => {
+        console.log('Item updated successfully:', updatedItem);
+      })
+    );
   }
 
   getReservations(paginationParams: PaginationParams) {

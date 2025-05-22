@@ -92,8 +92,8 @@
         <th mat-header-cell *matHeaderCellDef> Actions </th>
         <td mat-cell *matCellDef="let user">
           <div class="flex gap-2">
-            <button matTooltip="View Details" mat-icon-button [disabled]="true">
-              <mat-icon color="accent">visibility</mat-icon>
+            <button (click)="openUserDetailsDialog(user)" matTooltip="{{this.accountService.isAdmin() ? 'Edit User' : 'View Details'}}" mat-icon-button>
+              <mat-icon color="accent">{{this.accountService.isAdmin() ? 'edit' : 'visibility'}}</mat-icon>
             </button>
             <button (click)="openUnlockConfirmDialog(user.id)" matTooltip="Activate" mat-icon-button [hidden]="!user.isLockedOut" *appIsAdmin>
               <mat-icon class="icon-success">radio_button_checked</mat-icon>

@@ -12,6 +12,7 @@ namespace Infrastructure.Data;
 public static class CampContextSeed
 {
     private const string AdminRole = "Admin";
+    private const string ModeratorRole = "Moderator";
     private const string MemberRole = "Member";
     
     public static async Task SeedAsync(IServiceProvider serviceProvider)
@@ -34,7 +35,7 @@ public static class CampContextSeed
     
     private static async Task SeedRolesAsync(RoleManager<IdentityRole> roleManager)
     {
-        var roles = new List<string> { AdminRole, MemberRole };
+        var roles = new List<string> { AdminRole, ModeratorRole, MemberRole };
         
         foreach (var role in roles)
         {
@@ -59,6 +60,20 @@ public static class CampContextSeed
             
             await userManager.CreateAsync(adminUser, "Pa$$w0rd");
             await userManager.AddToRoleAsync(adminUser, AdminRole);
+        }
+
+        if (!userManager.Users.Any(x => x.UserName == "moderator@test.com"))
+        {
+            var moderatorUser = new AppUser
+            {
+                UserName = "moderator@test.com",
+                Email = "moderator@test.com",
+                FirstName = "Moderator",
+                LastName = "User"
+            };
+            
+            await userManager.CreateAsync(moderatorUser, "Pa$$w0rd");
+            await userManager.AddToRoleAsync(moderatorUser, ModeratorRole);
         }
 
         if (!userManager.Users.Any(x => x.UserName == "HappyCamper@test.com"))

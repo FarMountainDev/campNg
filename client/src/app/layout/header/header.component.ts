@@ -10,7 +10,7 @@ import {MatDivider} from '@angular/material/divider';
 import {ThemeService} from '../../core/services/theme.service';
 import {NgIf} from '@angular/common';
 import {MatTooltip} from '@angular/material/tooltip';
-import {IsAdminDirective} from '../../shared/directives/is-admin.directive';
+import {IsModDirective} from '../../shared/directives/is-mod.directive';
 
 @Component({
   selector: 'app-header',
@@ -26,7 +26,7 @@ import {IsAdminDirective} from '../../shared/directives/is-admin.directive';
     RouterLinkActive,
     NgIf,
     MatTooltip,
-    IsAdminDirective
+    IsModDirective
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
@@ -41,7 +41,7 @@ export class HeaderComponent {
     this.accountService.logout().subscribe({
       next: () => {
         this.accountService.currentUser.set(null);
-        this.router.navigateByUrl('/');
+        void this.router.navigateByUrl('/');
       }
     });
   }

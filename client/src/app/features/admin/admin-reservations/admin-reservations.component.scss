@@ -5,3 +5,9 @@
   min-height: 0;
   overflow: hidden;
 }
+
+
+.centered ::ng-deep .mat-button-wrapper {
+  display: flex;
+  justify-content: center;
+}

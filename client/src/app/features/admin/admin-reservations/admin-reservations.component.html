@@ -1,8 +1,16 @@
 <div class="dashboard-card table-container m-4 ">
   <div class="table-header flex justify-between items-start">
-    <h2 class="flex items-center gap-2 text-2xl font-semibold p-2">
-      <mat-icon aria-hidden="true" fontIcon="group" /> Reservations
-    </h2>
+    <div class="flex items-center gap-2">
+      <h2 class="flex items-center gap-2 text-2xl font-semibold p-2">
+        <mat-icon aria-hidden="true" fontIcon="calendar_month" /> Reservations
+      </h2>
+      <div>
+        <button matTooltip="Create Reservation" mat-icon-button class="centered">
+          <mat-icon class="icon-success">add_circle</mat-icon>
+        </button>
+      </div>
+    </div>
+
     <form [formGroup]="searchForm" (ngSubmit)="onSubmit()" class="flex gap-4">
 
       <mat-form-field appearance="outline" class="w-96">

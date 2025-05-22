@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
-[Authorize(Roles = "Admin")]
+[Authorize(Roles = "Admin,Moderator")]
 [Route("api/admin/reservations")]
 public class AdminReservationsController(CampContext context) : BaseApiController
 {

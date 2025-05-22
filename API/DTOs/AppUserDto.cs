@@ -10,4 +10,5 @@ public class AppUserDto
     public DateTime CreatedAt { get; set; }
     public bool IsEmailConfirmed { get; set; }
     public bool IsLockedOut { get; set; }
+    public IReadOnlyList<string> Roles { get; set; } = [];
 }

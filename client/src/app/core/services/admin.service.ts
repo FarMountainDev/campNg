@@ -20,6 +20,9 @@ export class AdminService {
 
   getUsers(userParams: UserParams) {
     let params = new HttpParams();
+    if (userParams.role && userParams.role !== 'All') {
+      params = params.append('role', userParams.role);
+    }
     if (userParams.status && userParams.status !== 'All') {
       params = params.append('status', userParams.status);
     }
@@ -41,6 +44,14 @@ export class AdminService {
 
   unlockUser(id: string) {
     return this.http.post<User>(this.baseUrl + 'admin/users/unlock/' + id, {});
+  }
+
+  addModerator(id: string) {
+    return this.http.post<User>(this.baseUrl + 'admin/users/add-mod/' + id, {});
+  }
+
+  removeModerator(id: string) {
+    return this.http.post<User>(this.baseUrl + 'admin/users/remove-mod/' + id, {});
   }
 
   getReservations(paginationParams: PaginationParams) {

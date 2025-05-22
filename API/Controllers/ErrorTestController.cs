@@ -61,4 +61,19 @@ public class ErrorTestController : BaseApiController
             name, id, isAdmin, roles
         });
     }
+
+    [Authorize(Roles = "Moderator")]
+    [HttpGet("mod-secret")]
+    public IActionResult GetModeratorSecret()
+    {
+        var name = User.FindFirst(ClaimTypes.Name)?.Value;
+        var id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var isModerator = User.IsInRole("Moderator");
+        var roles = User.FindFirstValue(ClaimTypes.Role);
+        
+        return Ok(new
+        {
+            name, id, isModerator, roles
+        });
+    }
 }

@@ -1,5 +1,5 @@
 import {Component, inject, ViewEncapsulation} from '@angular/core';
-import {RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
+import {Router, RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
 import {MatToolbar} from '@angular/material/toolbar';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {AccountService} from '../../core/services/account.service';
@@ -7,6 +7,7 @@ import {ThemeService} from '../../core/services/theme.service';
 import {MatIcon} from '@angular/material/icon';
 import {MatTooltip} from '@angular/material/tooltip';
 import {NgIf} from '@angular/common';
+import {MatIconButton} from '@angular/material/button';
 
 @Component({
   selector: 'app-admin-layout',
@@ -18,7 +19,8 @@ import {NgIf} from '@angular/common';
     RouterLinkActive,
     MatIcon,
     MatTooltip,
-    NgIf
+    NgIf,
+    MatIconButton
   ],
   templateUrl: './admin-layout.component.html',
   styleUrl: './admin-layout.component.scss',
@@ -27,4 +29,14 @@ import {NgIf} from '@angular/common';
 export class AdminLayoutComponent {
   protected readonly accountService = inject(AccountService);
   protected readonly themeService = inject(ThemeService);
+  protected readonly router = inject(Router);
+
+  logout() {
+    this.accountService.logout().subscribe({
+      next: () => {
+        this.accountService.currentUser.set(null);
+        void this.router.navigateByUrl('/');
+      }
+    });
+  }
 }

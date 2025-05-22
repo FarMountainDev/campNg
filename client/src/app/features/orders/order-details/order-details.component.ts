@@ -33,7 +33,7 @@ export class OrderDetailsComponent implements OnInit{
   private adminService = inject(AdminService);
   private router = inject(Router);
   order?: Order;
-  buttonText = this.accountService.isAdmin() ? 'Return to admin' : 'Return to orders';
+  buttonText = this.accountService.isModerator() ? 'Return to admin' : 'Return to orders';
 
   ngOnInit() {
     this.loadOrder();
@@ -43,7 +43,7 @@ export class OrderDetailsComponent implements OnInit{
     const id = this.activatedRoute.snapshot.paramMap.get('id');
     if (!id) return;
 
-    const loadOrderData = this.accountService.isAdmin()
+    const loadOrderData = this.accountService.isModerator()
       ? this.adminService.getOrder(+id)
       : this.orderService.getOrderDetails(+id);
 
@@ -53,7 +53,7 @@ export class OrderDetailsComponent implements OnInit{
   }
 
   onReturnClick() {
-    this.accountService.isAdmin()
+    this.accountService.isModerator()
       ? this.router.navigateByUrl('/admin/orders')
       : this.router.navigateByUrl('/orders');
   }

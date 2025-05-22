@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
-[Authorize(Roles = "Admin")]
+[Authorize(Roles = "Admin,Moderator")]
 [Route("api/admin/orders")]
 public class AdminOrdersController(CampContext context, IPaymentService paymentService) : BaseApiController
 {
@@ -63,7 +63,8 @@ public class AdminOrdersController(CampContext context, IPaymentService paymentS
         
         return order.ToDto();
     }
-
+    
+    [Authorize(Roles = "Admin")]
     [InvalidateCache("api/admin/orders", "api/admin/revenue")]
     [HttpPost("refund/{id:int}")]
     public async Task<ActionResult<OrderDto>> RefundOrder(int id)

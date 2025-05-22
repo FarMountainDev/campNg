@@ -135,7 +135,6 @@ export class DashboardMonthlyRevenueComponent implements AfterViewInit {
       };
       if (this.chart && this.chart.updateOptions) {
         this.chart.updateOptions(this.chartOptions, false, true)
-          .then(() => {})
           .catch(err => console.error('Error updating chart:', err));
       }
     });

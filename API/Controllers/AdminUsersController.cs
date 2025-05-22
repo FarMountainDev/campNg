@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
-[Authorize(Roles = "Admin")]
+[Authorize(Roles = "Admin,Moderator")]
 [Route("api/admin/users")]
 public class AdminUsersController(CampContext context, UserManager<AppUser> userManager) : BaseApiController
 {
@@ -29,6 +29,21 @@ public class AdminUsersController(CampContext context, UserManager<AppUser> user
                 "active" => query.Where(u => u.LockoutEnd == null || u.LockoutEnd <= DateTimeOffset.UtcNow),
                 _ => query
             };
+        }
+        
+        if (!string.IsNullOrWhiteSpace(userParams.Role))
+        {
+            var role = userParams.Role.Trim();
+            var userIds = await context.UserRoles
+                .Join(context.Roles,
+                    userRole => userRole.RoleId,
+                    identityRole => identityRole.Id,
+                    (userRole, r) => new { userRole.UserId, r.Name })
+                .Where(x => x.Name.ToLower() == role.ToLower())
+                .Select(x => x.UserId)
+                .ToListAsync();
+    
+            query = query.Where(u => userIds.Contains(u.Id));
         }
         
         if (!string.IsNullOrWhiteSpace(userParams.Search))
@@ -69,7 +84,8 @@ public class AdminUsersController(CampContext context, UserManager<AppUser> user
             LastName = user.LastName,
             CreatedAt = user.CreatedAt,
             IsEmailConfirmed = user.EmailConfirmed,
-            IsLockedOut = user.LockoutEnd != null && user.LockoutEnd > DateTimeOffset.UtcNow
+            IsLockedOut = user.LockoutEnd != null && user.LockoutEnd > DateTimeOffset.UtcNow,
+            Roles = userManager.GetRolesAsync(user).Result.ToList()
         }).ToList();
         
         var pagination = new PagedResult<AppUserDto>(userParams.PageNumber, userParams.PageSize, count, dtoItems);
@@ -77,6 +93,7 @@ public class AdminUsersController(CampContext context, UserManager<AppUser> user
         return Ok(pagination);
     }
     
+    [Authorize(Roles = "Admin")]
     [HttpPost("lock/{id}")]
     public async Task<ActionResult<AppUserDto>> LockUser(string id)
     {
@@ -98,12 +115,14 @@ public class AdminUsersController(CampContext context, UserManager<AppUser> user
             LastName = user.LastName,
             CreatedAt = user.CreatedAt,
             IsEmailConfirmed = user.EmailConfirmed,
-            IsLockedOut = true
+            IsLockedOut = true,
+            Roles = userManager.GetRolesAsync(user).Result.ToList()
         };
         
         return Ok(userDto);
     }
     
+    [Authorize(Roles = "Admin")]
     [HttpPost("unlock/{id}")]
     public async Task<ActionResult<AppUserDto>> UnlockUser(string id)
     {
@@ -125,7 +144,66 @@ public class AdminUsersController(CampContext context, UserManager<AppUser> user
             LastName = user.LastName,
             CreatedAt = user.CreatedAt,
             IsEmailConfirmed = user.EmailConfirmed,
-            IsLockedOut = false
+            IsLockedOut = false,
+            Roles = userManager.GetRolesAsync(user).Result.ToList()
+        };
+        
+        return Ok(userDto);
+    }
+    
+    [Authorize(Roles = "Admin")]
+    [HttpPost("add-mod/{id}")]
+    public async Task<ActionResult<AppUserDto>> AddModerator(string id)
+    {
+        var user = await context.Users.FindAsync(id);
+        
+        if (user == null) return NotFound();
+        
+        if (User.GetEmail() == user.Email)
+            return BadRequest("You cannot add yourself as a mod");
+
+        await userManager.AddToRoleAsync(user, "Moderator");
+        
+        var userDto = new AppUserDto
+        {
+            Id = user.Id,
+            UserName = user.UserName,
+            Email = user.Email,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            CreatedAt = user.CreatedAt,
+            IsEmailConfirmed = user.EmailConfirmed,
+            IsLockedOut = user.LockoutEnd != null && user.LockoutEnd > DateTimeOffset.UtcNow,
+            Roles = userManager.GetRolesAsync(user).Result.ToList()
+        };
+        
+        return Ok(userDto);
+    }
+    
+    [Authorize(Roles = "Admin")]
+    [HttpPost("remove-mod/{id}")]
+    public async Task<ActionResult<AppUserDto>> RemoveModerator(string id)
+    {
+        var user = await context.Users.FindAsync(id);
+        
+        if (user == null) return NotFound();
+        
+        if (User.GetEmail() == user.Email)
+            return BadRequest("You cannot remove yourself as a mod");
+
+        await userManager.RemoveFromRoleAsync(user, "Moderator");
+        
+        var userDto = new AppUserDto
+        {
+            Id = user.Id,
+            UserName = user.UserName,
+            Email = user.Email,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            CreatedAt = user.CreatedAt,
+            IsEmailConfirmed = user.EmailConfirmed,
+            IsLockedOut = user.LockoutEnd != null && user.LockoutEnd > DateTimeOffset.UtcNow,
+            Roles = userManager.GetRolesAsync(user).Result.ToList()
         };
         
         return Ok(userDto);

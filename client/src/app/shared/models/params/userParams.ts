@@ -2,4 +2,5 @@
 
 export class UserParams extends PaginationParams {
   status = '';
+  role = '';
 }

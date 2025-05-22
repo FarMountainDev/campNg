@@ -6,8 +6,17 @@
     <form [formGroup]="searchForm" (ngSubmit)="onSubmit()" class="flex gap-4">
 
       <mat-form-field appearance="outline">
+        <mat-label>Filter by role</mat-label>
+        <mat-select (selectionChange)="onFilterRoleSelect($event)" [formControl]="searchForm.controls.userStatusSelect">
+          @for (role of roleOptions; track $index) {
+            <mat-option [value]="role">{{role}}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
         <mat-label>Filter by status</mat-label>
-        <mat-select (selectionChange)="onFilterSelect($event)" [formControl]="searchForm.controls.userStatusSelect">
+        <mat-select (selectionChange)="onFilterStatusSelect($event)" [formControl]="searchForm.controls.userStatusSelect">
           @for (status of statusOptions; track $index) {
             <mat-option [value]="status">{{status}}</mat-option>
           }
@@ -86,11 +95,17 @@
             <button matTooltip="View Details" mat-icon-button [disabled]="true">
               <mat-icon color="accent">visibility</mat-icon>
             </button>
-            <button (click)="openUnlockConfirmDialog(user.id)" matTooltip="Activate" mat-icon-button [disabled]="!user.isLockedOut">
-              <mat-icon [class.icon-success]="user.isLockedOut">radio_button_unchecked</mat-icon>
+            <button (click)="openUnlockConfirmDialog(user.id)" matTooltip="Activate" mat-icon-button [hidden]="!user.isLockedOut" *appIsAdmin>
+              <mat-icon class="icon-success">radio_button_checked</mat-icon>
             </button>
-            <button (click)="openLockConfirmDialog(user.id)" matTooltip="Deactivate" mat-icon-button [disabled]="user.isLockedOut">
-              <mat-icon [class.icon-warning]="!user.isLockedOut">cancel</mat-icon>
+            <button (click)="openLockConfirmDialog(user.id)" matTooltip="Deactivate" mat-icon-button [hidden]="user.isLockedOut" *appIsAdmin>
+              <mat-icon class="icon-warning">cancel</mat-icon>
+            </button>
+            <button (click)="openAddModeratorConfirmDialog(user.id)" matTooltip="Add Moderator" mat-icon-button [hidden]="hasRole(user,  'Moderator')" *appIsAdmin>
+              <mat-icon class="icon-info">add_moderator</mat-icon>
+            </button>
+            <button (click)="openRemoveModeratorConfirmDialog(user.id)" matTooltip="Remove Moderator" mat-icon-button [hidden]="!hasRole(user,  'Moderator')" *appIsAdmin>
+              <mat-icon class="icon-highlight">remove_moderator</mat-icon>
             </button>
           </div>
         </td>

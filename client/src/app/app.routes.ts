@@ -5,9 +5,9 @@ import {CampgroundDetailsComponent} from './features/campgrounds/campground-deta
 import {ReservationsComponent} from './features/reservations/reservations.component';
 import {CartComponent} from './features/cart/cart.component';
 import {authGuard} from './core/guards/auth.guard';
-import {adminGuard} from './core/guards/admin.guard';
 import {DefaultLayoutComponent} from './layout/default-layout/default-layout.component';
 import {AdminLayoutComponent} from './layout/admin-layout/admin-layout.component';
+import {modGuard} from './core/guards/mod.guard';
 
 export const routes: Routes = [
   {
@@ -30,9 +30,9 @@ export const routes: Routes = [
   {
     path: 'admin',
     component: AdminLayoutComponent,
-    canActivate: [authGuard, adminGuard],
+    canActivate: [authGuard, modGuard],
     children: [
-      {path: '', loadChildren: () => import('./features/admin/routes').then(m => m.adminRoutes), canActivate: [authGuard, adminGuard]},
+      {path: '', loadChildren: () => import('./features/admin/routes').then(m => m.adminRoutes), canActivate: [authGuard, modGuard]},
     ]
   },
   {

@@ -15,6 +15,7 @@ import {DialogService} from '../../../core/services/dialog.service';
 import {MatInput} from '@angular/material/input';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatSort, MatSortHeader, Sort} from '@angular/material/sort';
+import {IsAdminDirective} from '../../../shared/directives/is-admin.directive';
 
 @Component({
   selector: 'app-admin-orders',
@@ -35,7 +36,8 @@ import {MatSort, MatSortHeader, Sort} from '@angular/material/sort';
     ReactiveFormsModule,
     NgIf,
     MatSortHeader,
-    MatSort
+    MatSort,
+    IsAdminDirective
   ],
   templateUrl: './admin-orders.component.html',
   styleUrl: './admin-orders.component.scss'

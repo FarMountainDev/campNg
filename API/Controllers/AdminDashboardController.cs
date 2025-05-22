@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
-[Authorize(Roles = "Admin")]
+[Authorize(Roles = "Admin,Moderator")]
 [Route("api/admin/dashboard")]
 public class AdminDashboardController(CampContext context) : BaseApiController
 {

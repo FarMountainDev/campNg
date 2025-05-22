@@ -16,7 +16,12 @@ export class AccountService {
   isAdmin = computed(() => {
     const roles = this.currentUser()?.roles;
     return Array.isArray(roles) ? roles.includes('Admin') : roles === 'Admin';
-  })
+  });
+  isModerator = computed(() => {
+    if (this.isAdmin()) return true;
+    const roles = this.currentUser()?.roles;
+    return Array.isArray(roles) ? roles.includes('Moderator') : roles === 'Moderator';
+  });
 
   login(values: any) {
     let params = new HttpParams();

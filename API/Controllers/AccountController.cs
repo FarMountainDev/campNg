@@ -20,16 +20,23 @@ public class AccountController(SignInManager<AppUser> signInManager) : BaseApiCo
             UserName = registerDto.Email,
             Email = registerDto.Email
         };
-        
+
         var result = await signInManager.UserManager.CreateAsync(user, registerDto.Password);
 
-        if (result.Succeeded) return Ok();
-        
-        foreach (var error in result.Errors)
+        if (result.Succeeded)
         {
-            ModelState.AddModelError(error.Code, error.Description);
+            var roleResult = await signInManager.UserManager.AddToRoleAsync(user, "Member");
+        
+            if (roleResult.Succeeded)
+                return Ok();
+        
+            foreach (var error in roleResult.Errors)
+                ModelState.AddModelError(error.Code, error.Description);
         }
-            
+
+        foreach (var error in result.Errors)
+            ModelState.AddModelError(error.Code, error.Description);
+
         return ValidationProblem();
     }
 

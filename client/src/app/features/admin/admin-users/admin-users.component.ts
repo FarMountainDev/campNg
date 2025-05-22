@@ -14,6 +14,7 @@ import {MatSort, MatSortHeader, Sort} from '@angular/material/sort';
 import {User} from '../../../shared/models/user';
 import {DialogService} from '../../../core/services/dialog.service';
 import {UserParams} from '../../../shared/models/params/userParams';
+import {IsAdminDirective} from '../../../shared/directives/is-admin.directive';
 
 @Component({
   selector: 'app-admin-users',
@@ -32,7 +33,8 @@ import {UserParams} from '../../../shared/models/params/userParams';
     NgIf,
     MatSortHeader,
     MatSort,
-    DatePipe
+    DatePipe,
+    IsAdminDirective
   ],
   templateUrl: './admin-users.component.html',
   styleUrl: './admin-users.component.scss'
@@ -45,11 +47,13 @@ export class AdminUsersComponent implements OnInit{
   userParams = new UserParams();
   totalItems = 0;
   statusOptions = ['All', 'Active', 'Locked'];
+  roleOptions = ['All', 'Member', 'Moderator', 'Admin'];
   searchForm = new FormGroup({
     searchInput: new FormControl<string>('', [
       Validators.pattern(/^[a-zA-Z0-9._%+-@]*$/)
     ]),
-    userStatusSelect: new FormControl()
+    userStatusSelect: new FormControl(),
+    userRoleSelect: new FormControl()
   });
 
   ngOnInit() {
@@ -73,7 +77,13 @@ export class AdminUsersComponent implements OnInit{
     this.loadUsers();
   }
 
-  onFilterSelect(event: MatSelectChange) {
+  onFilterRoleSelect(event: MatSelectChange) {
+    this.userParams.role = event.value;
+    this.userParams.pageNumber = 1;
+    this.loadUsers();
+  }
+
+  onFilterStatusSelect(event: MatSelectChange) {
     this.userParams.status = event.value;
     this.userParams.pageNumber = 1;
     this.loadUsers();
@@ -94,6 +104,7 @@ export class AdminUsersComponent implements OnInit{
   onSubmit() {
     if (this.searchForm.valid) {
       this.userParams.search = this.searchForm.controls.searchInput.value!;
+      this.userParams.role = this.searchForm.controls.userRoleSelect.value;
       this.userParams.status = this.searchForm.controls.userStatusSelect.value;
       this.userParams.pageNumber = 1;
       this.loadUsers();
@@ -103,8 +114,10 @@ export class AdminUsersComponent implements OnInit{
   onResetFilters() {
     this.userParams.pageNumber = 1;
     this.userParams.search = '';
+    this.userParams.role = '';
     this.userParams.status = '';
     this.searchForm.controls.searchInput.setValue('');
+    this.searchForm.controls.userRoleSelect.setValue('');
     this.searchForm.controls.userStatusSelect.setValue('');
     this.loadUsers();
   }
@@ -145,4 +158,49 @@ export class AdminUsersComponent implements OnInit{
     });
   }
 
+  async openAddModeratorConfirmDialog(id: string) {
+    const confirmed = await this.dialogService.confirm(
+      'Confirm add moderator',
+      'Are you sure you want to add this user as a moderator?'
+    )
+    if (confirmed) {
+      this.addModerator(id);
+    }
+  }
+
+  addModerator(id: string) {
+    this.adminService.addModerator(id).subscribe({
+      next: user => {
+        this.dataSource.data = this.dataSource.data.map(u => u.id === id ? user : u)
+      }
+    });
+  }
+
+  async openRemoveModeratorConfirmDialog(id: string) {
+    const confirmed = await this.dialogService.confirm(
+      'Confirm remove moderator',
+      'Are you sure you want to remove this user as a moderator?'
+    )
+    if (confirmed) {
+      this.removeModerator(id);
+    }
+  }
+
+  removeModerator(id: string) {
+    this.adminService.removeModerator(id).subscribe({
+      next: user => {
+        this.dataSource.data = this.dataSource.data.map(u => u.id === id ? user : u)
+      }
+    });
+  }
+
+  hasRole(user: User, role: string): boolean {
+    if (!user.roles) return false;
+
+    if (Array.isArray(user.roles)) {
+      return user.roles.includes(role);
+    } else {
+      return user.roles === role || user.roles.split(',').map(r => r.trim()).includes(role);
+    }
+  }
 }

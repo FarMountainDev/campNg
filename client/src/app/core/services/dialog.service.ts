@@ -2,6 +2,8 @@ import {inject, Injectable} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../../shared/components/confirmation-dialog/confirmation-dialog.component';
 import {firstValueFrom} from 'rxjs';
+import {User} from '../../shared/models/user';
+import {AdminUserEditComponent} from '../../features/admin/admin-users/admin-user-edit/admin-user-edit.component';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +16,13 @@ export class DialogService {
       width: '420px',
       data: {title, message}
     });
+    return firstValueFrom(dialogRef.afterClosed());
+  }
 
+  openAdminUserDetails(user: User) {
+    const dialogRef = this.dialog.open(AdminUserEditComponent, {
+      data: {user}
+    });
     return firstValueFrom(dialogRef.afterClosed());
   }
 }

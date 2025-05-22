@@ -88,12 +88,20 @@
         <td mat-cell *matCellDef="let user"> {{user.isEmailConfirmed}} </td>
       </ng-container>
 
+      <ng-container matColumnDef="isLocked">
+        <th mat-header-cell *matHeaderCellDef> Locked </th>
+        <td mat-cell *matCellDef="let user"> {{user.isLockedOut}} </td>
+      </ng-container>
+
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef> Actions </th>
         <td mat-cell *matCellDef="let user">
           <div class="flex gap-2">
-            <button matTooltip="View Details" mat-icon-button [disabled]="true">
-              <mat-icon color="accent">visibility</mat-icon>
+            <button matTooltip="View Details" mat-icon-button>
+              <mat-icon>visibility</mat-icon>
+            </button>
+            <button (click)="openUserEditDialog(user)" matTooltip="Edit User" mat-icon-button *appIsAdmin>
+              <mat-icon>edit</mat-icon>
             </button>
             <button (click)="openUnlockConfirmDialog(user.id)" matTooltip="Activate" mat-icon-button [hidden]="!user.isLockedOut" *appIsAdmin>
               <mat-icon class="icon-success">radio_button_checked</mat-icon>

@@ -94,6 +94,29 @@ public class AdminUsersController(CampContext context, UserManager<AppUser> user
     }
     
     [Authorize(Roles = "Admin")]
+    [HttpPut("update/")]
+    public async Task<ActionResult<AppUserDto>> UpdateUser(AppUserDto userDto)
+    {
+        var user = await context.Users.FindAsync(userDto.Id);
+        
+        if (user == null) return NotFound();
+        
+        if (User.GetEmail() == user.Email)
+            return BadRequest("You cannot update your own account from here");
+        
+        user.UserName = userDto.UserName;
+        user.Email = userDto.Email;
+        user.FirstName = userDto.FirstName;
+        user.LastName = userDto.LastName;
+        
+        context.Users.Update(user);
+        var result = await context.SaveChangesAsync();
+        if (result <= 0) return BadRequest("Failed to update user");
+        
+        return Ok(userDto);
+    }
+    
+    [Authorize(Roles = "Admin")]
     [HttpPost("lock/{id}")]
     public async Task<ActionResult<AppUserDto>> LockUser(string id)
     {
@@ -104,7 +127,9 @@ public class AdminUsersController(CampContext context, UserManager<AppUser> user
         if (User.GetEmail() == user.Email)
             return BadRequest("You cannot lock your own account");
 
-        await userManager.SetLockoutEndDateAsync(user, DateTimeOffset.MaxValue);
+        var result = await userManager.SetLockoutEndDateAsync(user, DateTimeOffset.MaxValue);
+        
+        if (!result.Succeeded) return BadRequest("Failed to lock user");
         
         var userDto = new AppUserDto
         {
@@ -133,7 +158,9 @@ public class AdminUsersController(CampContext context, UserManager<AppUser> user
         if (User.GetEmail() == user.Email)
             return BadRequest("You cannot unlock your own account");
 
-        await userManager.SetLockoutEndDateAsync(user, null);
+        var result = await userManager.SetLockoutEndDateAsync(user, null);
+        
+        if (!result.Succeeded) return BadRequest("Failed to unlock user");
         
         var userDto = new AppUserDto
         {
@@ -160,9 +187,11 @@ public class AdminUsersController(CampContext context, UserManager<AppUser> user
         if (user == null) return NotFound();
         
         if (User.GetEmail() == user.Email)
-            return BadRequest("You cannot add yourself as a mod");
+            return BadRequest("You cannot add yourself as a moderator");
 
-        await userManager.AddToRoleAsync(user, "Moderator");
+        var result = await userManager.AddToRoleAsync(user, "Moderator");
+        
+        if (!result.Succeeded) return BadRequest("Failed to add moderator role");
         
         var userDto = new AppUserDto
         {
@@ -189,9 +218,11 @@ public class AdminUsersController(CampContext context, UserManager<AppUser> user
         if (user == null) return NotFound();
         
         if (User.GetEmail() == user.Email)
-            return BadRequest("You cannot remove yourself as a mod");
+            return BadRequest("You cannot remove yourself as a moderator");
 
-        await userManager.RemoveFromRoleAsync(user, "Moderator");
+        var result = await userManager.RemoveFromRoleAsync(user, "Moderator");
+        
+        if (!result.Succeeded) return BadRequest("Failed to remove moderator role");
         
         var userDto = new AppUserDto
         {

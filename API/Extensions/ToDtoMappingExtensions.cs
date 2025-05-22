@@ -6,6 +6,22 @@ namespace API.Extensions;
 
 public static class ToDtoMappingExtensions
 {
+    public static AppUserDto ToDto(this AppUser user, IReadOnlyList<string> roles)
+    {
+        return new AppUserDto()
+        {
+            Id = user.Id,
+            UserName = user.UserName,
+            Email = user.Email,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            CreatedAt = user.CreatedAt,
+            IsEmailConfirmed = user.EmailConfirmed,
+            IsLockedOut = user.LockoutEnd != null && user.LockoutEnd > DateTimeOffset.UtcNow,
+            Roles = roles
+        };
+    }
+    
     public static CampgroundDto ToDto(this Campground campground)
     {
         return new CampgroundDto()

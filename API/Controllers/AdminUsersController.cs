@@ -72,23 +72,14 @@ public class AdminUsersController(CampContext context, UserManager<AppUser> user
         else query = query.OrderByDescending(e => e.CreatedAt);
         
         // Cannot use CreatePagedResult because IdentityUser does not implement BaseEntity or IDtoConvertible
-        var items = await query.Skip((userParams.PageNumber - 1) * userParams.PageSize).Take(userParams.PageSize).ToListAsync();
+        var users = await query.Skip((userParams.PageNumber - 1) * userParams.PageSize).Take(userParams.PageSize).ToListAsync();
         var count = await query.CountAsync();
         
-        var dtoItems = items.Select(user => new AppUserDto
-        {
-            Id = user.Id,
-            UserName = user.UserName,
-            Email = user.Email,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            CreatedAt = user.CreatedAt,
-            IsEmailConfirmed = user.EmailConfirmed,
-            IsLockedOut = user.LockoutEnd != null && user.LockoutEnd > DateTimeOffset.UtcNow,
-            Roles = userManager.GetRolesAsync(user).Result.ToList()
-        }).ToList();
+        var userDtoList = users.Select(user => user.ToDto(
+            userManager.GetRolesAsync(user).Result.ToList()))
+            .ToList();
         
-        var pagination = new PagedResult<AppUserDto>(userParams.PageNumber, userParams.PageSize, count, dtoItems);
+        var pagination = new PagedResult<AppUserDto>(userParams.PageNumber, userParams.PageSize, count, userDtoList);
         
         return Ok(pagination);
     }
@@ -105,7 +96,6 @@ public class AdminUsersController(CampContext context, UserManager<AppUser> user
             return BadRequest("You cannot update your own account from here");
         
         user.UserName = userDto.UserName;
-        user.Email = userDto.Email;
         user.FirstName = userDto.FirstName;
         user.LastName = userDto.LastName;
         
@@ -131,18 +121,7 @@ public class AdminUsersController(CampContext context, UserManager<AppUser> user
         
         if (!result.Succeeded) return BadRequest("Failed to lock user");
         
-        var userDto = new AppUserDto
-        {
-            Id = user.Id,
-            UserName = user.UserName,
-            Email = user.Email,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            CreatedAt = user.CreatedAt,
-            IsEmailConfirmed = user.EmailConfirmed,
-            IsLockedOut = true,
-            Roles = userManager.GetRolesAsync(user).Result.ToList()
-        };
+        var userDto = user.ToDto(userManager.GetRolesAsync(user).Result.ToList());
         
         return Ok(userDto);
     }
@@ -162,18 +141,7 @@ public class AdminUsersController(CampContext context, UserManager<AppUser> user
         
         if (!result.Succeeded) return BadRequest("Failed to unlock user");
         
-        var userDto = new AppUserDto
-        {
-            Id = user.Id,
-            UserName = user.UserName,
-            Email = user.Email,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            CreatedAt = user.CreatedAt,
-            IsEmailConfirmed = user.EmailConfirmed,
-            IsLockedOut = false,
-            Roles = userManager.GetRolesAsync(user).Result.ToList()
-        };
+        var userDto = user.ToDto(userManager.GetRolesAsync(user).Result.ToList());
         
         return Ok(userDto);
     }
@@ -193,18 +161,7 @@ public class AdminUsersController(CampContext context, UserManager<AppUser> user
         
         if (!result.Succeeded) return BadRequest("Failed to add moderator role");
         
-        var userDto = new AppUserDto
-        {
-            Id = user.Id,
-            UserName = user.UserName,
-            Email = user.Email,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            CreatedAt = user.CreatedAt,
-            IsEmailConfirmed = user.EmailConfirmed,
-            IsLockedOut = user.LockoutEnd != null && user.LockoutEnd > DateTimeOffset.UtcNow,
-            Roles = userManager.GetRolesAsync(user).Result.ToList()
-        };
+        var userDto = user.ToDto(userManager.GetRolesAsync(user).Result.ToList());
         
         return Ok(userDto);
     }
@@ -224,18 +181,7 @@ public class AdminUsersController(CampContext context, UserManager<AppUser> user
         
         if (!result.Succeeded) return BadRequest("Failed to remove moderator role");
         
-        var userDto = new AppUserDto
-        {
-            Id = user.Id,
-            UserName = user.UserName,
-            Email = user.Email,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            CreatedAt = user.CreatedAt,
-            IsEmailConfirmed = user.EmailConfirmed,
-            IsLockedOut = user.LockoutEnd != null && user.LockoutEnd > DateTimeOffset.UtcNow,
-            Roles = userManager.GetRolesAsync(user).Result.ToList()
-        };
+        var userDto = user.ToDto(userManager.GetRolesAsync(user).Result.ToList());
         
         return Ok(userDto);
     }

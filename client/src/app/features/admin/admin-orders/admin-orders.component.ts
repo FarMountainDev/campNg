@@ -16,6 +16,7 @@ import {MatInput} from '@angular/material/input';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatSort, MatSortHeader, Sort} from '@angular/material/sort';
 import {IsAdminDirective} from '../../../shared/directives/is-admin.directive';
+import {ImmediateErrorStateMatcher} from '../../../shared/utils/immediate-error-state-matcher';
 
 @Component({
   selector: 'app-admin-orders',
@@ -49,13 +50,14 @@ export class AdminOrdersComponent implements OnInit {
   dataSource = new MatTableDataSource<Order>([]);
   orderParams = new OrderParams();
   totalItems = 0;
-  statusOptions = ['All', 'PaymentReceived', 'PaymentMismatch', 'Refunded', 'Pending'];
+  statusOptions = ['All', 'PaymentReceived', 'PaymentMismatch', 'Refunded', 'RefundedPartial', 'Pending'];
   searchForm = new FormGroup({
     searchInput: new FormControl<string>('', [
       Validators.pattern(/^[a-zA-Z0-9._%+-@]*$/)
     ]),
     orderStatusSelect: new FormControl()
   });
+  immediateErrorMatcher = new ImmediateErrorStateMatcher();
 
   ngOnInit() {
     this.loadOrders();

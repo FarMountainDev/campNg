@@ -16,7 +16,8 @@
 
       <mat-form-field appearance="outline" class="w-96">
         <mat-label>Search by Email or Order ID</mat-label>
-        <input [formControl]="searchForm.controls.searchInput" matInput placeholder="Search by email or order ID" />
+        <input [formControl]="searchForm.controls.searchInput" matInput placeholder="Search by email or order ID"
+          [errorStateMatcher]="immediateErrorMatcher"/>
         <button
           mat-icon-button
           matPrefix

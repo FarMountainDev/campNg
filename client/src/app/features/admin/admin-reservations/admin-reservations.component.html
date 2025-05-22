@@ -6,7 +6,7 @@
       </h2>
       <div>
         <button matTooltip="Create Reservation" mat-icon-button class="centered">
-          <mat-icon class="icon-success">add_circle</mat-icon>
+          <mat-icon (click)="onCreateReservation()" class="icon-success">add_circle</mat-icon>
         </button>
       </div>
     </div>
@@ -15,7 +15,8 @@
 
       <mat-form-field appearance="outline" class="w-96">
         <mat-label>Search by Email or Campsite</mat-label>
-        <input [formControl]="searchForm.controls.searchInput" matInput placeholder="Search by Email or Campsite" />
+        <input [formControl]="searchForm.controls.searchInput" matInput placeholder="Search by Email or Campsite"
+          [errorStateMatcher]="immediateErrorMatcher"/>
         <button
           mat-icon-button
           matPrefix

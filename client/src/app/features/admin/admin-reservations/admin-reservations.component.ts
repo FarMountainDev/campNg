@@ -13,6 +13,8 @@ import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} fr
 import {MatSort, MatSortHeader, Sort} from '@angular/material/sort';
 import {PaginationParams} from '../../../shared/models/params/paginationParams';
 import {ReservationDto} from '../../../shared/models/reservationDto';
+import {SnackbarService} from '../../../core/services/snackbar.service';
+import {ImmediateErrorStateMatcher} from '../../../shared/utils/immediate-error-state-matcher';
 
 @Component({
   selector: 'app-admin-reservations',
@@ -38,6 +40,7 @@ import {ReservationDto} from '../../../shared/models/reservationDto';
 })
 export class AdminReservationsComponent implements OnInit {
   private readonly adminService = inject(AdminService);
+  private readonly snackbar = inject(SnackbarService);
   displayedColumns: string[] = ['id', 'email', 'campsiteId', 'campsiteName', 'startDate', 'endDate', 'orderId', 'actions'];
   dataSource = new MatTableDataSource<ReservationDto>([]);
   paginationParams = new PaginationParams();
@@ -47,6 +50,7 @@ export class AdminReservationsComponent implements OnInit {
       Validators.pattern(/^[a-zA-Z0-9._%+-@]*$/)
     ])
   });
+  immediateErrorMatcher = new ImmediateErrorStateMatcher();
 
   ngOnInit() {
     this.loadReservations();
@@ -94,5 +98,9 @@ export class AdminReservationsComponent implements OnInit {
     this.paginationParams.search = '';
     this.searchForm.controls.searchInput.setValue('');
     this.loadReservations();
+  }
+
+  onCreateReservation() {
+    this.snackbar.warning('Admin reservation creation is not available yet.');
   }
 }

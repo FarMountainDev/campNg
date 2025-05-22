@@ -28,7 +28,6 @@ public class PaymentService : IPaymentService
 
         foreach (var item in cart.Items)
         {
-            // TODO final validation for campsite availability and length of stay
             var campsite = await context.Campsites.Include(x => x.CampsiteType)
                 .FirstOrDefaultAsync(x => x.Id == item.CampsiteId);
             

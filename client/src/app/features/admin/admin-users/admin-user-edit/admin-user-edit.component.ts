@@ -36,11 +36,11 @@ export class AdminUserEditComponent implements OnInit {
 
     this.userForm = this.fb.group({
       firstName: [
-        this.data.user['firstName'],  // Use bracket notation here
+        this.data.user['firstName'],
         [Validators.pattern(namePattern)]
       ],
       lastName: [
-        this.data.user['lastName'],   // Use bracket notation here
+        this.data.user['lastName'],
         [Validators.pattern(namePattern)]
       ]
     });
@@ -48,7 +48,6 @@ export class AdminUserEditComponent implements OnInit {
 
   onConfirmChanges() {
     if (this.userForm.valid && this.userForm.dirty) {
-      // Update user object with form values using bracket notation
       this.data.user['firstName'] = this.userForm.value.firstName;
       this.data.user['lastName'] = this.userForm.value.lastName;
       this.dialogRef.close(this.data.user);

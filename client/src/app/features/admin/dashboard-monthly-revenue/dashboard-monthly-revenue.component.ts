@@ -134,8 +134,7 @@ export class DashboardMonthlyRevenueComponent implements AfterViewInit {
         categories: revenueData.months
       };
       if (this.chart && this.chart.updateOptions) {
-        this.chart.updateOptions(this.chartOptions, false, true)
-          .catch(err => console.error('Error updating chart:', err));
+        this.chart.updateOptions(this.chartOptions, false, true);
       }
     });
   }

@@ -7,8 +7,8 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 export class SnackbarService {
   private readonly snackbar = inject(MatSnackBar);
   private readonly defaultDuration = 5000;
-  private readonly horizontalPosition: 'start' | 'center' | 'end' | 'left' | 'right' = 'right';
-  private readonly verticalPosition: 'top' | 'bottom' = 'top';
+  private readonly horizontalPosition: 'start' | 'center' | 'end' | 'left' | 'right' = 'left';
+  private readonly verticalPosition: 'top' | 'bottom' = 'bottom';
 
   success(message: string) {
     this.snackbar.open(message, 'Close', {
@@ -16,6 +16,15 @@ export class SnackbarService {
       horizontalPosition: this.horizontalPosition,
       verticalPosition: this.verticalPosition,
       panelClass: ['snackbar-success']
+    });
+  }
+
+  warning(message: string) {
+    this.snackbar.open(message, 'Close', {
+      duration: this.defaultDuration,
+      horizontalPosition: this.horizontalPosition,
+      verticalPosition: this.verticalPosition,
+      panelClass: ['snackbar-warning']
     });
   }
 

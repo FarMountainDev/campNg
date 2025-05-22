@@ -17,6 +17,7 @@ import {UserParams} from '../../../shared/models/params/userParams';
 import {IsAdminDirective} from '../../../shared/directives/is-admin.directive';
 import {AccountService} from '../../../core/services/account.service';
 import {SnackbarService} from '../../../core/services/snackbar.service';
+import {ImmediateErrorStateMatcher} from '../../../shared/utils/immediate-error-state-matcher';
 
 @Component({
   selector: 'app-admin-users',
@@ -59,6 +60,7 @@ export class AdminUsersComponent implements OnInit{
     userStatusSelect: new FormControl(),
     userRoleSelect: new FormControl()
   });
+  immediateErrorMatcher = new ImmediateErrorStateMatcher();
 
   ngOnInit() {
     this.loadUsers();
@@ -126,6 +128,10 @@ export class AdminUsersComponent implements OnInit{
     this.loadUsers();
   }
 
+  async openUserDetailsDialog(user: User) {
+    this.snackbar.warning('Admin user details are not available yet.');
+  }
+
   async openUserEditDialog(user: User) {
     const userDetails = {...user};
     const userResult: User = await this.dialogService.openAdminUserDetails(userDetails);
@@ -159,6 +165,7 @@ export class AdminUsersComponent implements OnInit{
     this.adminService.lockUser(id).subscribe({
       next: user => {
         this.dataSource.data = this.dataSource.data.map(u => u.id === id ? user : u)
+        this.snackbar.success('User locked successfully');
       }
     });
   }
@@ -177,6 +184,7 @@ export class AdminUsersComponent implements OnInit{
     this.adminService.unlockUser(id).subscribe({
       next: user => {
         this.dataSource.data = this.dataSource.data.map(u => u.id === id ? user : u)
+        this.snackbar.success('User unlocked successfully');
       }
     });
   }
@@ -195,6 +203,7 @@ export class AdminUsersComponent implements OnInit{
     this.adminService.addModerator(id).subscribe({
       next: user => {
         this.dataSource.data = this.dataSource.data.map(u => u.id === id ? user : u)
+        this.snackbar.success('Moderator added successfully');
       }
     });
   }
@@ -213,17 +222,19 @@ export class AdminUsersComponent implements OnInit{
     this.adminService.removeModerator(id).subscribe({
       next: user => {
         this.dataSource.data = this.dataSource.data.map(u => u.id === id ? user : u)
+        this.snackbar.success('Moderator removed successfully');
       }
     });
   }
 
   hasRole(user: User, role: string): boolean {
     if (!user.roles) return false;
-
     if (Array.isArray(user.roles)) {
       return user.roles.includes(role);
     } else {
       return user.roles === role || user.roles.split(',').map(r => r.trim()).includes(role);
     }
   }
+
+  protected readonly open = open;
 }

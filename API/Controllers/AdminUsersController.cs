@@ -1,8 +1,11 @@
 ﻿using API.DTOs;
+using API.Extensions;
+using Core.Entities;
 using Core.Models;
 using Core.Parameters;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,24 +13,35 @@ namespace API.Controllers;
 
 [Authorize(Roles = "Admin")]
 [Route("api/admin/users")]
-public class AdminUsersController(CampContext context) : BaseApiController
+public class AdminUsersController(CampContext context, UserManager<AppUser> userManager) : BaseApiController
 {
     [HttpGet]
-    public async Task<ActionResult<IReadOnlyList<AppUserDto>>> GetUsers([FromQuery] BaseParams baseParams)
+    public async Task<ActionResult<IReadOnlyList<AppUserDto>>> GetUsers([FromQuery] UserParams userParams)
     {
         var query = context.Users.AsQueryable();
         
-        if (!string.IsNullOrWhiteSpace(baseParams.Search))
-            query = query.Where(e => 
-                (!string.IsNullOrWhiteSpace(e.UserName) && e.UserName.Contains(baseParams.Search))
-                    || (!string.IsNullOrWhiteSpace(e.Email) && e.Email.Contains(baseParams.Search))
-                    || (!string.IsNullOrWhiteSpace(e.FirstName) && e.FirstName.Contains(baseParams.Search))
-                    || (!string.IsNullOrWhiteSpace(e.LastName) && e.LastName.Contains(baseParams.Search)));
-        
-        if (!string.IsNullOrWhiteSpace(baseParams.Sort))
+        if (!string.IsNullOrWhiteSpace(userParams.Status))
         {
-            var sortField = baseParams.Sort.ToLower();
-            var isDescending = baseParams.SortDirection?.ToLower() == "desc";
+            var status = userParams.Status.ToLower();
+            query = status switch
+            {
+                "locked" => query.Where(u => u.LockoutEnd != null && u.LockoutEnd > DateTimeOffset.UtcNow),
+                "active" => query.Where(u => u.LockoutEnd == null || u.LockoutEnd <= DateTimeOffset.UtcNow),
+                _ => query
+            };
+        }
+        
+        if (!string.IsNullOrWhiteSpace(userParams.Search))
+            query = query.Where(e => 
+                (!string.IsNullOrWhiteSpace(e.UserName) && e.UserName.Contains(userParams.Search))
+                    || (!string.IsNullOrWhiteSpace(e.Email) && e.Email.Contains(userParams.Search))
+                    || (!string.IsNullOrWhiteSpace(e.FirstName) && e.FirstName.Contains(userParams.Search))
+                    || (!string.IsNullOrWhiteSpace(e.LastName) && e.LastName.Contains(userParams.Search)));
+        
+        if (!string.IsNullOrWhiteSpace(userParams.Sort))
+        {
+            var sortField = userParams.Sort.ToLower();
+            var isDescending = userParams.SortDirection?.ToLower() == "desc";
     
             query = sortField switch
             {
@@ -37,16 +51,13 @@ public class AdminUsersController(CampContext context) : BaseApiController
                 "firstname" => isDescending ? query.OrderByDescending(u => u.FirstName) : query.OrderBy(u => u.FirstName),
                 "lastname" => isDescending ? query.OrderByDescending(u => u.LastName) : query.OrderBy(u => u.LastName),
                 "createdat" => isDescending ? query.OrderByDescending(u => u.CreatedAt) : query.OrderBy(u => u.CreatedAt),
-                _ => isDescending ? query.OrderByDescending(u => u.UserName) : query.OrderBy(u => u.UserName)
+                _ => isDescending ? query.OrderByDescending(u => u.CreatedAt) : query.OrderBy(u => u.CreatedAt)
             };
         }
-        else
-        {
-            query = query.OrderBy(e => e.Id);
-        }
+        else query = query.OrderByDescending(e => e.CreatedAt);
         
         // Cannot use CreatePagedResult because IdentityUser does not implement BaseEntity or IDtoConvertible
-        var items = await query.Skip((baseParams.PageNumber - 1) * baseParams.PageSize).Take(baseParams.PageSize).ToListAsync();
+        var items = await query.Skip((userParams.PageNumber - 1) * userParams.PageSize).Take(userParams.PageSize).ToListAsync();
         var count = await query.CountAsync();
         
         var dtoItems = items.Select(user => new AppUserDto
@@ -58,10 +69,65 @@ public class AdminUsersController(CampContext context) : BaseApiController
             LastName = user.LastName,
             CreatedAt = user.CreatedAt,
             IsEmailConfirmed = user.EmailConfirmed,
+            IsLockedOut = user.LockoutEnd != null && user.LockoutEnd > DateTimeOffset.UtcNow
         }).ToList();
         
-        var pagination = new PagedResult<AppUserDto>(baseParams.PageNumber, baseParams.PageSize, count, dtoItems);
+        var pagination = new PagedResult<AppUserDto>(userParams.PageNumber, userParams.PageSize, count, dtoItems);
         
         return Ok(pagination);
+    }
+    
+    [HttpPost("lock/{id}")]
+    public async Task<ActionResult<AppUserDto>> LockUser(string id)
+    {
+        var user = await context.Users.FindAsync(id);
+        
+        if (user == null) return NotFound();
+        
+        if (User.GetEmail() == user.Email)
+            return BadRequest("You cannot lock your own account");
+
+        await userManager.SetLockoutEndDateAsync(user, DateTimeOffset.MaxValue);
+        
+        var userDto = new AppUserDto
+        {
+            Id = user.Id,
+            UserName = user.UserName,
+            Email = user.Email,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            CreatedAt = user.CreatedAt,
+            IsEmailConfirmed = user.EmailConfirmed,
+            IsLockedOut = true
+        };
+        
+        return Ok(userDto);
+    }
+    
+    [HttpPost("unlock/{id}")]
+    public async Task<ActionResult<AppUserDto>> UnlockUser(string id)
+    {
+        var user = await context.Users.FindAsync(id);
+        
+        if (user == null) return NotFound();
+        
+        if (User.GetEmail() == user.Email)
+            return BadRequest("You cannot unlock your own account");
+
+        await userManager.SetLockoutEndDateAsync(user, null);
+        
+        var userDto = new AppUserDto
+        {
+            Id = user.Id,
+            UserName = user.UserName,
+            Email = user.Email,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            CreatedAt = user.CreatedAt,
+            IsEmailConfirmed = user.EmailConfirmed,
+            IsLockedOut = false
+        };
+        
+        return Ok(userDto);
     }
 }

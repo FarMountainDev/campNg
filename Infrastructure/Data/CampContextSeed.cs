@@ -54,8 +54,7 @@ public static class CampContextSeed
                 UserName = "admin@test.com",
                 Email = "admin@test.com",
                 FirstName = "Admin",
-                LastName = "User",
-                CreatedAt = DateTime.UtcNow
+                LastName = "User"
             };
             
             await userManager.CreateAsync(adminUser, "Pa$$w0rd");
@@ -69,8 +68,7 @@ public static class CampContextSeed
                 UserName = "HappyCamper@test.com",
                 Email = "HappyCamper@test.com",
                 FirstName = "Happy",
-                LastName = "Camper",
-                CreatedAt = DateTime.UtcNow
+                LastName = "Camper"
             };
             
             await userManager.CreateAsync(memberUser, "Pa$$w0rd");

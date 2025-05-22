@@ -3,7 +3,7 @@ import {environment} from '../../../environments/environment';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {Campground} from '../../shared/models/campground';
 import {Pagination} from '../../shared/models/pagination';
-import {CampParams} from '../../shared/models/campParams';
+import {CampParams} from '../../shared/models/params/campParams';
 import {Observable} from 'rxjs';
 
 @Injectable({

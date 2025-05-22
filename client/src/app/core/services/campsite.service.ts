@@ -1,7 +1,7 @@
 import {inject, Injectable} from '@angular/core';
 import {environment} from '../../../environments/environment';
 import {HttpClient, HttpParams} from '@angular/common/http';
-import {CampParams} from '../../shared/models/campParams';
+import {CampParams} from '../../shared/models/params/campParams';
 import {Pagination} from '../../shared/models/pagination';
 import {CampsiteAvailabilityDto} from '../../shared/models/campsiteAvailabilityDto';
 

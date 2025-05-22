@@ -1,11 +1,22 @@
 <div class="dashboard-card table-container m-4 ">
   <div class="table-header flex justify-between items-start">
-    <h2 class="text-2xl font-semibold p-2">Users</h2>
+    <h2 class="flex items-center gap-2 text-2xl font-semibold p-2">
+      <mat-icon aria-hidden="true" fontIcon="group" /> Users
+    </h2>
     <form [formGroup]="searchForm" (ngSubmit)="onSubmit()" class="flex gap-4">
+
+      <mat-form-field appearance="outline">
+        <mat-label>Filter by status</mat-label>
+        <mat-select (selectionChange)="onFilterSelect($event)" [formControl]="searchForm.controls.userStatusSelect">
+          @for (status of statusOptions; track $index) {
+            <mat-option [value]="status">{{status}}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
 
       <mat-form-field appearance="outline" class="w-96">
         <mat-label>Search by Name or Email</mat-label>
-        <input [formControl]="searchForm.controls.searchInput" matInput placeholder="Search by name or email" />
+        <input [formControl]="searchForm.controls.searchInput" matInput placeholder="Search by Name or Email" />
         <button
           mat-icon-button
           matPrefix
@@ -20,17 +31,17 @@
         </mat-error>
       </mat-form-field>
 
-      <button mat-stroked-button aria-label="Filter results" type="submit" [disabled]="searchForm.invalid">
+      <button mat-stroked-button aria-label="Filter results" type="submit" class="admin-toolbar-button" [disabled]="searchForm.invalid">
         <mat-icon>filter_list</mat-icon> Submit
       </button>
-      <button mat-stroked-button aria-label="Reset filters" type="reset" (click)="onResetFilters()">
+      <button mat-stroked-button aria-label="Reset filters" type="reset" class="admin-toolbar-button" (click)="onResetFilters()">
         <mat-icon>clear</mat-icon> Reset
       </button>
 
     </form>
   </div>
   <div class="table-scroll-container">
-    <table mat-table [dataSource]="dataSource" matSort matSortActive="id" matSortDirection="asc"
+    <table mat-table [dataSource]="dataSource" matSort matSortActive="createdAt" matSortDirection="desc"
            matSortDisableClear="true" (matSortChange)="onSort($event)">
 
       <ng-container matColumnDef="id">
@@ -59,8 +70,8 @@
       </ng-container>
 
       <ng-container matColumnDef="createdAt">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by Created At"> Created At </th>
-        <td mat-cell *matCellDef="let user"> {{user.createdAt | date: 'medium'}} </td>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by Created At" start="desc"> Created At </th>
+        <td mat-cell *matCellDef="let user"> {{user.createdAt | date: 'MMMM d, y, h:mm:ss a'}} </td>
       </ng-container>
 
       <ng-container matColumnDef="isEmailConfirmed">
@@ -72,8 +83,14 @@
         <th mat-header-cell *matHeaderCellDef> Actions </th>
         <td mat-cell *matCellDef="let user">
           <div class="flex gap-2">
-            <button matTooltip="TODO" mat-icon-button>
+            <button matTooltip="View Details" mat-icon-button [disabled]="true">
               <mat-icon color="accent">visibility</mat-icon>
+            </button>
+            <button (click)="openUnlockConfirmDialog(user.id)" matTooltip="Activate" mat-icon-button [disabled]="!user.isLockedOut">
+              <mat-icon [class.icon-success]="user.isLockedOut">radio_button_unchecked</mat-icon>
+            </button>
+            <button (click)="openLockConfirmDialog(user.id)" matTooltip="Deactivate" mat-icon-button [disabled]="user.isLockedOut">
+              <mat-icon [class.icon-warning]="!user.isLockedOut">cancel</mat-icon>
             </button>
           </div>
         </td>
@@ -91,7 +108,7 @@
 
   <mat-paginator [pageSizeOptions]="[5, 10, 15, 20, 50]"
                  [length]="totalItems"
-                 [pageSize]="paginationParams.pageSize"
+                 [pageSize]="userParams.pageSize"
                  (page)="onPageChange($event)"
                  showFirstLastButtons
                  aria-label="Select page">

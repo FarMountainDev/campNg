@@ -3,7 +3,7 @@ import {MatPaginatorModule, PageEvent} from '@angular/material/paginator';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {Order} from '../../../shared/models/order';
 import {AdminService} from '../../../core/services/admin.service';
-import {OrderParams} from '../../../shared/models/orderParams';
+import {OrderParams} from '../../../shared/models/params/orderParams';
 import {MatButton, MatIconButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
 import {MatSelectChange, MatSelectModule} from '@angular/material/select';

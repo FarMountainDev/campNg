@@ -7,7 +7,7 @@ import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {MatIcon} from '@angular/material/icon';
 import {FiltersDialogComponent} from './filters-dialog/filters-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
-import {CampParams} from '../../shared/models/campParams';
+import {CampParams} from '../../shared/models/params/campParams';
 import {MatButton} from '@angular/material/button';
 import {FormsModule} from '@angular/forms';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';

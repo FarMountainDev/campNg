@@ -23,9 +23,11 @@ public class AdminDashboardController(CampContext context) : BaseApiController
         
         var query = context.Reservations
             .Include(x => x.Campsite)
+            .Include(x => x.OrderItem)
+            .ThenInclude(x => x!.Order)
             .Where(x => x.StartDate == today);
         
-        return await CreatePagedResult(query, baseParams.PageNumber, baseParams.PageSize, r => r.ToDto());
+        return await CreatePagedResult(query, baseParams.PageNumber, baseParams.PageSize, r => r.ToDto(true));
     }
     
     [HttpGet("check-outs")]
@@ -35,9 +37,11 @@ public class AdminDashboardController(CampContext context) : BaseApiController
         
         var query = context.Reservations
             .Include(x => x.Campsite)
+            .Include(x => x.OrderItem)
+            .ThenInclude(x => x!.Order)
             .Where(x => x.EndDate.AddDays(1) == today);
         
-        return await CreatePagedResult(query, baseParams.PageNumber, baseParams.PageSize, r => r.ToDto());
+        return await CreatePagedResult(query, baseParams.PageNumber, baseParams.PageSize, r => r.ToDto(true));
     }
 
     [HttpGet("occupancy")]

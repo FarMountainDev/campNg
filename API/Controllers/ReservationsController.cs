@@ -8,28 +8,27 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
-public class ReservationsController(CampContext context, IReservationService reservationService, IConfiguration config) : BaseApiController
+public class ReservationsController(CampContext context, IReservationService reservationService) : BaseApiController
 {
-    [HttpGet]
-    public async Task<ActionResult<List<Reservation>>> GetAllReservations()
-    {
-        var reservations = await context.Reservations
-            .ToListAsync();
-        
-        return Ok(reservations.Select(r => r.ToDto()).ToList());
-    }
-    
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetReservation(int id)
     {
-        var reservation = await context.Reservations
+        var isAdmin = User.IsInRole("Admin");
+
+        var query = context.Reservations
             .Include(e => e.Campsite)
-            .FirstOrDefaultAsync(e => e.Id == id);
+            .AsQueryable();
+        
+        if (isAdmin)
+            query = query.Include(x => x.OrderItem)
+                .ThenInclude(x => x!.Order);
+        
+        var reservation = await query.FirstOrDefaultAsync(e => e.Id == id);
         
         if (reservation is null)
             return NotFound();
         
-        return Ok(reservation.ToDto());
+        return Ok(reservation.ToDto(includeEmail: isAdmin));
     }
 
     [HttpGet("valid")]

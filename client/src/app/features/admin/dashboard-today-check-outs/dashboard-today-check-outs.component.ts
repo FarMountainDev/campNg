@@ -2,7 +2,7 @@ import {Component, inject, OnInit} from '@angular/core';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {MatPaginatorModule, PageEvent} from '@angular/material/paginator';
 import {AdminService} from '../../../core/services/admin.service';
-import {PaginationParams} from '../../../shared/models/paginationParams';
+import {PaginationParams} from '../../../shared/models/params/paginationParams';
 import {DatePipe} from '@angular/common';
 import {ReservationDto} from '../../../shared/models/reservationDto';
 
@@ -18,7 +18,7 @@ import {ReservationDto} from '../../../shared/models/reservationDto';
 })
 export class DashboardTodayCheckOutsComponent implements OnInit {
   private readonly adminService = inject(AdminService);
-  displayedColumns: string[] = ['id', 'campsiteId', 'email', 'startDate', 'endDate'];
+  displayedColumns: string[] = ['id', 'campsite', 'email', 'startDate', 'endDate'];
   dataSource = new MatTableDataSource<ReservationDto>([]);
   paginationParams = new PaginationParams();
   totalItems = 0;

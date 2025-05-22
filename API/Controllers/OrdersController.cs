@@ -7,19 +7,25 @@ using Core.Interfaces;
 using Core.Models;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
 [Authorize]
-public class OrdersController(ICartService cartService, CampContext context, IReservationService reservationService) : BaseApiController
+public class OrdersController(ICartService cartService, CampContext context, 
+    IReservationService reservationService, UserManager<AppUser> userManager) : BaseApiController
 {
     [InvalidateCache("/api/admin/orders", "/api/admin/revenue")]
     [HttpPost]
     public async Task<ActionResult<Order>> CreateOrder(CreateOrderDto orderDto)
     {
         var email = User.GetEmail();
+        
+        var user = await userManager.FindByEmailAsync(email);
+        if (user is { LockoutEnd: not null } && user.LockoutEnd > DateTimeOffset.UtcNow)
+            return Forbid("User account is currently locked");
         
         var cart = await cartService.GetCartAsync(orderDto.CartId);
         
@@ -35,13 +41,11 @@ public class OrdersController(ICartService cartService, CampContext context, IRe
             
             if (campsite is null) return BadRequest("Campsite not found");
 
-            var reservationValid = await reservationService.ValidReservation(
+            var reservationValidationResult = await reservationService.ValidReservation(
                 item.CampsiteId, item.StartDate, item.EndDate);
             
-            if (!reservationValid.IsValid)
-            {
-                return BadRequest($"{item.CampsiteName} is not available for the selected dates");
-            }
+            if (!reservationValidationResult.IsValid)
+                return BadRequest($"{reservationValidationResult.ErrorMessage}");
             
             var reservation = new Reservation
             {

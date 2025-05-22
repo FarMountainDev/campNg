@@ -1,10 +1,11 @@
 ﻿export type User = {
-  id: number;
+  id: string;
   username: string;
   firstName: string;
   lastName: string;
   email: string;
   createdAt: Date;
   isEmailConfirmed: boolean;
+  isLockedOut: boolean;
   roles: string | string[];
 }

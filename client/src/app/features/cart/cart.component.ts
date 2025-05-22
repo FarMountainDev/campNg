@@ -4,8 +4,6 @@ import {CartItemComponent} from './cart-item/cart-item.component';
 import {OrderSummaryComponent} from '../../shared/components/order-summary/order-summary.component';
 import {MatButton} from '@angular/material/button';
 import {RouterLink} from '@angular/router';
-import {MatFormField, MatLabel} from '@angular/material/form-field';
-import {MatInput} from '@angular/material/input';
 import {EmptyStateComponent} from '../../shared/components/empty-state/empty-state.component';
 
 @Component({
@@ -15,9 +13,6 @@ import {EmptyStateComponent} from '../../shared/components/empty-state/empty-sta
     OrderSummaryComponent,
     MatButton,
     RouterLink,
-    MatFormField,
-    MatInput,
-    MatLabel,
     EmptyStateComponent
   ],
   templateUrl: './cart.component.html',

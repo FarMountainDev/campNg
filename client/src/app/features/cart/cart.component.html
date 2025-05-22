@@ -7,18 +7,6 @@
     </div>
     <div class="basis-1/4 flex flex-col gap-3">
       <app-order-summary />
-      <div class="p-4 flex flex-col div-backdrop">
-        <form class="flex flex-col">
-          <label class="mb-4 block text-sm font-medium">
-            Do you have a voucher code?
-          </label>
-          <mat-form-field appearance="outline">
-            <mat-label>Voucher code</mat-label>
-            <input type="text" matInput />
-          </mat-form-field>
-          <button mat-stroked-button>Apply</button>
-        </form>
-      </div>
       <div class="p-4 flex flex-col div-backdrop gap-3">
         <button mat-flat-button routerLink="/checkout" [disabled]="!cartService.cart()">Checkout</button>
         <button mat-button routerLink="/reservations">Find another reservation</button>

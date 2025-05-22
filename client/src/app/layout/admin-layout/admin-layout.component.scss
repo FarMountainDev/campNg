@@ -93,11 +93,31 @@ html.dark-mode {
   overflow: auto;
 }
 
-.mat-mdc-outlined-button {
+.mat-mdc-outlined-button, .mat-mdc-unelevated-button {
   height: 56px !important;
 }
 
 .mat-mdc-header-row {
   background-color: var(--card-bg-color) !important;
   z-index: 10;
+}
+
+.icon-success {
+  fill: #4caf50 !important;
+  color: #4caf50 !important;
+}
+
+.icon-info {
+  fill: #2196f3 !important;
+  color: #2196f3 !important;
+}
+
+.icon-warning {
+  fill: #c66a28 !important;
+  color: #c66a28 !important;
+}
+
+.icon-error {
+  fill: #f44336 !important;
+  color: #f44336 !important;
 }

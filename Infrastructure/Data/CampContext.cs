@@ -89,7 +89,7 @@ public class CampContext(DbContextOptions options) : IdentityDbContext<AppUser>(
                 .OnDelete(DeleteBehavior.Cascade);
             entity.HasOne(e => e.OrderItem)
                 .WithOne(e => e.Reservation)
-                .HasForeignKey<OrderItem>(e => e.ReservationId)
+                .HasForeignKey<Reservation>(e => e.OrderItemId)
                 .OnDelete(DeleteBehavior.SetNull);
         });
             
@@ -116,6 +116,11 @@ public class CampContext(DbContextOptions options) : IdentityDbContext<AppUser>(
         // OrderItem
         modelBuilder.Entity<OrderItem>(entity =>
         {
+            entity.HasOne(oi => oi.Order)
+                .WithMany(o => o.OrderItems)
+                .HasForeignKey(oi => oi.OrderId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade);
             entity.OwnsOne(e => e.ReservationOrdered, o =>
             {
                 o.Property(p => p.CampsiteName).HasMaxLength(50);

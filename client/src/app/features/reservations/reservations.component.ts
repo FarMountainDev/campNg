@@ -12,7 +12,7 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatOption, provideNativeDateAdapter} from '@angular/material/core';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {Pagination} from '../../shared/models/pagination';
-import {CampParams} from '../../shared/models/campParams';
+import {CampParams} from '../../shared/models/params/campParams';
 import {FormControl, FormsModule, NgForm, ReactiveFormsModule} from '@angular/forms';
 import {MatSelect, MatSelectTrigger} from '@angular/material/select';
 import {MatDivider} from '@angular/material/divider';

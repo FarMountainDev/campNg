@@ -36,16 +36,23 @@ public static class ToDtoMappingExtensions
         };
     }
 
-    public static ReservationDto ToDto(this Reservation reservation)
+    public static ReservationDto ToDto(this Reservation reservation, bool includeEmail = false)
     {
-        return new ReservationDto()
+        var dto = new ReservationDto()
         {
             Id = reservation.Id,
-            Email = reservation.Email,
             StartDate = reservation.StartDate,
             EndDate = reservation.EndDate,
             CampsiteId = reservation.CampsiteId,
+            CampsiteName = reservation.Campsite?.Name,
+            OrderItemId = reservation.OrderItem?.Id,
+            OrderId = reservation.OrderItem?.OrderId
         };
+        
+        if (includeEmail)
+            dto.Email = reservation.Email;
+    
+        return dto;
     }
 
     public static OrderDto ToDto(this Order order)

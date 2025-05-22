@@ -1,4 +1,4 @@
-<div class="table-container">
+<div class="table-container flex-1">
   <div class="table-header">Today's Check-Outs</div>
   <div class="table-scroll-container">
     <table mat-table [dataSource]="dataSource" class="mat-elevation-z0">
@@ -7,9 +7,9 @@
         <td mat-cell *matCellDef="let reservation"> {{reservation.id}} </td>
       </ng-container>
 
-      <ng-container matColumnDef="campsiteId">
-        <th mat-header-cell *matHeaderCellDef class="bg-gray-200 dark:bg-gray-700"> Campsite ID </th>
-        <td mat-cell *matCellDef="let reservation"> {{reservation.campsiteId}} </td>
+      <ng-container matColumnDef="campsite">
+        <th mat-header-cell *matHeaderCellDef class="bg-gray-200 dark:bg-gray-700"> Campsite </th>
+        <td mat-cell *matCellDef="let reservation"> ({{reservation.campsiteId}}) {{reservation.campsiteName}} </td>
       </ng-container>
 
       <ng-container matColumnDef="email">

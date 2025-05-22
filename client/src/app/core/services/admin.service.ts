@@ -1,14 +1,15 @@
 import {inject, Injectable} from '@angular/core';
 import {environment} from '../../../environments/environment';
 import {HttpClient, HttpParams} from '@angular/common/http';
-import {OrderParams} from '../../shared/models/orderParams';
+import {OrderParams} from '../../shared/models/params/orderParams';
 import {Pagination} from '../../shared/models/pagination';
 import {Order} from '../../shared/models/order';
-import {PaginationParams} from '../../shared/models/paginationParams';
+import {PaginationParams} from '../../shared/models/params/paginationParams';
 import {ReservationDto} from '../../shared/models/reservationDto';
 import {OccupancyRate} from '../../shared/models/occupancyRate';
 import {MonthlyRevenue} from '../../shared/models/monthlyRevenue';
 import {User} from '../../shared/models/user';
+import {UserParams} from '../../shared/models/params/userParams';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,32 @@ export class AdminService {
   private readonly baseUrl = environment.apiUrl;
   private readonly http = inject(HttpClient);
 
-  getUsers(paginationParams: PaginationParams) {
+  getUsers(userParams: UserParams) {
+    let params = new HttpParams();
+    if (userParams.status && userParams.status !== 'All') {
+      params = params.append('status', userParams.status);
+    }
+    if (userParams.search) {
+        params = params.append('search', userParams.search);
+    }
+    if (userParams.sort && userParams.sortDirection) {
+        params = params.append('sort', userParams.sort);
+        params = params.append('sortDirection', userParams.sortDirection);
+    }
+    params = params.append('pageNumber', userParams.pageNumber);
+    params = params.append('pageSize', userParams.pageSize);
+    return this.http.get<Pagination<User>>(this.baseUrl + 'admin/users', {params});
+  }
+
+  lockUser(id: string) {
+    return this.http.post<User>(this.baseUrl + 'admin/users/lock/' + id, {});
+  }
+
+  unlockUser(id: string) {
+    return this.http.post<User>(this.baseUrl + 'admin/users/unlock/' + id, {});
+  }
+
+  getReservations(paginationParams: PaginationParams) {
     let params = new HttpParams();
     if (paginationParams.search) {
         params = params.append('search', paginationParams.search);
@@ -28,7 +54,7 @@ export class AdminService {
     }
     params = params.append('pageNumber', paginationParams.pageNumber);
     params = params.append('pageSize', paginationParams.pageSize);
-    return this.http.get<Pagination<User>>(this.baseUrl + 'admin/users', {params});
+    return this.http.get<Pagination<ReservationDto>>(this.baseUrl + 'admin/reservations', {params});
   }
 
   getOrders(orderParams: OrderParams) {
@@ -92,7 +118,8 @@ export class AdminService {
         campsiteId: 100 + Math.floor(Math.random() * 50),
         email: `camper${i}@test.com`,
         startDate: startDate,
-        endDate: endDate
+        endDate: endDate,
+        campsiteName: `Campsite ${100 + Math.floor(Math.random() * 50)}`,
       });
     }
 

@@ -122,8 +122,7 @@ export class ReservationsComponent implements OnInit, OnDestroy {
     this.campsiteSubscription?.unsubscribe();
     this.campsiteSubscription = this.campsiteService.getAvailableCampsites(startDate, endDate, this.campParams)
       .pipe(
-        catchError(error => {
-          console.error('Error fetching campsites:', error);
+        catchError(() => {
           this.snackbar.error('Failed to load campsites. Please try again.');
           this.loading$.next(false);
           return EMPTY;
@@ -131,12 +130,9 @@ export class ReservationsComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (response) => {
-          console.log("response:", response);
           this.campsites$.next(response);
           this.campsiteCount = response.count;
           this.loading$.next(false);
-          console.log('campsites$:', this.campsites$);
-          console.log("campsiteCount:", this.campsiteCount);
         }
       });
   }

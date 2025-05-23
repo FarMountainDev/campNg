@@ -9,5 +9,5 @@ public class CampsiteDto
     public string? CampsiteType { get; set; }
     public decimal? WeekDayPrice { get; set; }
     public decimal? WeekEndPrice { get; set; }
-    public ICollection<ReservationDto> Reservations { get; set; } = [];
+    public ICollection<ReservationDto>? Reservations { get; set; }
 }

@@ -89,7 +89,6 @@ export class CheckoutComponent implements OnInit, OnDestroy{
         const result = await this.stripeService.createConfirmationToken();
         if (result.error) throw new Error(result.error.message);
         this.confirmationToken = result.confirmationToken;
-        console.log(this.confirmationToken);
       }
     } catch (error: any) {
       this.snackbar.error(error.message);

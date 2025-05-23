@@ -1,12 +1,12 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { User } from '../../../../shared/models/user';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { NgIf } from '@angular/common';
+import { ImmediateErrorStateMatcher } from '../../../../shared/utils/immediate-error-state-matcher';
 
 @Component({
   selector: 'app-admin-user-edit',
@@ -22,13 +22,11 @@ import { NgIf } from '@angular/common';
   styleUrls: ['./admin-user-edit.component.scss']
 })
 export class AdminUserEditComponent implements OnInit {
+  private readonly dialogRef = inject(MatDialogRef<AdminUserEditComponent>);
+  private readonly fb: FormBuilder = new FormBuilder();
+  data = inject(MAT_DIALOG_DATA);
   userForm!: FormGroup;
-
-  constructor(
-    private fb: FormBuilder,
-    public dialogRef: MatDialogRef<AdminUserEditComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { user: User }
-  ) {}
+  immediateErrorMatcher = new ImmediateErrorStateMatcher();
 
   ngOnInit() {
     // Name pattern allows letters, spaces, hyphens and apostrophes

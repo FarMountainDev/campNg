@@ -18,9 +18,6 @@ export class CampsiteService {
     params = params.append('startDate', this.formatDateToYYYYMMDD(startDate));
     params = params.append('endDate', this.formatDateToYYYYMMDD(endDate));
 
-    console.log(this.formatDateToYYYYMMDD(startDate));
-    console.log(this.formatDateToYYYYMMDD(endDate));
-
     if (campParams.campgroundAmenities.length > 0)
       params = params.append('campgroundAmenities', campParams.campgroundAmenities.join(','));
 

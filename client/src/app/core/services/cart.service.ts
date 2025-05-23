@@ -38,8 +38,7 @@ export class CartService {
 
   setCart(cart: ShoppingCart) {
     return this.http.post<ShoppingCart>(this.baseUrl + 'cart', cart).subscribe({
-      next: cart => this.cart.set(cart),
-      error: error => console.log(error)
+      next: cart => this.cart.set(cart)
     })
   }
 

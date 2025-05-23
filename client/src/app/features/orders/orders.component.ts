@@ -24,9 +24,6 @@ export class OrdersComponent implements OnInit{
     this.orderService.getOrdersForUser().subscribe({
       next: orders => {
         this.orders = orders;
-      },
-      error: err => {
-        console.error('Error fetching orders:', err);
       }
     });
   }

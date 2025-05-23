@@ -5,4 +5,6 @@
   endDate: Date;
   campsiteId: number;
   campsiteName: string;
+  campgroundName: string;
+  orderId: number;
 }

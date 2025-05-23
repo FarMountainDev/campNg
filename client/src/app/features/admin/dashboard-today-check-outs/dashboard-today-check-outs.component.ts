@@ -5,6 +5,7 @@ import {AdminService} from '../../../core/services/admin.service';
 import {PaginationParams} from '../../../shared/models/params/paginationParams';
 import {DatePipe} from '@angular/common';
 import {ReservationDto} from '../../../shared/models/reservationDto';
+import {DialogService} from '../../../core/services/dialog.service';
 
 @Component({
   selector: 'app-dashboard-today-check-outs',
@@ -18,6 +19,7 @@ import {ReservationDto} from '../../../shared/models/reservationDto';
 })
 export class DashboardTodayCheckOutsComponent implements OnInit {
   private readonly adminService = inject(AdminService);
+  private readonly dialogService = inject(DialogService);
   displayedColumns: string[] = ['id', 'campsite', 'email', 'startDate', 'endDate'];
   dataSource = new MatTableDataSource<ReservationDto>([]);
   paginationParams = new PaginationParams();
@@ -43,5 +45,9 @@ export class DashboardTodayCheckOutsComponent implements OnInit {
     this.paginationParams.pageNumber = event.pageIndex + 1;
     this.paginationParams.pageSize = event.pageSize;
     this.loadCheckOuts();
+  }
+
+  openReservationDetailsDialog(reservation: ReservationDto) {
+    this.dialogService.openAdminReservationDetails(reservation);
   }
 }

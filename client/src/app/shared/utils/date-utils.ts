@@ -16,7 +16,6 @@ export function normalizeDate(dateInput: string | Date | unknown): Date {
     // Fall back to standard date conversion
     return new Date(dateInput as any);
   } catch (e) {
-    console.error('Date parsing error:', e);
     return new Date(); // Return today as fallback
   }
 }

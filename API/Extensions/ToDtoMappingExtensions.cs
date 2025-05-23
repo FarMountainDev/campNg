@@ -8,7 +8,7 @@ public static class ToDtoMappingExtensions
 {
     public static AppUserDto ToDto(this AppUser user, IReadOnlyList<string> roles)
     {
-        return new AppUserDto()
+        return new AppUserDto
         {
             Id = user.Id,
             UserName = user.UserName,
@@ -24,7 +24,7 @@ public static class ToDtoMappingExtensions
     
     public static CampgroundDto ToDto(this Campground campground)
     {
-        return new CampgroundDto()
+        return new CampgroundDto
         {
             Id = campground.Id,
             Name = campground.Name,
@@ -37,9 +37,7 @@ public static class ToDtoMappingExtensions
 
     public static CampsiteDto ToDto(this Campsite campsite)
     {
-        campsite.Reservations ??= [];
-
-        return new CampsiteDto()
+        return new CampsiteDto
         {
             Id = campsite.Id,
             Name = campsite.Name,
@@ -48,19 +46,20 @@ public static class ToDtoMappingExtensions
             CampsiteType = campsite.CampsiteType?.Name,
             WeekDayPrice = campsite.CampsiteType?.WeekDayPrice,
             WeekEndPrice = campsite.CampsiteType?.WeekEndPrice,
-            Reservations = campsite.Reservations.Select(r => r.ToDto()).ToList()
+            Reservations = campsite.Reservations?.Select(r => r.ToDto()).ToList()
         };
     }
 
     public static ReservationDto ToDto(this Reservation reservation, bool includeEmail = false)
     {
-        var dto = new ReservationDto()
+        var dto = new ReservationDto
         {
             Id = reservation.Id,
             StartDate = reservation.StartDate,
             EndDate = reservation.EndDate,
             CampsiteId = reservation.CampsiteId,
             CampsiteName = reservation.Campsite?.Name,
+            CampgroundName = reservation.Campsite?.Campground?.Name,
             OrderItemId = reservation.OrderItem?.Id,
             OrderId = reservation.OrderItem?.OrderId
         };

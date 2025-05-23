@@ -5,7 +5,6 @@ import {Campground} from '../../../shared/models/campground';
 import {BehaviorSubject, Subject, catchError, EMPTY, finalize, takeUntil} from 'rxjs';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {AsyncPipe, NgIf} from '@angular/common';
-import {MatCard, MatCardContent, MatCardHeader, MatCardTitle} from '@angular/material/card';
 
 @Component({
   selector: 'app-campground-details',
@@ -44,9 +43,8 @@ export class CampgroundDetailsComponent implements OnInit, OnDestroy {
 
     this.campgroundsService.getCampground(id).pipe(
       takeUntil(this.destroy$),
-      catchError(err => {
+      catchError(() => {
         this.error$.next('Failed to load campground details');
-        console.error(err);
         return EMPTY;
       }),
       finalize(() => this.loading$.next(false))

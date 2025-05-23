@@ -4,6 +4,10 @@ import { ConfirmationDialogComponent } from '../../shared/components/confirmatio
 import {firstValueFrom} from 'rxjs';
 import {User} from '../../shared/models/user';
 import {AdminUserEditComponent} from '../../features/admin/admin-users/admin-user-edit/admin-user-edit.component';
+import {
+  AdminReservationDetailsComponent
+} from '../../features/admin/admin-reservations/admin-reservation-details/admin-reservation-details.component';
+import {ReservationDto} from '../../shared/models/reservationDto';
 
 @Injectable({
   providedIn: 'root'
@@ -19,10 +23,17 @@ export class DialogService {
     return firstValueFrom(dialogRef.afterClosed());
   }
 
-  openAdminUserDetails(user: User) {
+  openAdminUserEdit(user: User) {
     const dialogRef = this.dialog.open(AdminUserEditComponent, {
       data: {user}
     });
     return firstValueFrom(dialogRef.afterClosed());
+  }
+
+  openAdminReservationDetails(reservation: ReservationDto) {
+    this.dialog.open(AdminReservationDetailsComponent, {
+      maxWidth: '1200px',
+      data: {reservation}
+    });
   }
 }

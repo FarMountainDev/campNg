@@ -1,0 +1,32 @@
+<h2 mat-dialog-title>Reservation Details</h2>
+<mat-dialog-content>
+  <table class="w-full text-lg">
+    <tr>
+      <td class="text-right font-semibold">ID:</td>
+      <td>{{data.reservation.id}}</td>
+      <td class="text-right font-semibold">Email:</td>
+      <td>{{data.reservation.email}}</td>
+    </tr>
+    <tr>
+      <td class="text-right font-semibold">Campsite ID:</td>
+      <td>{{data.reservation.campsiteId}}</td>
+      <td class="text-right font-semibold">Order ID:</td>
+      <td>{{data.reservation.orderId}}</td>
+    </tr>
+    <tr>
+      <td class="text-right font-semibold">Campsite Name:</td>
+      <td>{{data.reservation.campsiteName}}</td>
+      <td class="text-right font-semibold">Start Date:</td>
+      <td>{{data.reservation.startDate | date: 'fullDate'}}</td>
+    </tr>
+    <tr>
+      <td class="text-right font-semibold">Campground Name:</td>
+      <td>{{data.reservation.campgroundName}}</td>
+      <td class="text-right font-semibold">End Date:</td>
+      <td>{{data.reservation.endDate | date: 'fullDate'}}</td>
+    </tr>
+  </table>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-stroked-button (click)="onCancel()">Close</button>
+</mat-dialog-actions>

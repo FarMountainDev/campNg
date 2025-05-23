@@ -10,7 +10,6 @@ import {OccupancyRate} from '../../shared/models/occupancyRate';
 import {MonthlyRevenue} from '../../shared/models/monthlyRevenue';
 import {User} from '../../shared/models/user';
 import {UserParams} from '../../shared/models/params/userParams';
-import { tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -56,11 +55,7 @@ export class AdminService {
   }
 
   updateUser(user: User) {
-    return this.http.put<User>(this.baseUrl + 'admin/users/update/', user).pipe(
-      tap((updatedItem) => {
-        console.log('Item updated successfully:', updatedItem);
-      })
-    );
+    return this.http.put<User>(this.baseUrl + 'admin/users/update/', user).pipe();
   }
 
   getReservations(paginationParams: PaginationParams) {
@@ -140,6 +135,8 @@ export class AdminService {
         startDate: startDate,
         endDate: endDate,
         campsiteName: `Campsite ${100 + Math.floor(Math.random() * 50)}`,
+        campgroundName: `Campground ${Math.floor(Math.random() * 10)}`,
+        orderId: 1000 + Math.floor(Math.random() * 100)
       });
     }
 

@@ -28,7 +28,8 @@
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      <tr mat-row *matRowDef="let reservation; columns: displayedColumns;"
+        (click)="openReservationDetailsDialog(reservation)" class="cursor-pointer"></tr>
       <tr class="mat-row" *matNoDataRow>
         <td class="mat-cell text-center text-xl py-4" [attr.colspan]="displayedColumns.length">
           No check-ins for today.

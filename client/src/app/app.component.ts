@@ -18,9 +18,7 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.http.get<Pagination<Campground>>(this.baseUrl + 'campgrounds').subscribe({
-      next: response => this.campgrounds = response.data,
-      error: (error: any) => console.error(error),
-      complete: () => console.log('complete')
-    })
+      next: response => this.campgrounds = response.data
+    });
   }
 }

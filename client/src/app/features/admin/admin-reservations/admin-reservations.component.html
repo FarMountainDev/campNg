@@ -81,9 +81,9 @@
 
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef> Actions </th>
-        <td mat-cell *matCellDef="let user">
+        <td mat-cell *matCellDef="let reservation">
           <div class="flex gap-2">
-            <button matTooltip="View Details" mat-icon-button [disabled]="true">
+            <button (click)="openReservationDetailsDialog(reservation)" matTooltip="View Details" mat-icon-button>
               <mat-icon color="accent">visibility</mat-icon>
             </button>
             <button matTooltip="Deactivate" mat-icon-button [disabled]="true">

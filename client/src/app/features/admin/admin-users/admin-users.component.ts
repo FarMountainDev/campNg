@@ -134,7 +134,7 @@ export class AdminUsersComponent implements OnInit{
 
   async openUserEditDialog(user: User) {
     const userDetails = {...user};
-    const userResult: User = await this.dialogService.openAdminUserDetails(userDetails);
+    const userResult = await this.dialogService.openAdminUserEdit(userDetails);
     if (userResult) {
       this.updateUser(userResult);
     }

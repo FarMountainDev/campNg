@@ -15,6 +15,7 @@ import {PaginationParams} from '../../../shared/models/params/paginationParams';
 import {ReservationDto} from '../../../shared/models/reservationDto';
 import {SnackbarService} from '../../../core/services/snackbar.service';
 import {ImmediateErrorStateMatcher} from '../../../shared/utils/immediate-error-state-matcher';
+import {DialogService} from '../../../core/services/dialog.service';
 
 @Component({
   selector: 'app-admin-reservations',
@@ -40,6 +41,7 @@ import {ImmediateErrorStateMatcher} from '../../../shared/utils/immediate-error-
 })
 export class AdminReservationsComponent implements OnInit {
   private readonly adminService = inject(AdminService);
+  private readonly dialogService = inject(DialogService);
   private readonly snackbar = inject(SnackbarService);
   displayedColumns: string[] = ['id', 'email', 'campsiteId', 'campsiteName', 'startDate', 'endDate', 'orderId', 'actions'];
   dataSource = new MatTableDataSource<ReservationDto>([]);
@@ -102,5 +104,9 @@ export class AdminReservationsComponent implements OnInit {
 
   onCreateReservation() {
     this.snackbar.warning('Admin reservation creation is not available yet.');
+  }
+
+  openReservationDetailsDialog(reservation: ReservationDto) {
+    this.dialogService.openAdminReservationDetails(reservation);
   }
 }

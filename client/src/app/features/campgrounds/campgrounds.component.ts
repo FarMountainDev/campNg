@@ -52,8 +52,7 @@ export class CampgroundsComponent implements OnInit {
       map(response => {
         this.campgroundCount = response.count;
       }),
-      catchError(error => {
-        console.log(error);
+      catchError(() => {
         this.loading.next(false);
         return EMPTY;
       })

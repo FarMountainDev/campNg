@@ -7,6 +7,7 @@ html {
     background: #FFF;
     --content-bg-color: #f1f1f1;
     --card-bg-color: #fff;
+    --card-bg-color-hover: #EDEDED;
   }
 
   .admin-content {
@@ -25,6 +26,10 @@ html {
     @apply rounded-lg p-4 shadow-md border-2;
     background-color: var(--card-bg-color);
   }
+
+  .mat-mdc-row:hover .mat-mdc-cell {
+    background-color: var(--card-bg-color-hover);
+  }
 }
 
 html.dark-mode {
@@ -39,6 +44,7 @@ html.dark-mode {
     background: #000;
     --content-bg-color: #0e1218;
     --card-bg-color: #121821;
+    --card-bg-color-hover: #222833;
   }
 
   .mat-toolbar {
@@ -67,6 +73,10 @@ html.dark-mode {
 
   .dashboard-card {
     @apply border-gray-500;
+  }
+
+  .mat-mdc-row:hover .mat-mdc-cell {
+    background-color: var(--card-bg-color-hover);
   }
 }
 

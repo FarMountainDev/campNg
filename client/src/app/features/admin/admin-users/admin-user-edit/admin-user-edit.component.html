@@ -1,30 +1,32 @@
-<div class="p-4 flex flex-col gap-4 w-96">
+<div class="p-4 flex flex-col gap-4">
   <h2 class="text-2xl font-semibold">User Details</h2>
   <form [formGroup]="userForm" (ngSubmit)="onConfirmChanges()">
     <mat-card>
       <mat-card-header>
         <mat-card-title>{{data.user['email']}}</mat-card-title>
       </mat-card-header>
-      <mat-card-content class="flex flex-col gap-3 mt-3">
-        <mat-form-field appearance="outline">
+      <mat-card-content class="flex flex-col gap-2 mt-3">
+
+        <mat-form-field appearance="outline" class="my-2 w-full">
           <mat-label>First Name</mat-label>
-          <input matInput formControlName="firstName">
+          <input matInput formControlName="firstName" [errorStateMatcher]="immediateErrorMatcher">
           <mat-error *ngIf="userForm.controls['firstName'].hasError('pattern')">
             Invalid characters detected
           </mat-error>
         </mat-form-field>
 
-        <mat-form-field appearance="outline">
+        <mat-form-field appearance="outline" class="mb-2 w-full">
           <mat-label>Last Name</mat-label>
-          <input matInput formControlName="lastName">
+          <input matInput formControlName="lastName" [errorStateMatcher]="immediateErrorMatcher">
           <mat-error *ngIf="userForm.controls['lastName'].hasError('pattern')">
             Invalid characters detected
           </mat-error>
         </mat-form-field>
+
       </mat-card-content>
       <mat-card-actions class="flex gap-2" align="end">
-        <button mat-stroked-button (click)="onCancel()">Close</button>
-        <button mat-stroked-button [disabled]="userForm.invalid || !userForm.dirty" (click)="onConfirmChanges()" type="submit">Confirm Changes</button>
+        <button mat-stroked-button (click)="onCancel()" type="button">Cancel</button>
+        <button mat-stroked-button (click)="onConfirmChanges()" type="submit" [disabled]="userForm.invalid || !userForm.dirty">Confirm Changes</button>
       </mat-card-actions>
     </mat-card>
   </form>

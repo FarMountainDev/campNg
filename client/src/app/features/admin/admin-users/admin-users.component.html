@@ -98,22 +98,22 @@
         <th mat-header-cell *matHeaderCellDef> Actions </th>
         <td mat-cell *matCellDef="let user">
           <div class="flex gap-2">
-            <button (click)="openUserDetailsDialog(user)" matTooltip="View Details" mat-icon-button>
+            <button (click)="$event.stopPropagation(); openUserDetailsDialog(user)" matTooltip="View Details" mat-icon-button>
               <mat-icon>visibility</mat-icon>
             </button>
-            <button (click)="openUserEditDialog(user)" matTooltip="Edit User" mat-icon-button *appIsAdmin>
+            <button (click)="$event.stopPropagation(); openUserEditDialog(user)" matTooltip="Edit User" mat-icon-button *appIsAdmin>
               <mat-icon>edit</mat-icon>
             </button>
-            <button (click)="openUnlockConfirmDialog(user.id)" matTooltip="Activate" mat-icon-button [hidden]="!user.isLockedOut" *appIsAdmin>
+            <button (click)="$event.stopPropagation(); openUnlockConfirmDialog(user.id)" matTooltip="Activate" mat-icon-button [hidden]="!user.isLockedOut" *appIsAdmin>
               <mat-icon class="icon-success">radio_button_checked</mat-icon>
             </button>
-            <button (click)="openLockConfirmDialog(user.id)" matTooltip="Deactivate" mat-icon-button [hidden]="user.isLockedOut" *appIsAdmin>
+            <button (click)="$event.stopPropagation(); openLockConfirmDialog(user.id)" matTooltip="Deactivate" mat-icon-button [hidden]="user.isLockedOut" *appIsAdmin>
               <mat-icon class="icon-warning">cancel</mat-icon>
             </button>
-            <button (click)="openAddModeratorConfirmDialog(user.id)" matTooltip="Add Moderator" mat-icon-button [hidden]="hasRole(user,  'Moderator')" *appIsAdmin>
+            <button (click)="$event.stopPropagation(); openAddModeratorConfirmDialog(user.id)" matTooltip="Add Moderator" mat-icon-button [hidden]="hasRole(user,  'Moderator')" *appIsAdmin>
               <mat-icon class="icon-info">add_moderator</mat-icon>
             </button>
-            <button (click)="openRemoveModeratorConfirmDialog(user.id)" matTooltip="Remove Moderator" mat-icon-button [hidden]="!hasRole(user,  'Moderator')" *appIsAdmin>
+            <button (click)="$event.stopPropagation(); openRemoveModeratorConfirmDialog(user.id)" matTooltip="Remove Moderator" mat-icon-button [hidden]="!hasRole(user,  'Moderator')" *appIsAdmin>
               <mat-icon class="icon-highlight">remove_moderator</mat-icon>
             </button>
           </div>
@@ -121,7 +121,8 @@
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      <tr mat-row *matRowDef="let user; columns: displayedColumns;"
+        (click)="openUserDetailsDialog(user)" class="cursor-pointer"></tr>
       <tr class="mat-row" *matNoDataRow>
         <td class="mat-cell text-center text-xl py-4" [attr.colspan]="displayedColumns.length">
           No data matching the filter.

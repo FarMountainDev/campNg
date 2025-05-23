@@ -20,7 +20,7 @@ import {CampsiteTypeService} from '../../core/services/campsite-type.service';
 import {CampgroundAmenityService} from '../../core/services/campground-amenities.service';
 import {CampgroundAmenity} from '../../shared/models/campgroundAmenity';
 import {CampsiteType} from '../../shared/models/campsiteType';
-import {BehaviorSubject, catchError, EMPTY, Subscription, merge, debounceTime} from 'rxjs';
+import {BehaviorSubject, catchError, EMPTY, Subscription, distinctUntilChanged, debounceTime} from 'rxjs';
 import {CampsiteAvailabilityItemComponent} from './campsite-availability-item/campsite-availability-item.component';
 import {ReservationService} from '../../core/services/reservation.service';
 import {MAT_DATE_RANGE_SELECTION_STRATEGY} from '@angular/material/datepicker';
@@ -188,17 +188,9 @@ export class ReservationsComponent implements OnInit, OnDestroy {
     const formStartDate = this.searchForm.get('startDate')?.value;
     const formEndDate = this.searchForm.get('endDate')?.value;
 
-    // Check if arrays have same contents
     const typesMatch = this.arraysEqual(formCampsiteTypes, this.campParams.campsiteTypes);
     const amenitiesMatch = this.arraysEqual(formAmenities, this.campParams.campgroundAmenities);
-
-    // Check if dates match (normalize to remove time components)
-    const normalizeDate = (date: Date) =>
-      new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
-
-    const datesMatch =
-      normalizeDate(formStartDate) === normalizeDate(this.searchStartDate) &&
-      normalizeDate(formEndDate) === normalizeDate(this.searchEndDate);
+    const datesMatch = formStartDate === this.searchStartDate && formEndDate === this.searchEndDate;
 
     return typesMatch && amenitiesMatch && datesMatch;
   }
@@ -218,25 +210,31 @@ export class ReservationsComponent implements OnInit, OnDestroy {
       campgroundAmenities: this.campgroundAmenities
     });
 
-    // Update searchParamsMatch$ whenever form values change
-    merge(
-      this.searchForm.get('startDate')?.valueChanges || EMPTY,
-      this.searchForm.get('endDate')?.valueChanges || EMPTY,
-      this.searchForm.get('campsiteTypes')?.valueChanges || EMPTY,
-      this.searchForm.get('campgroundAmenities')?.valueChanges || EMPTY
-    ).pipe(
-      debounceTime(50) // Prevent multiple rapid calculations
+    const startDateControl = this.searchForm.get('startDate');
+    const endDateControl = this.searchForm.get('endDate');
+
+    if (startDateControl) {
+      startDateControl.valueChanges.pipe(
+        distinctUntilChanged()
+      ).subscribe(date => {
+        this.handleStartDateChange(date);
+      });
+    }
+
+    if (endDateControl) {
+      endDateControl.valueChanges.pipe(
+        distinctUntilChanged()
+      ).subscribe(date => {
+        this.handleEndDateChange(date);
+      });
+    }
+
+    // Only compute searchParamsMatch$ after user stops interacting
+    this.searchForm.valueChanges.pipe(
+      debounceTime(50),
+      distinctUntilChanged((prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)),
     ).subscribe(() => {
       this.searchParamsMatch$.next(this.doSearchParamsMatch());
-    });
-
-    // Individual subscriptions for date handling
-    this.searchForm.get('startDate')?.valueChanges.subscribe(date => {
-      this.handleStartDateChange(date);
-    });
-
-    this.searchForm.get('endDate')?.valueChanges.subscribe(date => {
-      this.handleEndDateChange(date);
     });
   }
 

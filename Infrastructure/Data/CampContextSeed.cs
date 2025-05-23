@@ -308,9 +308,11 @@ public static class CampContextSeed
                             {
                                 reservations.Add(reservation);
                                 
-                                // Create order 1-30 days before the reservation start date
-                                var orderDate = reservationStart.ToDateTime(TimeOnly.MinValue)
-                                    .AddDays(-random.Next(1, 31));
+                                // If reservation is in the past, set order date to a random date within the last 30 days
+                                // Otherwise, set order date to a random date within the last 30 days
+                                var orderDate = reservationStart.ToDateTime(TimeOnly.MinValue) < DateTime.UtcNow 
+                                    ? reservationStart.ToDateTime(TimeOnly.MinValue).AddDays(-random.Next(1, 31))
+                                    : DateTime.UtcNow.AddDays(-random.Next(1, 31));
                                 
                                 var price = CalculateReservationPrice(campsite, reservation, random);
                                 

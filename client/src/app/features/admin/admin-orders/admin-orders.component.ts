@@ -10,7 +10,6 @@ import {MatSelectChange, MatSelectModule} from '@angular/material/select';
 import {CurrencyPipe, DatePipe, NgIf} from '@angular/common';
 import {MatLabel} from '@angular/material/form-field';
 import {MatTooltipModule} from '@angular/material/tooltip';
-import {RouterLink} from '@angular/router';
 import {DialogService} from '../../../core/services/dialog.service';
 import {MatInput} from '@angular/material/input';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
@@ -30,7 +29,6 @@ import {ImmediateErrorStateMatcher} from '../../../shared/utils/immediate-error-
     MatTableModule,
     MatPaginatorModule,
     MatLabel,
-    RouterLink,
     MatInput,
     MatButton,
     FormsModule,
@@ -116,7 +114,7 @@ export class AdminOrdersComponent implements OnInit {
     this.loadOrders();
   }
 
-  async openConfirmDialog(id: number) {
+  async openRefundConfirmDialog(id: number) {
     const confirmed = await this.dialogService.confirm(
       'Confirm refund',
       'Are you sure you want to refund this order? This cannot be undone.'
@@ -124,6 +122,10 @@ export class AdminOrdersComponent implements OnInit {
     if (confirmed) {
       this.refundOrder(id);
     }
+  }
+
+  openOrderDetailsDialog(order: Order) {
+    this.dialogService.openAdminOrderDetails(order);
   }
 
   refundOrder(id: number) {

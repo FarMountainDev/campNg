@@ -2,12 +2,12 @@ import {inject, Injectable} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../../shared/components/confirmation-dialog/confirmation-dialog.component';
 import {firstValueFrom} from 'rxjs';
-import {User} from '../../shared/models/user';
 import {AdminUserEditComponent} from '../../features/admin/admin-users/admin-user-edit/admin-user-edit.component';
-import {
-  AdminReservationDetailsComponent
-} from '../../features/admin/admin-reservations/admin-reservation-details/admin-reservation-details.component';
+import {AdminReservationDetailsComponent} from '../../features/admin/admin-reservations/admin-reservation-details/admin-reservation-details.component';
+import {AdminOrderDetailsComponent} from '../../features/admin/admin-orders/admin-order-details/admin-order-details.component';
+import {User} from '../../shared/models/user';
 import {ReservationDto} from '../../shared/models/reservationDto';
+import {Order} from '../../shared/models/order';
 
 @Injectable({
   providedIn: 'root'
@@ -34,6 +34,13 @@ export class DialogService {
     this.dialog.open(AdminReservationDetailsComponent, {
       maxWidth: '1200px',
       data: {reservation}
+    });
+  }
+
+  openAdminOrderDetails(order: Order) {
+    this.dialog.open(AdminOrderDetailsComponent, {
+      maxWidth: '1400px',
+      data: {order}
     });
   }
 }

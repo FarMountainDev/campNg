@@ -13,14 +13,14 @@ import {MatOption, provideNativeDateAdapter} from '@angular/material/core';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {Pagination} from '../../shared/models/pagination';
 import {CampParams} from '../../shared/models/params/campParams';
-import {FormControl, FormsModule, NgForm, ReactiveFormsModule} from '@angular/forms';
+import {FormControl, FormsModule, FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {MatSelect, MatSelectTrigger} from '@angular/material/select';
 import {MatDivider} from '@angular/material/divider';
 import {CampsiteTypeService} from '../../core/services/campsite-type.service';
 import {CampgroundAmenityService} from '../../core/services/campground-amenities.service';
 import {CampgroundAmenity} from '../../shared/models/campgroundAmenity';
 import {CampsiteType} from '../../shared/models/campsiteType';
-import {BehaviorSubject, catchError, EMPTY, Subscription} from 'rxjs';
+import {BehaviorSubject, catchError, EMPTY, Subscription, merge, debounceTime} from 'rxjs';
 import {CampsiteAvailabilityItemComponent} from './campsite-availability-item/campsite-availability-item.component';
 import {ReservationService} from '../../core/services/reservation.service';
 import {MAT_DATE_RANGE_SELECTION_STRATEGY} from '@angular/material/datepicker';
@@ -64,16 +64,18 @@ import {CampsiteAvailabilityDto} from '../../shared/models/campsiteAvailabilityD
   ]
 })
 export class ReservationsComponent implements OnInit, OnDestroy {
-  private readonly campsiteService = inject(CampsiteService);
-  private readonly snackbar = inject(SnackbarService);
   protected readonly campgroundAmenityService = inject(CampgroundAmenityService);
   protected readonly campsiteTypeService = inject(CampsiteTypeService);
   protected readonly reservationService = inject(ReservationService);
+  private readonly campsiteService = inject(CampsiteService);
+  private readonly snackbar = inject(SnackbarService);
+  private readonly fb = inject(FormBuilder);
   private campsiteSubscription?: Subscription;
   campsites$ = new BehaviorSubject<Pagination<CampsiteAvailabilityDto> | null>(null);
+  searchParamsMatch$ = new BehaviorSubject<boolean>(true);
   loading$ = new BehaviorSubject<boolean>(false);
   campParams = new CampParams();
-  pageSizeOptions = [2, 5, 10, 15, 20];
+  pageSizeOptions = [10, 15, 20, 50];
   campsiteTypes = new FormControl([]);
   campgroundAmenities = new FormControl([]);
   campsiteCount: number = 0;
@@ -81,8 +83,10 @@ export class ReservationsComponent implements OnInit, OnDestroy {
   endDate = new Date();
   searchStartDate = new Date(); // keep track of the last search start date
   searchEndDate = new Date(); // keep track of the last search end date
+  searchForm!: FormGroup;
 
   ngOnInit() {
+    this.initializeForm();
     this.initializeServices();
     this.initializeDateRange();
     this.startNewSearch();
@@ -92,8 +96,8 @@ export class ReservationsComponent implements OnInit, OnDestroy {
     this.campsiteSubscription?.unsubscribe();
   }
 
-  onSubmit(form: NgForm) {
-    if (form.valid) {
+  onSubmit() {
+    if (this.searchForm.valid) {
       this.startNewSearch();
     } else {
       this.snackbar.error('Invalid date range.');
@@ -106,11 +110,12 @@ export class ReservationsComponent implements OnInit, OnDestroy {
       return;
     }
     this.campParams.pageNumber = 1;
-    this.campParams.campsiteTypes = this.campsiteTypes.value || [];
-    this.campParams.campgroundAmenities = this.campgroundAmenities.value || [];
+    this.campParams.campsiteTypes = this.searchForm.get('campsiteTypes')?.value || [];
+    this.campParams.campgroundAmenities = this.searchForm.get('campgroundAmenities')?.value || [];
     this.searchStartDate = this.reservationService.selectedStartDate();
     this.searchEndDate = this.reservationService.selectedEndDate();
     this.getCampsites(this.searchStartDate, this.searchEndDate);
+    setTimeout(() => this.searchParamsMatch$.next(true), 0);
   }
 
   getCampsites(startDate: Date, endDate: Date) {
@@ -158,13 +163,8 @@ export class ReservationsComponent implements OnInit, OnDestroy {
   }
 
   clearFilters() {
-    this.campsiteTypes = new FormControl([]);
-    this.campgroundAmenities = new FormControl([]);
-    this.campParams.campgroundAmenities = [];
-    this.campParams.campsiteTypes = [];
-    this.campParams.search = '';
-    this.campParams.pageNumber = 1;
-    this.startNewSearch();
+    this.searchForm.get('campsiteTypes')?.setValue([]);
+    this.searchForm.get('campgroundAmenities')?.setValue([]);
   }
 
   getTypeNameById(id: number | null | undefined, types: CampsiteType[]): string {
@@ -177,6 +177,67 @@ export class ReservationsComponent implements OnInit, OnDestroy {
     if (id === null || id === undefined) return '';
     const amenity = amenities.find(a => a.id === id);
     return amenity ? amenity.name : '';
+  }
+
+  doSearchParamsMatch(): boolean {
+    if (!this.searchForm) return false;
+
+    // Get values from form
+    const formCampsiteTypes = this.searchForm.get('campsiteTypes')?.value || [];
+    const formAmenities = this.searchForm.get('campgroundAmenities')?.value || [];
+    const formStartDate = this.searchForm.get('startDate')?.value;
+    const formEndDate = this.searchForm.get('endDate')?.value;
+
+    // Check if arrays have same contents
+    const typesMatch = this.arraysEqual(formCampsiteTypes, this.campParams.campsiteTypes);
+    const amenitiesMatch = this.arraysEqual(formAmenities, this.campParams.campgroundAmenities);
+
+    // Check if dates match (normalize to remove time components)
+    const normalizeDate = (date: Date) =>
+      new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+
+    const datesMatch =
+      normalizeDate(formStartDate) === normalizeDate(this.searchStartDate) &&
+      normalizeDate(formEndDate) === normalizeDate(this.searchEndDate);
+
+    return typesMatch && amenitiesMatch && datesMatch;
+  }
+
+  private arraysEqual(arr1: any[], arr2: any[]): boolean {
+    if (arr1.length !== arr2.length) return false;
+    const sorted1 = [...arr1].sort();
+    const sorted2 = [...arr2].sort();
+    return sorted1.every((val, idx) => val === sorted2[idx]);
+  }
+
+  private initializeForm() {
+    this.searchForm = this.fb.group({
+      startDate: [this.reservationService.selectedStartDate()],
+      endDate: [this.reservationService.selectedEndDate()],
+      campsiteTypes: this.campsiteTypes,
+      campgroundAmenities: this.campgroundAmenities
+    });
+
+    // Update searchParamsMatch$ whenever form values change
+    merge(
+      this.searchForm.get('startDate')?.valueChanges || EMPTY,
+      this.searchForm.get('endDate')?.valueChanges || EMPTY,
+      this.searchForm.get('campsiteTypes')?.valueChanges || EMPTY,
+      this.searchForm.get('campgroundAmenities')?.valueChanges || EMPTY
+    ).pipe(
+      debounceTime(50) // Prevent multiple rapid calculations
+    ).subscribe(() => {
+      this.searchParamsMatch$.next(this.doSearchParamsMatch());
+    });
+
+    // Individual subscriptions for date handling
+    this.searchForm.get('startDate')?.valueChanges.subscribe(date => {
+      this.handleStartDateChange(date);
+    });
+
+    this.searchForm.get('endDate')?.valueChanges.subscribe(date => {
+      this.handleEndDateChange(date);
+    });
   }
 
   private initializeServices() {

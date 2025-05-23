@@ -13,10 +13,13 @@
     <div class="flex align-middle items-center px-4">
       {{accountService.currentUser()?.email}}
     </div>
-    <a (click)="this.themeService.toggleTheme()" class="mt-2 mr-4 cursor-pointer">
-      <mat-icon *ngIf="this.themeService.currentTheme() === 'light'" matTooltip="Toggle theme">light_mode</mat-icon>
-      <mat-icon *ngIf="this.themeService.currentTheme() === 'dark'" matTooltip="Toggle theme">dark_mode</mat-icon>
-    </a>
+    <button (click)="this.themeService.toggleTheme()" matTooltip="Toggle theme" mat-icon-button class="mr-2">
+      <mat-icon *ngIf="this.themeService.currentTheme() === 'light'">light_mode</mat-icon>
+      <mat-icon *ngIf="this.themeService.currentTheme() === 'dark'">dark_mode</mat-icon>
+    </button>
+    <button routerLink="/" matTooltip="CampNg Home Page" mat-icon-button class="mr-2">
+      <mat-icon>home</mat-icon>
+    </button>
     <button (click)="logout()" matTooltip="Logout" mat-icon-button class="mr-2">
       <mat-icon>logout</mat-icon>
     </button>

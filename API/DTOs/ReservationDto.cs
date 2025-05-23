@@ -8,6 +8,7 @@ public class ReservationDto
     public DateOnly EndDate { get; set; }
     public int CampsiteId { get; set; }
     public string? CampsiteName { get; set; }
+    public string? CampgroundName { get; set; }
     public int? OrderItemId { get; set; }
     public int? OrderId { get; set; }
 }

@@ -17,6 +17,7 @@ public class AdminReservationsController(CampContext context) : BaseApiControlle
     {
         var query = context.Reservations
             .Include(e => e.Campsite)
+            .ThenInclude(x => x!.Campground)
             .Include(e => e.OrderItem)
             .ThenInclude(x => x!.Order)
             .AsQueryable();

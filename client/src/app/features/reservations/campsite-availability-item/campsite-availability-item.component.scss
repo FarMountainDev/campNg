@@ -19,3 +19,9 @@
   padding: 10px;
   min-width: 100px;
 }
+
+:host-context(html.dark-mode)  {
+  .date-cell {
+    border: 1px solid #626262;
+  }
+}

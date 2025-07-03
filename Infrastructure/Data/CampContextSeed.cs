@@ -308,8 +308,8 @@ public static class CampContextSeed
                             {
                                 reservations.Add(reservation);
                                 
-                                // If reservation is in the past, set order date to a random date within the last 30 days
-                                // Otherwise, set order date to a random date within the last 30 days
+                                // If reservation is in the past, set order date to a random date within the last 30 days before the reservation start date
+                                // Otherwise, set order date to a random date within the last 30 days from today
                                 var orderDate = reservationStart.ToDateTime(TimeOnly.MinValue) < DateTime.UtcNow 
                                     ? reservationStart.ToDateTime(TimeOnly.MinValue).AddDays(-random.Next(1, 31))
                                     : DateTime.UtcNow.AddDays(-random.Next(1, 31));

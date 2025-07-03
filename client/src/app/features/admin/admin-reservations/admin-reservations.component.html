@@ -84,10 +84,10 @@
         <td mat-cell *matCellDef="let reservation">
           <div class="flex gap-2">
             <button (click)="$event.stopPropagation(); openReservationDetailsDialog(reservation)" matTooltip="View Details" mat-icon-button>
-              <mat-icon color="accent">visibility</mat-icon>
+              <mat-icon>visibility</mat-icon>
             </button>
-            <button (click)="$event.stopPropagation();" matTooltip="Deactivate" mat-icon-button>
-              <mat-icon color="accent">cancel</mat-icon>
+            <button (click)="$event.stopPropagation();" matTooltip="Cancel" mat-icon-button>
+              <mat-icon class="icon-warning">cancel</mat-icon>
             </button>
           </div>
         </td>

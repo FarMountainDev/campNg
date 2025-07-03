@@ -115,31 +115,11 @@ export class AdminService {
     return this.http.get<OccupancyRate[]>(this.baseUrl + 'admin/dashboard/occupancy');
   }
 
-  getMonthlyRevenue() {
-    return this.http.get<MonthlyRevenue>(this.baseUrl + 'admin/dashboard/revenue');
+  getMonthlyOrderRevenue() {
+    return this.http.get<MonthlyRevenue>(this.baseUrl + 'admin/dashboard/revenue/orders');
   }
 
-  generateMockReservationDtoData(count: number) {
-    const mockData: ReservationDto[] = [];
-    const today = new Date();
-
-    for (let i = 1; i <= count; i++) {
-      const startDate = new Date(today);
-      const endDate = new Date(today);
-      endDate.setDate(endDate.getDate() + 3 + Math.floor(Math.random() * 5));
-
-      mockData.push({
-        id: i,
-        campsiteId: 100 + Math.floor(Math.random() * 50),
-        email: `camper${i}@test.com`,
-        startDate: startDate,
-        endDate: endDate,
-        campsiteName: `Campsite ${100 + Math.floor(Math.random() * 50)}`,
-        campgroundName: `Campground ${Math.floor(Math.random() * 10)}`,
-        orderId: 1000 + Math.floor(Math.random() * 100)
-      });
-    }
-
-    return mockData;
+  getMonthlyReservationRevenue() {
+    return this.http.get<MonthlyRevenue>(this.baseUrl + 'admin/dashboard/revenue/reservations');
   }
 }

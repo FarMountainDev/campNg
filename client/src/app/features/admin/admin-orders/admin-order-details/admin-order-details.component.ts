@@ -9,7 +9,7 @@ import {
 import {Order} from '../../../../shared/models/order';
 import {CurrencyPipe, DatePipe} from '@angular/common';
 import {MatButton} from '@angular/material/button';
-import {PascalCaseToWordsPipe} from '../../../../shared/pipes/pascal-to-words';
+import {PascalCaseToWordsPipe} from '../../../../shared/pipes/pascal-to-words.pipe';
 import {PaymentCardPipe} from '../../../../shared/pipes/payment-card.pipe';
 import {getDateFromDateOnlyString} from '../../../../shared/utils/date-utils';
 import {ReservationService} from '../../../../core/services/reservation.service';

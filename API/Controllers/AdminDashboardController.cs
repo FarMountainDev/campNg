@@ -23,6 +23,7 @@ public class AdminDashboardController(CampContext context) : BaseApiController
         
         var query = context.Reservations
             .Include(x => x.Campsite)
+            .ThenInclude(x => x.Campground)
             .Include(x => x.OrderItem)
             .ThenInclude(x => x!.Order)
             .Where(x => x.StartDate == today);
@@ -37,6 +38,7 @@ public class AdminDashboardController(CampContext context) : BaseApiController
         
         var query = context.Reservations
             .Include(x => x.Campsite)
+            .ThenInclude(x => x.Campground)
             .Include(x => x.OrderItem)
             .ThenInclude(x => x!.Order)
             .Where(x => x.EndDate.AddDays(1) == today);
@@ -116,8 +118,8 @@ public class AdminDashboardController(CampContext context) : BaseApiController
     }
 
     [Cache((int)TimeSpan.SecondsPerDay)]
-    [HttpGet("revenue")]
-    public async Task<ActionResult> GetMonthlyRevenue()
+    [HttpGet("revenue/orders")]
+    public async Task<ActionResult> GetMonthlyOrderRevenue()
     {
         const string monthFormat = "MM/yyyy";
         var currentMonth = DateTime.Now.Month;
@@ -176,6 +178,103 @@ public class AdminDashboardController(CampContext context) : BaseApiController
                 {
                     revenueData[orderMonth][campgroundName] += item.Price;
                 }
+            }
+        }
+
+        // Transform data to a format suitable for charts
+        var result = new
+        {
+            Months = months,
+            Datasets = campgrounds.Select(c => new
+            {
+                Campground = c.Name,
+                Revenue = months.Select(m => revenueData[m].GetValueOrDefault(c.Name, 0)).ToList()
+            }).ToList()
+        };
+
+        return Ok(result);
+    }
+    
+    
+    [Cache((int)TimeSpan.SecondsPerDay)]
+    [HttpGet("revenue/reservations")]
+    public async Task<ActionResult> GetMonthlyReservationRevenue()
+    {
+        const string monthFormat = "MM/yyyy";
+        var currentMonth = DateTime.Now.Month;
+        var currentYear = DateTime.Now.Year;
+
+        // Time range from 5 months ago to 6 months ahead
+        var firstDayOfTheMonthFiveMonthsAgo = new DateTime(currentYear, currentMonth, 1).AddMonths(-5);
+        var lastDayOfTheMonthSixMonthsFromNow = new DateTime(currentYear, currentMonth, 1).AddMonths(7).AddDays(-1);
+        var firstDateFiveMonthsAgo = DateOnly.FromDateTime(firstDayOfTheMonthFiveMonthsAgo);
+        var lastDateSixMonthsFromNow = DateOnly.FromDateTime(lastDayOfTheMonthSixMonthsFromNow);
+
+        // Get all reservations in the date range with non-refunded orders
+        var reservations = await context.Reservations
+            .Include(r => r.Campsite)
+                .ThenInclude(c => c!.CampsiteType)
+            .Include(r => r.Campsite)
+                .ThenInclude(c => c!.Campground)
+            .Include(r => r.OrderItem)
+                .ThenInclude(oi => oi!.Order)
+            .Where(r => r.StartDate >= firstDateFiveMonthsAgo && 
+                        r.StartDate <= lastDateSixMonthsFromNow &&
+                        r.OrderItem != null && 
+                        r.OrderItem.Order != null &&
+                        r.OrderItem.Order.Status != OrderStatus.Refunded)
+            .ToListAsync();
+
+        // Get list of campgrounds and initialize revenue data
+        var campgrounds = await context.Campgrounds.ToListAsync();
+        var revenueData = new Dictionary<string, Dictionary<string, decimal>>();
+
+        // Create a month list for the timeframe
+        var months = new List<string>();
+        for (int i = -5; i <= 6; i++)
+        {
+            var month = new DateTime(currentYear, currentMonth, 1).AddMonths(i);
+            months.Add(month.ToString(monthFormat));
+        }
+        
+        // Initialize all campgrounds with zero revenue for each month
+        foreach (var campground in campgrounds)
+        {
+            foreach (var month in months)
+            {
+                if (!revenueData.ContainsKey(month))
+                    revenueData[month] = new Dictionary<string, decimal>();
+                
+                revenueData[month][campground.Name] = 0;
+            }
+        }
+
+        // Calculate revenue for each reservation
+        foreach (var reservation in reservations)
+        {
+            if (reservation.Campsite?.Campground == null || 
+                reservation.Campsite.CampsiteType == null) continue;
+
+            // Calculate price based on weekday/weekend rates
+            decimal price = 0;
+            var currentDate = reservation.StartDate;
+            var weekDayPrice = reservation.Campsite.CampsiteType.WeekDayPrice;
+            var weekEndPrice = reservation.Campsite.CampsiteType.WeekEndPrice;
+
+            while (currentDate <= reservation.EndDate)
+            {
+                var isWeekend = currentDate.DayOfWeek is DayOfWeek.Friday or DayOfWeek.Saturday;
+                price += isWeekend ? weekEndPrice : weekDayPrice;
+                currentDate = currentDate.AddDays(1);
+            }
+
+            // Add to revenue data using StartDate month
+            var reservationMonth = reservation.StartDate.ToDateTime(TimeOnly.MinValue).ToString(monthFormat);
+            var campgroundName = reservation.Campsite.Campground.Name;
+
+            if (revenueData.ContainsKey(reservationMonth) && revenueData[reservationMonth].ContainsKey(campgroundName))
+            {
+                revenueData[reservationMonth][campgroundName] += price;
             }
         }
 

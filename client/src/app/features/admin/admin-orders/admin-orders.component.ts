@@ -16,6 +16,7 @@ import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} fr
 import {MatSort, MatSortHeader, Sort} from '@angular/material/sort';
 import {IsAdminDirective} from '../../../shared/directives/is-admin.directive';
 import {ImmediateErrorStateMatcher} from '../../../shared/utils/immediate-error-state-matcher';
+import {PascalCaseToWordsPipe} from '../../../shared/pipes/pascal-to-words.pipe';
 
 @Component({
   selector: 'app-admin-orders',
@@ -36,7 +37,8 @@ import {ImmediateErrorStateMatcher} from '../../../shared/utils/immediate-error-
     NgIf,
     MatSortHeader,
     MatSort,
-    IsAdminDirective
+    IsAdminDirective,
+    PascalCaseToWordsPipe
   ],
   templateUrl: './admin-orders.component.html',
   styleUrl: './admin-orders.component.scss'

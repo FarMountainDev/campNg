@@ -35,3 +35,10 @@ https://docs.stripe.com/stripe-cli
 Ensure that the webhook secret from the CLI matches the one in appSettings.json.
 
 **Note:** Does not seem to work from JetBrains IDE terminals. Windows PowerShell terminal works fine.
+
+
+## Deployment to Azure:
+Note: Steps assume an Azure App Service and Azure SQL Database are already set up and IDE is configured for Azure deployment.
+#### 1. Ensure client angular.json build outputPath is set to `../API/wwwroot`
+#### 2. Build client application with `ng build`
+#### 3. Publish the API project to Azure.

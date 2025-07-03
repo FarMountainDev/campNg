@@ -1,5 +1,13 @@
 <div class="chartDiv flex-col p-4">
-  <div class="w-full text-xl text-center">Revenue by Month and Campground</div>
+  <div class="flex w-full items-center relative">
+    <div class="w-full text-xl text-center absolute">Revenue by Month and Campground</div>
+    <div class="ml-auto z-10">
+      <select class="p-1 border rounded" [formControl]="dataFilterControl">
+        <option value="reservationStartDate">by Reservation Date</option>
+        <option value="orderDate">by Order Date</option>
+      </select>
+    </div>
+  </div>
   <apx-chart
     #chart
     [series]="chartOptions.series!"

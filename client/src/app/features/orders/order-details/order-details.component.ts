@@ -8,7 +8,7 @@ import {CurrencyPipe, DatePipe} from '@angular/common';
 import {PaymentCardPipe} from '../../../shared/pipes/payment-card.pipe';
 import {ReservationService} from '../../../core/services/reservation.service';
 import {getDateFromDateOnlyString} from '../../../shared/utils/date-utils';
-import {PascalCaseToWordsPipe} from '../../../shared/pipes/pascal-to-words';
+import {PascalCaseToWordsPipe} from '../../../shared/pipes/pascal-to-words.pipe';
 
 @Component({
   selector: 'app-order-details',

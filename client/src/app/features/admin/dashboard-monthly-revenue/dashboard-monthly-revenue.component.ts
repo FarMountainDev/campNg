@@ -1,6 +1,7 @@
 import {AfterViewInit, Component, effect, inject, ViewChild} from '@angular/core';
 import {AdminService} from '../../../core/services/admin.service';
 import {ThemeService} from '../../../core/services/theme.service';
+import { ReactiveFormsModule } from '@angular/forms';
 
 import {
   ApexChart,
@@ -12,6 +13,7 @@ import {
   ApexTooltip,
   ChartComponent
 } from "ng-apexcharts";
+import {FormControl} from '@angular/forms';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -30,7 +32,8 @@ export type ChartOptions = {
 @Component({
   selector: 'app-dashboard-monthly-revenue',
   imports: [
-    ChartComponent
+    ChartComponent,
+    ReactiveFormsModule
   ],
   templateUrl: './dashboard-monthly-revenue.component.html',
   styleUrl: './dashboard-monthly-revenue.component.scss'
@@ -41,6 +44,7 @@ export class DashboardMonthlyRevenueComponent implements AfterViewInit {
   private readonly themeService = inject(ThemeService);
   protected chartOptions: Partial<ChartOptions>;
   protected colors: string[] = ["#008FFB", "#4caf50", "#FF9800", "#FF4560"];
+  dataFilterControl = new FormControl('reservationStartDate');
 
   constructor() {
     const theme = this.themeService.currentTheme();
@@ -115,14 +119,42 @@ export class DashboardMonthlyRevenueComponent implements AfterViewInit {
           .then(() => {});
       }
     });
+
+    this.dataFilterControl.valueChanges.subscribe(value => {
+      this.loadChartData(value);
+    });
   }
 
   ngAfterViewInit() {
-    this.getMonthlyRevenueData();
+    this.loadChartData(this.dataFilterControl.value);
   }
 
-  getMonthlyRevenueData() {
-    this.adminService.getMonthlyRevenue().subscribe(revenueData =>{
+  loadChartData(type: string | null) {
+    if (type === 'reservationStartDate') {
+      this.getMonthlyReservationRevenueData();
+    } else {
+      this.getMonthlyOrderRevenueData();
+    }
+  }
+  getMonthlyOrderRevenueData() {
+    this.adminService.getMonthlyOrderRevenue().subscribe(revenueData =>{
+      this.chartOptions.series = revenueData.datasets.map((dataset, index) => ({
+        name: dataset.campground,
+        data: dataset.revenue,
+        color: this.colors[index % this.colors.length]
+      }));
+      this.chartOptions.xAxis = {
+        type: "category",
+        categories: revenueData.months
+      };
+      if (this.chart && this.chart.updateOptions) {
+        this.chart.updateOptions(this.chartOptions, false, true);
+      }
+    });
+  }
+
+  getMonthlyReservationRevenueData() {
+    this.adminService.getMonthlyReservationRevenue().subscribe(revenueData =>{
       this.chartOptions.series = revenueData.datasets.map((dataset, index) => ({
         name: dataset.campground,
         data: dataset.revenue,

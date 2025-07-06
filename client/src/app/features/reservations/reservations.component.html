@@ -60,7 +60,7 @@
         <mat-icon>clear</mat-icon>
         Reset Filters
       </button>
-      <button mat-stroked-button type="submit" [disabled]="searchForm.invalid || (searchParamsMatch$ | async)">
+      <button mat-stroked-button type="submit" [disabled]="searchForm.invalid || searchParamsMatch()">
         <mat-icon>search</mat-icon>
         Search for Campsites
       </button>
@@ -70,20 +70,11 @@
 
   </div>
 
-  <div class="p-4 div-backdrop" *ngIf="(loading$ | async) === false; else loadingTemplate">
+  <div class="p-4 div-backdrop" *ngIf="!loading(); else loadingTemplate">
 
     <div *ngIf="reservationService.selectedStartDate() && (campsites$ | async) as campsites" class="flex flex-col gap-3">
       <div class="flex justify-center" *ngIf="campsiteCount > 0">
-        <mat-paginator
-          (page)="handlePageEvent($event)"
-          [length]="campsiteCount"
-          [pageSize]="campParams.pageSize"
-          [showFirstLastButtons]="true"
-          [pageSizeOptions]="pageSizeOptions"
-          [pageIndex]="campParams.pageNumber - 1"
-          aria-label="Select page"
-          class="bg-white"
-        ></mat-paginator>
+        <ng-container *ngTemplateOutlet="paginatorTemplate" />
       </div>
       <div *ngIf="campsiteCount > 0">
         <mat-divider></mat-divider>
@@ -97,16 +88,7 @@
         </ol>
       </div>
       <div class="flex justify-center" *ngIf="campsiteCount > 0">
-        <mat-paginator
-          (page)="handlePageEvent($event)"
-          [length]="campsiteCount"
-          [pageSize]="campParams.pageSize"
-          [showFirstLastButtons]="true"
-          [pageSizeOptions]="pageSizeOptions"
-          [pageIndex]="campParams.pageNumber - 1"
-          aria-label="Select page"
-          class="bg-white"
-        ></mat-paginator>
+        <ng-container *ngTemplateOutlet="paginatorTemplate" />
       </div>
 
       <div *ngIf="campsiteCount === 0" class="flex">
@@ -123,3 +105,16 @@
   </ng-template>
 
 </div>
+
+<ng-template #paginatorTemplate>
+  <mat-paginator
+    (page)="handlePageEvent($event)"
+    [length]="campsiteCount"
+    [pageSize]="campParams.pageSize"
+    [showFirstLastButtons]="true"
+    [pageSizeOptions]="pageSizeOptions"
+    [pageIndex]="campParams.pageNumber - 1"
+    aria-label="Select page"
+    class="bg-white"
+  ></mat-paginator>
+</ng-template>

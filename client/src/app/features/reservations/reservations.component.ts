@@ -1,10 +1,10 @@
-import {Component, inject, OnDestroy, OnInit} from '@angular/core';
+import {Component, inject, OnInit, DestroyRef, signal} from '@angular/core';
 import {CampsiteService} from '../../core/services/campsite.service';
 import {MatButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
-import {AsyncPipe, NgIf} from '@angular/common';
+import {AsyncPipe, NgIf, NgTemplateOutlet} from '@angular/common';
 import {MatFormField, MatLabel} from '@angular/material/form-field';
 import {MatDatepickerToggle, MatDateRangeInput, MatDateRangePicker} from '@angular/material/datepicker';
 import {MatInput} from '@angular/material/input';
@@ -20,7 +20,8 @@ import {CampsiteTypeService} from '../../core/services/campsite-type.service';
 import {CampgroundAmenityService} from '../../core/services/campground-amenities.service';
 import {CampgroundAmenity} from '../../shared/models/campgroundAmenity';
 import {CampsiteType} from '../../shared/models/campsiteType';
-import {BehaviorSubject, catchError, EMPTY, Subscription, distinctUntilChanged, debounceTime} from 'rxjs';
+import {BehaviorSubject, catchError, EMPTY, distinctUntilChanged, debounceTime} from 'rxjs';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {CampsiteAvailabilityItemComponent} from './campsite-availability-item/campsite-availability-item.component';
 import {ReservationService} from '../../core/services/reservation.service';
 import {MAT_DATE_RANGE_SELECTION_STRATEGY} from '@angular/material/datepicker';
@@ -51,7 +52,8 @@ import {CampsiteAvailabilityDto} from '../../shared/models/campsiteAvailabilityD
     MatSelectTrigger,
     MatDivider,
     AsyncPipe,
-    CampsiteAvailabilityItemComponent
+    CampsiteAvailabilityItemComponent,
+    NgTemplateOutlet
   ],
   templateUrl: './reservations.component.html',
   styleUrl: './reservations.component.scss',
@@ -63,17 +65,17 @@ import {CampsiteAvailabilityDto} from '../../shared/models/campsiteAvailabilityD
     provideNativeDateAdapter()
   ]
 })
-export class ReservationsComponent implements OnInit, OnDestroy {
+export class ReservationsComponent implements OnInit {
   protected readonly campgroundAmenityService = inject(CampgroundAmenityService);
   protected readonly campsiteTypeService = inject(CampsiteTypeService);
   protected readonly reservationService = inject(ReservationService);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly campsiteService = inject(CampsiteService);
   private readonly snackbar = inject(SnackbarService);
   private readonly fb = inject(FormBuilder);
-  private campsiteSubscription?: Subscription;
   campsites$ = new BehaviorSubject<Pagination<CampsiteAvailabilityDto> | null>(null);
-  searchParamsMatch$ = new BehaviorSubject<boolean>(true);
-  loading$ = new BehaviorSubject<boolean>(false);
+  loading = signal(false);
+  searchParamsMatch = signal(true);
   campParams = new CampParams();
   pageSizeOptions = [10, 15, 20, 50];
   campsiteTypes = new FormControl([]);
@@ -90,10 +92,6 @@ export class ReservationsComponent implements OnInit, OnDestroy {
     this.initializeServices();
     this.initializeDateRange();
     this.startNewSearch();
-  }
-
-  ngOnDestroy() {
-    this.campsiteSubscription?.unsubscribe();
   }
 
   onSubmit() {
@@ -115,21 +113,17 @@ export class ReservationsComponent implements OnInit, OnDestroy {
     this.searchStartDate = this.reservationService.selectedStartDate();
     this.searchEndDate = this.reservationService.selectedEndDate();
     this.getCampsites(this.searchStartDate, this.searchEndDate);
-    setTimeout(() => this.searchParamsMatch$.next(true), 0);
+    setTimeout(() => this.searchParamsMatch.set(true), 0);
   }
 
   getCampsites(startDate: Date, endDate: Date) {
-    if (!this.reservationService.datesValid(startDate, endDate)) {
-      this.snackbar.error('Please select a valid date range.');
-      return;
-    }
-    this.loading$.next(true);
-    this.campsiteSubscription?.unsubscribe();
-    this.campsiteSubscription = this.campsiteService.getAvailableCampsites(startDate, endDate, this.campParams)
+    this.loading.set(true);
+    this.campsiteService.getAvailableCampsites(startDate, endDate, this.campParams)
       .pipe(
+        takeUntilDestroyed(this.destroyRef),
         catchError(() => {
           this.snackbar.error('Failed to load campsites. Please try again.');
-          this.loading$.next(false);
+          this.loading.set(false);
           return EMPTY;
         })
       )
@@ -137,7 +131,7 @@ export class ReservationsComponent implements OnInit, OnDestroy {
         next: (response) => {
           this.campsites$.next(response);
           this.campsiteCount = response.count;
-          this.loading$.next(false);
+          this.loading.set(false);
         }
       });
   }
@@ -197,9 +191,7 @@ export class ReservationsComponent implements OnInit, OnDestroy {
 
   private arraysEqual(arr1: any[], arr2: any[]): boolean {
     if (arr1.length !== arr2.length) return false;
-    const sorted1 = [...arr1].sort();
-    const sorted2 = [...arr2].sort();
-    return sorted1.every((val, idx) => val === sorted2[idx]);
+    return JSON.stringify([...arr1].sort()) === JSON.stringify([...arr2].sort());
   }
 
   private initializeForm() {
@@ -215,7 +207,8 @@ export class ReservationsComponent implements OnInit, OnDestroy {
 
     if (startDateControl) {
       startDateControl.valueChanges.pipe(
-        distinctUntilChanged()
+        distinctUntilChanged(),
+        takeUntilDestroyed(this.destroyRef)
       ).subscribe(date => {
         this.handleStartDateChange(date);
       });
@@ -223,7 +216,8 @@ export class ReservationsComponent implements OnInit, OnDestroy {
 
     if (endDateControl) {
       endDateControl.valueChanges.pipe(
-        distinctUntilChanged()
+        distinctUntilChanged(),
+        takeUntilDestroyed(this.destroyRef)
       ).subscribe(date => {
         this.handleEndDateChange(date);
       });
@@ -233,8 +227,9 @@ export class ReservationsComponent implements OnInit, OnDestroy {
     this.searchForm.valueChanges.pipe(
       debounceTime(50),
       distinctUntilChanged((prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)),
+      takeUntilDestroyed(this.destroyRef)
     ).subscribe(() => {
-      this.searchParamsMatch$.next(this.doSearchParamsMatch());
+      this.searchParamsMatch.set(this.doSearchParamsMatch());
     });
   }
 

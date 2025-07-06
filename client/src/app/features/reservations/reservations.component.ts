@@ -1,4 +1,4 @@
-import {Component, inject, OnInit, DestroyRef, signal} from '@angular/core';
+import {Component, inject, OnInit, DestroyRef, signal, ChangeDetectionStrategy} from '@angular/core';
 import {CampsiteService} from '../../core/services/campsite.service';
 import {MatButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
@@ -20,7 +20,7 @@ import {CampsiteTypeService} from '../../core/services/campsite-type.service';
 import {CampgroundAmenityService} from '../../core/services/campground-amenities.service';
 import {CampgroundAmenity} from '../../shared/models/campgroundAmenity';
 import {CampsiteType} from '../../shared/models/campsiteType';
-import {BehaviorSubject, catchError, EMPTY, distinctUntilChanged, debounceTime} from 'rxjs';
+import {catchError, EMPTY, distinctUntilChanged, debounceTime} from 'rxjs';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {CampsiteAvailabilityItemComponent} from './campsite-availability-item/campsite-availability-item.component';
 import {ReservationService} from '../../core/services/reservation.service';
@@ -63,7 +63,8 @@ import {CampsiteAvailabilityDto} from '../../shared/models/campsiteAvailabilityD
       useClass: MaxRangeSelectionStrategy
     },
     provideNativeDateAdapter()
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ReservationsComponent implements OnInit {
   protected readonly campgroundAmenityService = inject(CampgroundAmenityService);
@@ -73,14 +74,14 @@ export class ReservationsComponent implements OnInit {
   private readonly campsiteService = inject(CampsiteService);
   private readonly snackbar = inject(SnackbarService);
   private readonly fb = inject(FormBuilder);
-  campsites$ = new BehaviorSubject<Pagination<CampsiteAvailabilityDto> | null>(null);
   loading = signal(false);
   searchParamsMatch = signal(true);
+  campsites = signal<Pagination<CampsiteAvailabilityDto> | null>(null);
+  campsiteCount = signal<number>(0);
   campParams = new CampParams();
   pageSizeOptions = [10, 15, 20, 50];
   campsiteTypes = new FormControl([]);
   campgroundAmenities = new FormControl([]);
-  campsiteCount: number = 0;
   startDate = new Date();
   endDate = new Date();
   searchStartDate = new Date(); // keep track of the last search start date
@@ -113,7 +114,7 @@ export class ReservationsComponent implements OnInit {
     this.searchStartDate = this.reservationService.selectedStartDate();
     this.searchEndDate = this.reservationService.selectedEndDate();
     this.getCampsites(this.searchStartDate, this.searchEndDate);
-    setTimeout(() => this.searchParamsMatch.set(true), 0);
+    this.searchParamsMatch.set(true);
   }
 
   getCampsites(startDate: Date, endDate: Date) {
@@ -129,8 +130,8 @@ export class ReservationsComponent implements OnInit {
       )
       .subscribe({
         next: (response) => {
-          this.campsites$.next(response);
-          this.campsiteCount = response.count;
+          this.campsites.set(response);
+          this.campsiteCount.set(response.count);
           this.loading.set(false);
         }
       });

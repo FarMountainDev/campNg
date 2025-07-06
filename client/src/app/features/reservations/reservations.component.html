@@ -72,14 +72,14 @@
 
   <div class="p-4 div-backdrop" *ngIf="!loading(); else loadingTemplate">
 
-    <div *ngIf="reservationService.selectedStartDate() && (campsites$ | async) as campsites" class="flex flex-col gap-3">
-      <div class="flex justify-center" *ngIf="campsiteCount > 0">
+    <div *ngIf="reservationService.selectedStartDate() && campsites()" class="flex flex-col gap-3">
+      <div class="flex justify-center" *ngIf="campsiteCount() > 0">
         <ng-container *ngTemplateOutlet="paginatorTemplate" />
       </div>
-      <div *ngIf="campsiteCount > 0">
+      <div *ngIf="campsiteCount() > 0">
         <mat-divider></mat-divider>
         <ol>
-          @for (campsite of campsites.data; track campsite.id) {
+          @for (campsite of campsites()!.data; track campsite.id) {
             <app-campsite-availability-item [campsiteAvailabilityDto]="campsite"
                                             [startDate]="reservationService.selectedStartDate()"
                                             [endDate]="reservationService.selectedEndDate()" />
@@ -87,11 +87,11 @@
           }
         </ol>
       </div>
-      <div class="flex justify-center" *ngIf="campsiteCount > 0">
+      <div class="flex justify-center" *ngIf="campsiteCount() > 0">
         <ng-container *ngTemplateOutlet="paginatorTemplate" />
       </div>
 
-      <div *ngIf="campsiteCount === 0" class="flex">
+      <div *ngIf="campsiteCount() === 0" class="flex">
         <p class="mx-auto">No campsites found matching your criteria.</p>
       </div>
     </div>
@@ -109,7 +109,7 @@
 <ng-template #paginatorTemplate>
   <mat-paginator
     (page)="handlePageEvent($event)"
-    [length]="campsiteCount"
+    [length]="campsiteCount()"
     [pageSize]="campParams.pageSize"
     [showFirstLastButtons]="true"
     [pageSizeOptions]="pageSizeOptions"

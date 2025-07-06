@@ -40,7 +40,7 @@ export class DashboardTodayOccupancyComponent implements OnInit {
     this.chartOptions = {
       series: [],
       chart: {
-        height: 420,
+        width: "100%",
         type: "radialBar",
         foreColor: this.getChartForeColor(),
         background: "none"
@@ -59,11 +59,8 @@ export class DashboardTodayOccupancyComponent implements OnInit {
             },
             total: {
               show: true,
-              label: "Total",
-              formatter: function() {
-                return "0";
-              }
-            }
+              label: "Total"
+            },
           }
         }
       },
@@ -75,7 +72,7 @@ export class DashboardTodayOccupancyComponent implements OnInit {
       legend: {
         show: true,
         floating: false,
-        fontSize: "16px",
+        fontSize: "14px",
         position: "bottom",
         labels: {
           useSeriesColors: true
@@ -92,7 +89,7 @@ export class DashboardTodayOccupancyComponent implements OnInit {
         onItemHover: {
           highlightDataSeries: true
         },
-      },
+      }
     };
 
     effect(() => {

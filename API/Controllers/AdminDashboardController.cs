@@ -15,6 +15,7 @@ namespace API.Controllers;
 [Route("api/admin/dashboard")]
 public class AdminDashboardController(CampContext context) : BaseApiController
 {
+    const string MonthFormat = "MMM yy";
     
     [HttpGet("check-ins")]
     public async Task<ActionResult<IReadOnlyList<ReservationDto>>> GetCheckInsForToday([FromQuery]BaseParams baseParams)
@@ -121,7 +122,6 @@ public class AdminDashboardController(CampContext context) : BaseApiController
     [HttpGet("revenue/orders")]
     public async Task<ActionResult> GetMonthlyOrderRevenue()
     {
-        const string monthFormat = "MM/yyyy";
         var currentMonth = DateTime.Now.Month;
         var currentYear = DateTime.Now.Year;
 
@@ -149,7 +149,7 @@ public class AdminDashboardController(CampContext context) : BaseApiController
         for (int i = -5; i <= 6; i++)
         {
             var month = new DateTime(currentYear, currentMonth, 1).AddMonths(i);
-            months.Add(month.ToString(monthFormat));
+            months.Add(month.ToString(MonthFormat));
         }
         
         // Initialize all campgrounds with zero revenue for each month
@@ -171,7 +171,7 @@ public class AdminDashboardController(CampContext context) : BaseApiController
             {
                 if (item.Reservation?.Campsite?.Campground == null) continue;
 
-                var orderMonth = order.OrderDate.ToString(monthFormat);
+                var orderMonth = order.OrderDate.ToString(MonthFormat);
                 var campgroundName = item.Reservation.Campsite.Campground.Name;
 
                 if (revenueData.ContainsKey(orderMonth) && revenueData[orderMonth].ContainsKey(campgroundName))
@@ -200,7 +200,6 @@ public class AdminDashboardController(CampContext context) : BaseApiController
     [HttpGet("revenue/reservations")]
     public async Task<ActionResult> GetMonthlyReservationRevenue()
     {
-        const string monthFormat = "MM/yyyy";
         var currentMonth = DateTime.Now.Month;
         var currentYear = DateTime.Now.Year;
 
@@ -234,7 +233,7 @@ public class AdminDashboardController(CampContext context) : BaseApiController
         for (int i = -5; i <= 6; i++)
         {
             var month = new DateTime(currentYear, currentMonth, 1).AddMonths(i);
-            months.Add(month.ToString(monthFormat));
+            months.Add(month.ToString(MonthFormat));
         }
         
         // Initialize all campgrounds with zero revenue for each month
@@ -269,7 +268,7 @@ public class AdminDashboardController(CampContext context) : BaseApiController
             }
 
             // Add to revenue data using StartDate month
-            var reservationMonth = reservation.StartDate.ToDateTime(TimeOnly.MinValue).ToString(monthFormat);
+            var reservationMonth = reservation.StartDate.ToDateTime(TimeOnly.MinValue).ToString(MonthFormat);
             var campgroundName = reservation.Campsite.Campground.Name;
 
             if (revenueData.ContainsKey(reservationMonth) && revenueData[reservationMonth].ContainsKey(campgroundName))

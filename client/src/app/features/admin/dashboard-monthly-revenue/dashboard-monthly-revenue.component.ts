@@ -22,6 +22,7 @@ export type ChartOptions = {
   plotOptions: ApexPlotOptions;
   responsive: ApexResponsive[];
   xAxis: ApexXAxis;
+  yAxis: ApexYAxis;
   legend: ApexLegend;
   fill: ApexFill;
   theme: ApexTheme;
@@ -66,12 +67,23 @@ export class DashboardMonthlyRevenueComponent implements AfterViewInit {
       },
       responsive: [
         {
-          breakpoint: 480,
+          breakpoint: 1536,
           options: {
             legend: {
               position: "bottom",
-              offsetX: -10,
-              offsetY: 0
+              offsetY: 10
+            },
+            plotOptions: {
+              bar: {
+                dataLabels: {
+                  total: {
+                    enabled: false
+                  }
+                }
+              }
+            },
+            dataLabels: {
+              enabled: false,
             }
           }
         }
@@ -98,6 +110,13 @@ export class DashboardMonthlyRevenueComponent implements AfterViewInit {
       xAxis: {
         type: "category",
         categories: []
+      },
+      yAxis: {
+        labels: {
+          formatter: (val) => {
+            return "$" + val!.toString();
+          }
+        }
       },
       legend: {
         position: "bottom",
@@ -136,6 +155,7 @@ export class DashboardMonthlyRevenueComponent implements AfterViewInit {
       this.getMonthlyOrderRevenueData();
     }
   }
+
   getMonthlyOrderRevenueData() {
     this.adminService.getMonthlyOrderRevenue().subscribe(revenueData =>{
       this.chartOptions.series = revenueData.datasets.map((dataset, index) => ({

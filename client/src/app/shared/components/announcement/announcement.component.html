@@ -1,0 +1,17 @@
+<div *ngIf="announcement()" class="announcement"
+     [ngClass]="announcementService.getAnnouncementClass(announcement()!)">
+  <div class="announcement-content">
+    <div class="announcement-header">
+      <div class="title-container">
+        <h3>{{ announcement()!.title }}</h3>
+        @if (announcement()!.campgrounds && announcement()!.campgrounds.length) {
+          <span class="campgrounds-list">
+            ({{ getCampgroundNames(announcement()!.campgrounds) }})
+          </span>
+        }
+      </div>
+      <span class="announcement-date">{{ announcement()!.createdAt | date:'shortDate' }}</span>
+    </div>
+    <p>{{ announcement()!.content }}</p>
+  </div>
+</div>

@@ -14,6 +14,8 @@ public static class CampContextSeed
     private const string AdminRole = "Admin";
     private const string ModeratorRole = "Moderator";
     private const string MemberRole = "Member";
+
+    private const string AdminEmail = "admin@test.com";
     
     public static async Task SeedAsync(IServiceProvider serviceProvider)
     {
@@ -31,6 +33,7 @@ public static class CampContextSeed
         await SeedCampsiteTypesAsync(context, path);
         await SeedCampsitesAsync(context, path);
         await SeedReservationsWithOrdersAsync(context);
+        await SeedAnnouncements(context);
     }
     
     private static async Task SeedRolesAsync(RoleManager<IdentityRole> roleManager)
@@ -48,12 +51,12 @@ public static class CampContextSeed
 
     private static async Task SeedUsersAsync(UserManager<AppUser> userManager)
     {
-        if (!userManager.Users.Any(x => x.UserName == "admin@test.com"))
+        if (!userManager.Users.Any(x => x.UserName == AdminEmail))
         {
             var adminUser = new AppUser
             {
-                UserName = "admin@test.com",
-                Email = "admin@test.com",
+                UserName = AdminEmail,
+                Email = AdminEmail,
                 FirstName = "Admin",
                 LastName = "User"
             };
@@ -357,6 +360,114 @@ public static class CampContextSeed
 
                     context.Reservations.AddRange(reservations);
                     context.Orders.AddRange(orders);
+                    await context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                }
+                catch
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            });
+        }
+    }
+
+    private static async Task SeedAnnouncements(CampContext context)
+    {
+        if (!context.Announcements.Any())
+        {
+            await context.Database.CreateExecutionStrategy().ExecuteAsync(async () =>
+            {
+                await using var transaction = await context.Database.BeginTransactionAsync();
+                
+                try
+                {
+                    var announcements = new List<Announcement>();
+            
+                    var demoAnnouncement = new Announcement
+                    {
+                        Title = "CampNg Demo Mode!",
+                        Content = """
+                                  This is a demo version of CampNg. You can explore the features, but some functionalities are limited.
+
+                                  Registration is disabled for the demo, but you can still login as either a moderator or a basic user to explore the application.
+
+                                  Moderators will have access to the admin panel, but they cannot perform most of the actions there.
+
+                                  Basic users can search for available campsites and "purchase" new reservations.
+                                  """,
+                        MessageType = MessageType.Warning,
+                        PinnedPriority = 99
+                    };
+                    announcements.Add(demoAnnouncement);
+            
+                    var welcomeAnnouncement = new Announcement
+                    {
+                        Title = "Welcome to CampNg!",
+                        Content = """
+                                  Thank you for using CampNg! We hope you enjoy your camping experience.
+
+                                  If you have any questions or feedback, feel free to reach out to us.
+                                  """,
+                        MessageType = MessageType.Success
+                    };
+                    announcements.Add(welcomeAnnouncement);
+                    
+                    var crystalShores = await context.Campgrounds.FirstAsync(c => c.Id == 2);
+                    var storeConstructionAnnouncement = new Announcement
+                    {
+                        Title = "Store Under Construction",
+                        Content = """
+                                  Our camp store is currently under construction. We are working hard to bring you a better shopping experience.
+
+                                  Campers may hear construction noise during the day, but we will do our best to minimize any inconvenience.
+                                  """,
+                        ExpirationDate = DateTime.UtcNow.AddDays(30),
+                        MessageType = MessageType.Warning,
+                        PinnedPriority = 1,
+                        Campgrounds = new List<Campground> { crystalShores }
+                    };
+                    announcements.Add(storeConstructionAnnouncement);
+                    
+                    var waterActivitiesAnnouncement = new Announcement
+                    {
+                        Title = "Water Activities Available",
+                        Content = """
+                                  We are excited to announce that water activities are now available at Crystal Shores!
+
+                                  Enjoy kayaking, paddleboarding, and fishing in our beautiful lake.
+                                  """,
+                        MessageType = MessageType.Info,
+                        Campgrounds = new List<Campground> { crystalShores }
+                    };
+                    announcements.Add(waterActivitiesAnnouncement);
+                    
+                    var cedarRidge = await context.Campgrounds.FirstAsync(c => c.Id == 1);
+                    var silverPineMeadows = await context.Campgrounds.FirstAsync(c => c.Id == 4);
+                    var fireBanAnnouncement = new Announcement
+                    {
+                        Title = "Fire Ban in Effect",
+                        Content = """
+                                  Due to dry conditions, a fire ban is currently in effect. Open fires of any kind are prohibited until further notice.
+                                  """,
+                        MessageType = MessageType.Error,
+                        PinnedPriority = 2,
+                        ForceGlobal = true,
+                        Campgrounds = new List<Campground> { cedarRidge, silverPineMeadows }
+                    };
+                    announcements.Add(fireBanAnnouncement);
+                    
+                    var expiredAnnouncement = new Announcement
+                    {
+                        Title = "Expired Announcement",
+                        Content = "This announcement has expired and should not be displayed.",
+                        ExpirationDate = DateTime.UtcNow.AddDays(-1), // Set to a past date to simulate expiration
+                        PinnedPriority = 0
+                    };
+                    announcements.Add(expiredAnnouncement);
+                    
+                    context.Announcements.AddRange(announcements);
+                    
                     await context.SaveChangesAsync();
                     await transaction.CommitAsync();
                 }

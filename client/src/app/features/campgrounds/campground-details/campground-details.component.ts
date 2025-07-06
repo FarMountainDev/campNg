@@ -1,29 +1,36 @@
-import {Component, inject, OnDestroy, OnInit} from '@angular/core';
+import {Component, inject, OnDestroy, OnInit, signal} from '@angular/core';
 import {CampgroundService} from '../../../core/services/campground.service';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, RouterModule} from '@angular/router';
 import {Campground} from '../../../shared/models/campground';
-import {BehaviorSubject, Subject, catchError, EMPTY, finalize, takeUntil} from 'rxjs';
-import {MatProgressSpinner} from '@angular/material/progress-spinner';
-import {AsyncPipe, NgIf} from '@angular/common';
+import {catchError, EMPTY, finalize, Subject, takeUntil} from 'rxjs';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {NgIf} from '@angular/common';
+import {AnnouncementService} from '../../../core/services/announcement.service';
+import {Announcement} from '../../../shared/models/announcement';
+import {AnnouncementComponent} from '../../../shared/components/announcement/announcement.component';
 
 @Component({
   selector: 'app-campground-details',
   imports: [
-    MatProgressSpinner,
+    MatProgressSpinnerModule,
     NgIf,
-    AsyncPipe
+    RouterModule,
+    AnnouncementComponent
   ],
   templateUrl: './campground-details.component.html',
   styleUrl: './campground-details.component.scss'
 })
 export class CampgroundDetailsComponent implements OnInit, OnDestroy {
   private readonly campgroundsService = inject(CampgroundService);
-  private readonly activatedRoute = inject(ActivatedRoute);
+  private readonly announcementService = inject(AnnouncementService);
+  private readonly route = inject(ActivatedRoute);
   private destroy$ = new Subject<void>();
 
-  campground$ = new BehaviorSubject<Campground | null>(null);
-  loading$ = new BehaviorSubject<boolean>(false);
-  error$ = new BehaviorSubject<string | null>(null);
+  loading = signal(false);
+  error = signal<string | null>(null);
+  campground = signal<Campground | null>(null);
+  announcements = signal<Announcement[]>([]);
+  announcementsLoading = signal(false);
 
   ngOnInit() {
     this.loadCampground();
@@ -35,21 +42,39 @@ export class CampgroundDetailsComponent implements OnInit, OnDestroy {
   }
 
   loadCampground() {
-    const id = this.activatedRoute.snapshot.params['id'];
+    const id = this.route.snapshot.paramMap.get('id');
     if (!id) return;
 
-    this.loading$.next(true);
-    this.error$.next(null);
+    this.loading.set(true);
+    this.error.set(null);
 
-    this.campgroundsService.getCampground(id).pipe(
+    this.campgroundsService.getCampground(Number(id)).pipe(
       takeUntil(this.destroy$),
-      catchError(() => {
-        this.error$.next('Failed to load campground details');
+      catchError(err => {
+        const errorMessage = err.status === 404
+          ? 'Campground not found'
+          : 'Failed to load campground details';
+        this.error.set(errorMessage);
         return EMPTY;
       }),
-      finalize(() => this.loading$.next(false))
+      finalize(() => this.loading.set(false))
     ).subscribe(campground => {
-      this.campground$.next(campground);
+      this.campground.set(campground);
+      this.loadCampgroundAnnouncements(campground.id);
+    });
+  }
+
+  loadCampgroundAnnouncements(campgroundId: number) {
+    this.announcementsLoading.set(true);
+    this.announcementService.getCampgroundAnnouncements(campgroundId).pipe(
+      takeUntil(this.destroy$),
+      catchError(err => {
+        console.error('Failed to load announcements', err);
+        return EMPTY;
+      }),
+      finalize(() => this.announcementsLoading.set(false))
+    ).subscribe(announcements => {
+      this.announcements.set(announcements);
     });
   }
 }

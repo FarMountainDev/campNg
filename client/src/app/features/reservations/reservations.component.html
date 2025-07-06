@@ -70,9 +70,9 @@
 
   </div>
 
-  <div class="p-4 div-backdrop" *ngIf="!loading(); else loadingTemplate">
+  <div class="p-4 div-backdrop" *ngIf="reservationService.selectedStartDate() && campsites() && !loading(); else loadingTemplate">
 
-    <div *ngIf="reservationService.selectedStartDate() && campsites()" class="flex flex-col gap-3">
+    <div class="flex flex-col gap-3">
       <div class="flex justify-center" *ngIf="campsiteCount() > 0">
         <ng-container *ngTemplateOutlet="paginatorTemplate" />
       </div>

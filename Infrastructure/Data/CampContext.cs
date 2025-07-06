@@ -15,6 +15,7 @@ public class CampContext(DbContextOptions options) : IdentityDbContext<AppUser>(
     public DbSet<Reservation> Reservations { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
+    public DbSet<Announcement> Announcements { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -129,6 +130,30 @@ public class CampContext(DbContextOptions options) : IdentityDbContext<AppUser>(
                 o.WithOwner();
             });
             entity.Property(e => e.Price).HasColumnType("decimal(18,2)");
+        });
+        
+        // Announcement
+        modelBuilder.Entity<Announcement>(entity =>
+        {
+            entity.Property(e => e.Title).IsRequired().HasMaxLength(256);
+            entity.Property(e => e.Subtitle).HasMaxLength(256);
+            entity.Property(e => e.Content).IsRequired().HasMaxLength(1000);
+            entity.Property(e => e.CreatedAt).IsRequired().HasConversion(
+                d => d.ToUniversalTime(),
+                d => DateTime.SpecifyKind(d, DateTimeKind.Utc));
+            entity.Property(e => e.CreatedById).HasMaxLength(450);
+            entity.HasOne(a => a.CreatedBy)
+                .WithMany()
+                .HasForeignKey(a => a.CreatedById)
+                .OnDelete(DeleteBehavior.SetNull);
+            entity.Property(e => e.UpdatedById).HasMaxLength(450);
+            entity.HasOne(a => a.UpdatedBy)
+                .WithMany()
+                .HasForeignKey(a => a.UpdatedById)
+                .OnDelete(DeleteBehavior.NoAction); // TODO: must set to null manually if user is deleted
+            entity.HasMany(a => a.Campgrounds)
+                .WithMany()
+                .UsingEntity(j => j.ToTable("AnnouncementCampgrounds"));
         });
         
         base.OnModelCreating(modelBuilder);

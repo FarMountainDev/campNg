@@ -18,6 +18,11 @@ html {
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-position: center;
+    transition: all 0.3s ease;
+  }
+
+  .text-shadow {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
   }
 
   .error-text {

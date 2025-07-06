@@ -1,6 +1,14 @@
 <div class="flex gap-3">
-  <div class="home-image"></div>
+  <div class="home-image p-4 flex flex-col justify-end align-text-bottom text-center text-white text-shadow italic">
+    <span class="text-4xl font-bold">¡Sal Si Puedes!</span>
+    <span class="text-xl font-semibold">(Escape if you can)</span>
+  </div>
   <div class="div-backdrop px-4 py-2 flex-1 flex items-center justify-center align-middle">
     <button mat-flat-button routerLink="/reservations">Find a reservation</button>
   </div>
+</div>
+<div class="div-backdrop my-3 p-8 gap-4 flex flex-col justify-center align-middle">
+  @for (announcement of announcements(); track announcement.id) {
+    <app-announcement [announcement]="announcement" />
+  }
 </div>

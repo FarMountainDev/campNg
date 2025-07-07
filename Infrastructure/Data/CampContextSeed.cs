@@ -342,10 +342,11 @@ public static class CampContextSeed
                                             Reservation = reservation,
                                             ReservationOrdered = new ReservationOrdered
                                             {
-                                                CampgroundName = campsite.Campground!.Name,
                                                 CampsiteId = campsite.Id,
+                                                CampgroundId = campsite.Campground!.Id,
                                                 CampsiteName = campsite.Name,
                                                 CampsiteType = campsite.CampsiteType!.Name,
+                                                CampgroundName = campsite.Campground!.Name,
                                                 StartDate = reservation.StartDate,
                                                 EndDate = reservation.EndDate
                                             }

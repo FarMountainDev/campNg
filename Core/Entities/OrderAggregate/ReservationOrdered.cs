@@ -3,6 +3,7 @@
 public class ReservationOrdered
 {
     public int CampsiteId { get; set; }
+    public int CampgroundId { get; set; }
     public required string CampsiteName { get; set; }
     public required string CampsiteType { get; set; }
     public required string CampgroundName { get; set; }

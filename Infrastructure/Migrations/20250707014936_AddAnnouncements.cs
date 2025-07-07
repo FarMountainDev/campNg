@@ -11,6 +11,13 @@ namespace Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AddColumn<int>(
+                name: "ReservationOrdered_CampgroundId",
+                table: "OrderItems",
+                type: "int",
+                nullable: false,
+                defaultValue: 0);
+
             migrationBuilder.CreateTable(
                 name: "Announcements",
                 columns: table => new
@@ -93,6 +100,10 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Announcements");
+
+            migrationBuilder.DropColumn(
+                name: "ReservationOrdered_CampgroundId",
+                table: "OrderItems");
         }
     }
 }

@@ -23,3 +23,9 @@
     </table>
   </div>
 </div>
+
+<div class="mt-6 w-full flex flex-col gap-4">
+  @for (announcement of announcements(); track announcement.id) {
+    <app-announcement [announcement]="announcement" />
+  }
+</div>

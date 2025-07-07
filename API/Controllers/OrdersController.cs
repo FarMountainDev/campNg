@@ -60,6 +60,7 @@ public class OrdersController(ICartService cartService, CampContext context,
                 ReservationOrdered = new ReservationOrdered
                 {
                     CampsiteId = item.CampsiteId,
+                    CampgroundId = item.CampgroundId,
                     CampsiteName = item.CampsiteName,
                     CampgroundName = item.CampgroundName,
                     CampsiteType = item.CampsiteType,
@@ -68,10 +69,10 @@ public class OrdersController(ICartService cartService, CampContext context,
                 },
                 Price = item.Price
             };
-    
+            
             reservation.OrderItem = orderItem;
             orderItem.Reservation = reservation;
-    
+            
             await context.Reservations.AddAsync(reservation);
             items.Add(orderItem);
         }

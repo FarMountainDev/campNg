@@ -77,6 +77,7 @@ export class CampsiteAvailabilityItemComponent implements OnChanges{
 
     const cartItem = {
       campsiteId: this.campsiteAvailabilityDto.id,
+      campgroundId: this.campsiteAvailabilityDto.campgroundId,
       campsiteName: this.campsiteAvailabilityDto.name,
       campsiteType: this.campsiteAvailabilityDto.campsiteTypeName,
       campgroundName: this.campsiteAvailabilityDto.campgroundName,

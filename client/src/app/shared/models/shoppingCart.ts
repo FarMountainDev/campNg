@@ -9,6 +9,7 @@ export type Cart = {
 
 export type CartItem = {
   campsiteId: number;
+  campgroundId: number;
   campsiteName: string;
   campsiteType: string;
   campgroundName: string;

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(CampContext))]
-    [Migration("20250706222959_AddAnnouncements")]
+    [Migration("20250707014936_AddAnnouncements")]
     partial class AddAnnouncements
     {
         /// <inheritdoc />
@@ -639,6 +639,9 @@ namespace Infrastructure.Migrations
                     b.OwnsOne("Core.Entities.OrderAggregate.ReservationOrdered", "ReservationOrdered", b1 =>
                         {
                             b1.Property<int>("OrderItemId")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("CampgroundId")
                                 .HasColumnType("int");
 
                             b1.Property<string>("CampgroundName")

@@ -91,6 +91,7 @@ public static class ToDtoMappingExtensions
         return new OrderItemDto
         {
             CampsiteId = orderItem.ReservationOrdered.CampsiteId,
+            CampgroundId = orderItem.ReservationOrdered.CampgroundId,
             CampsiteName = orderItem.ReservationOrdered.CampsiteName,
             CampsiteType = orderItem.ReservationOrdered.CampsiteType,
             CampgroundName = orderItem.ReservationOrdered.CampgroundName,

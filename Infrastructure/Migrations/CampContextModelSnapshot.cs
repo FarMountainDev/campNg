@@ -638,6 +638,9 @@ namespace Infrastructure.Migrations
                             b1.Property<int>("OrderItemId")
                                 .HasColumnType("int");
 
+                            b1.Property<int>("CampgroundId")
+                                .HasColumnType("int");
+
                             b1.Property<string>("CampgroundName")
                                 .IsRequired()
                                 .HasMaxLength(50)

@@ -17,7 +17,7 @@ namespace API.Controllers;
 public class OrdersController(ICartService cartService, CampContext context, 
     IReservationService reservationService, UserManager<AppUser> userManager) : BaseApiController
 {
-    [InvalidateCache("/api/admin/orders", "/api/admin/revenue")]
+    [InvalidateCache("/api/admin/orders", "/api/admin/dashboard/revenue")]
     [HttpPost]
     public async Task<ActionResult<Order>> CreateOrder(CreateOrderDto orderDto)
     {

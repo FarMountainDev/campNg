@@ -8,7 +8,7 @@ import {AnnouncementService} from '../../../core/services/announcement.service';
 import {Announcement} from '../../../shared/models/announcement';
 import {catchError, EMPTY, finalize} from 'rxjs';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {AnnouncementComponent} from '../../../shared/components/announcement/announcement.component';
+import {AnnouncementsComponent} from '../../../shared/components/announcements/announcements.component';
 
 @Component({
   selector: 'app-checkout-review',
@@ -16,7 +16,7 @@ import {AnnouncementComponent} from '../../../shared/components/announcement/ann
     CurrencyPipe,
     PaymentCardPipe,
     DatePipe,
-    AnnouncementComponent
+    AnnouncementsComponent
   ],
   templateUrl: './checkout-review.component.html',
   styleUrl: './checkout-review.component.scss'

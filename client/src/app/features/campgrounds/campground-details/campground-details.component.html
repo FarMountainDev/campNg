@@ -8,10 +8,8 @@
           <mat-spinner diameter="30"></mat-spinner>
         </div>
       } @else if (announcements().length) {
-        <div class="my-4 gap-4 flex flex-col">
-          @for (announcement of announcements(); track announcement.id) {
-            <app-announcement [announcement]="announcement" />
-          }
+        <div class="my-4">
+          <app-announcements [announcements]="announcements()" />
         </div>
       }
 

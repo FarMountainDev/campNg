@@ -7,7 +7,7 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {NgIf} from '@angular/common';
 import {AnnouncementService} from '../../../core/services/announcement.service';
 import {Announcement} from '../../../shared/models/announcement';
-import {AnnouncementComponent} from '../../../shared/components/announcement/announcement.component';
+import {AnnouncementsComponent} from '../../../shared/components/announcements/announcements.component';
 
 @Component({
   selector: 'app-campground-details',
@@ -15,7 +15,7 @@ import {AnnouncementComponent} from '../../../shared/components/announcement/ann
     MatProgressSpinnerModule,
     NgIf,
     RouterModule,
-    AnnouncementComponent
+    AnnouncementsComponent
   ],
   templateUrl: './campground-details.component.html',
   styleUrl: './campground-details.component.scss'

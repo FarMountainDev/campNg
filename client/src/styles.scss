@@ -25,6 +25,10 @@ html {
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
   }
 
+  .tr-hover {
+    @apply hover:bg-gray-300;
+  }
+
   .error-text {
     @apply text-red-800;
   }
@@ -105,6 +109,10 @@ html.dark-mode {
 
   & {
     background-image: url("/images/night-sky-bg.jpg");
+  }
+
+  .tr-hover {
+    @apply hover:bg-gray-800;
   }
 
   .error-text {

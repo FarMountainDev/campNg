@@ -7,8 +7,6 @@
     <button mat-flat-button routerLink="/reservations">Find a reservation</button>
   </div>
 </div>
-<div class="div-backdrop my-3 p-8 gap-4 flex flex-col justify-center align-middle">
-  @for (announcement of announcements(); track announcement.id) {
-    <app-announcement [announcement]="announcement" />
-  }
+<div class="div-backdrop my-3 p-8 gap-4">
+  <app-announcements [announcements]="announcements()" />
 </div>

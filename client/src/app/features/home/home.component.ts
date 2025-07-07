@@ -3,14 +3,14 @@ import {MatButton} from '@angular/material/button';
 import {RouterLink} from '@angular/router';
 import {AnnouncementService} from '../../core/services/announcement.service';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {AnnouncementComponent} from '../../shared/components/announcement/announcement.component';
+import {AnnouncementsComponent} from '../../shared/components/announcements/announcements.component';
 
 @Component({
   selector: 'app-home',
   imports: [
     MatButton,
     RouterLink,
-    AnnouncementComponent
+    AnnouncementsComponent
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'

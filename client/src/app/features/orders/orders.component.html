@@ -13,7 +13,7 @@
         </thead>
         <tbody class="divide-y divide-gray-200">
           @for (order of orders; track order.id) {
-            <tr routerLink="/orders/{{order.id}}" class="hover:bg-gray-500">
+            <tr routerLink="/orders/{{order.id}}" class="tr-hover">
               <th class="px-6 py-3"># {{order.id}}</th>
               <td>{{order.orderDate | date: 'medium'}}</td>
               <td>{{order.total | currency}}</td>

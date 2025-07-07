@@ -1,8 +1,8 @@
 import {Component, inject, input} from '@angular/core';
-import {AnnouncementService} from '../../../core/services/announcement.service';
+import {AnnouncementService} from '../../../../core/services/announcement.service';
 import {DatePipe, NgClass, NgIf} from '@angular/common';
-import {Announcement} from '../../models/announcement';
-import {Campground} from '../../models/campground';
+import {Announcement} from '../../../models/announcement';
+import {Campground} from '../../../models/campground';
 
 @Component({
   selector: 'app-announcement',

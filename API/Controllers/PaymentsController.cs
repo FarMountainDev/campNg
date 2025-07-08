@@ -1,5 +1,4 @@
-﻿using API.Attributes;
-using API.Extensions;
+﻿using API.Extensions;
 using API.SignalR;
 using Core.Entities.OrderAggregate;
 using Core.Enums;

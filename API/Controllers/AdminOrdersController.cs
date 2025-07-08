@@ -65,7 +65,7 @@ public class AdminOrdersController(CampContext context, IPaymentService paymentS
     }
     
     [Authorize(Roles = "Admin")]
-    [InvalidateCache("api/admin/orders", "api/admin/revenue")]
+    [InvalidateCache("/api/admin/orders", "/api/admin/revenue")]
     [HttpPost("refund/{id:int}")]
     public async Task<ActionResult<OrderDto>> RefundOrder(int id)
     {

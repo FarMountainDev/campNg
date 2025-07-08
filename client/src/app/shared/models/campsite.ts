@@ -1,6 +1,4 @@
-﻿import {Campground} from './campground';
-import {CampsiteType} from './campsiteType';
-import {Reservation} from './reservation';
+﻿import {Reservation} from './reservation';
 
 export type Campsite = {
   id: number;

@@ -10,6 +10,8 @@ import {OccupancyRate} from '../../shared/models/occupancyRate';
 import {MonthlyRevenue} from '../../shared/models/monthlyRevenue';
 import {User} from '../../shared/models/user';
 import {UserParams} from '../../shared/models/params/userParams';
+import {AnnouncementDto} from '../../shared/models/announcementDto';
+import {AnnouncementParams} from '../../shared/models/params/announcementParams';
 
 @Injectable({
   providedIn: 'root'
@@ -121,5 +123,19 @@ export class AdminService {
 
   getMonthlyReservationRevenue() {
     return this.http.get<MonthlyRevenue>(this.baseUrl + 'admin/dashboard/revenue/reservations');
+  }
+
+  getAnnouncements(announcementParams: AnnouncementParams) {
+    let params = new HttpParams();
+    if (announcementParams.search) {
+      params = params.append('search', announcementParams.search);
+    }
+    if (announcementParams.sort && announcementParams.sortDirection) {
+      params = params.append('sort', announcementParams.sort);
+      params = params.append('sortDirection', announcementParams.sortDirection);
+    }
+    params = params.append('pageNumber', announcementParams.pageNumber);
+    params = params.append('pageSize', announcementParams.pageSize);
+    return this.http.get<Pagination<AnnouncementDto>>(this.baseUrl + 'admin/announcements', {params});
   }
 }

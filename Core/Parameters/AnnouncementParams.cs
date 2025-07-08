@@ -1,6 +1,6 @@
 ﻿namespace Core.Parameters;
 
-public class AnnouncementParams
+public class AnnouncementParams : BaseParams
 {
     private List<int> campgrounds = [];
     public List<int> CampgroundIds() => campgrounds;

@@ -100,4 +100,24 @@ public static class ToDtoMappingExtensions
             Price = orderItem.Price,
         };
     }
+
+    public static AnnouncementDto ToDto(this Announcement announcement)
+    {
+        return new AnnouncementDto
+        {
+            Id = announcement.Id,
+            Title = announcement.Title,
+            Subtitle = announcement.Subtitle,
+            Content = announcement.Content,
+            ExpirationDate = announcement.ExpirationDate,
+            MessageType = announcement.MessageType.ToString(),
+            ForceGlobal = announcement.ForceGlobal,
+            PinnedPriority = announcement.PinnedPriority,
+            CreatedAt = announcement.CreatedAt,
+            CreatedBy = announcement.CreatedBy?.UserName ?? "Unknown",
+            UpdatedAt = announcement.UpdatedAt,
+            UpdatedBy = announcement.UpdatedBy?.UserName,
+            Campgrounds = announcement.Campgrounds.Select(c => c.ToDto()).ToList()
+        };
+    }
 }

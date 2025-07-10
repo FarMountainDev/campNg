@@ -23,4 +23,6 @@ public class AnnouncementParams : BaseParams
             }
         }
     }
+
+    public string? MessageType { get; set; }
 }

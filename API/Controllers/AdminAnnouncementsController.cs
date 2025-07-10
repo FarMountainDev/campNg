@@ -2,6 +2,7 @@
 using API.DTOs;
 using API.Extensions;
 using Core.Entities;
+using Core.Enums;
 using Core.Models;
 using Core.Parameters;
 using Infrastructure.Data;
@@ -16,17 +17,50 @@ namespace API.Controllers;
 [Route("api/admin/announcements")]
 public class AdminAnnouncementsController(CampContext context, UserManager<AppUser> userManager) : BaseApiController
 {
+    //[Cache((int)TimeSpan.SecondsPerDay * 30)]
     [HttpGet]
     public async Task<IActionResult> GetAnnouncements([FromQuery] AnnouncementParams announcementParams)
     {
         var query = context.Announcements.AsQueryable();
-        
-        if (announcementParams.CampgroundIds().Any())
-            query = query.Where(a => a.Campgrounds.Any(c => announcementParams.CampgroundIds().Contains(c.Id)));
 
         query = query.Include(a => a.Campgrounds)
             .Include(a => a.CreatedBy)
             .Include(a => a.UpdatedBy);
+        
+        if (announcementParams.CampgroundIds().Any())
+            query = query.Where(a => a.Campgrounds.Any(c => announcementParams.CampgroundIds().Contains(c.Id)));
+        
+        if (!string.IsNullOrWhiteSpace(announcementParams.MessageType) && 
+            Enum.TryParse<MessageType>(announcementParams.MessageType, true, out var messageType))
+            query = query.Where(a => a.MessageType == messageType);
+        
+        if (!string.IsNullOrWhiteSpace(announcementParams.Search))
+            query = query.Where(a => 
+                a.Title.Contains(announcementParams.Search) || 
+                a.Content.Contains(announcementParams.Search));
+
+        if (!string.IsNullOrEmpty(announcementParams.Sort))
+        {
+            var sortField = announcementParams.Sort.ToLower();
+            var isDescending = announcementParams.SortDirection?.ToLower() == "desc";
+            
+            query = sortField switch
+            {
+                "id" => isDescending ? query.OrderByDescending(a => a.Id) : query.OrderBy(a => a.Id),
+                "title" => isDescending ? query.OrderByDescending(a => a.Title) : query.OrderBy(a => a.Title),
+                "expirationdate" => isDescending ? query.OrderByDescending(a => a.ExpirationDate) : query.OrderBy(a => a.ExpirationDate),
+                "pinnedpriority" => isDescending ? query.OrderByDescending(a => a.PinnedPriority) : query.OrderBy(a => a.PinnedPriority),
+                "createdat" => isDescending ? query.OrderByDescending(a => a.CreatedAt) : query.OrderBy(a => a.CreatedAt),
+                "updatedat" => isDescending ? query.OrderByDescending(a => a.UpdatedAt) : query.OrderBy(a => a.UpdatedAt),
+                "createdby" => isDescending 
+                    ? query.OrderByDescending(a => a.CreatedBy != null ? a.CreatedBy.UserName : string.Empty) 
+                    : query.OrderBy(a => a.CreatedBy != null ? a.CreatedBy.UserName : string.Empty),
+                "updatedby" => isDescending 
+                    ? query.OrderByDescending(a => a.UpdatedBy != null ? a.UpdatedBy.UserName : string.Empty) 
+                    : query.OrderBy(a => a.UpdatedBy != null ? a.UpdatedBy.UserName : string.Empty),
+                _ => query.OrderByDescending(a => a.CreatedAt)
+            };
+        }
         
         var announcements = await query
             .Skip((announcementParams.PageNumber - 1) * announcementParams.PageSize)

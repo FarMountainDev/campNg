@@ -17,13 +17,14 @@ import {MatError, MatFormField, MatLabel, MatPrefix} from '@angular/material/for
 import {MatIcon} from '@angular/material/icon';
 import {MatInput} from '@angular/material/input';
 import {MatOption} from '@angular/material/core';
-import {MatSelect} from '@angular/material/select';
+import {MatSelect, MatSelectChange} from '@angular/material/select';
 import {MatSort, MatSortHeader, Sort} from '@angular/material/sort';
 import {MatTooltip} from '@angular/material/tooltip';
-import {ReactiveFormsModule} from '@angular/forms';
+import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {User} from '../../../shared/models/user';
 import {DialogService} from '../../../core/services/dialog.service';
 import {SnackbarService} from '../../../core/services/snackbar.service';
+import {ImmediateErrorStateMatcher} from '../../../shared/utils/immediate-error-state-matcher';
 
 @Component({
   selector: 'app-admin-announcements',
@@ -68,6 +69,14 @@ export class AdminAnnouncementsComponent implements OnInit {
   dataSource = new MatTableDataSource<AnnouncementDto>([]);
   announcementParams = new AnnouncementParams();
   totalItems = 0;
+  messageTypeOptions = ['All', 'Default', 'Info', 'Success', 'Warning', 'Error'];
+  searchForm = new FormGroup({
+    searchInput: new FormControl<string>('', [
+      Validators.pattern(/^[a-zA-Z0-9._%+-@]*$/)
+    ]),
+    messageTypeSelect: new FormControl()
+  });
+  immediateErrorMatcher = new ImmediateErrorStateMatcher();
 
   ngOnInit() {
     this.loadAnnouncements();
@@ -93,6 +102,36 @@ export class AdminAnnouncementsComponent implements OnInit {
   onSort(event: Sort) {
     this.announcementParams.sort = event.active;
     this.announcementParams.sortDirection = event.direction;
+    this.loadAnnouncements();
+  }
+
+  onSearch(searchTerm: string) {
+    this.announcementParams.search = searchTerm;
+    this.announcementParams.pageNumber = 1;
+    this.loadAnnouncements();
+  }
+
+  onFilterMessageTypeSelect(event: MatSelectChange) {
+    this.announcementParams.messageType = event.value;
+    this.announcementParams.pageNumber = 1;
+    this.loadAnnouncements();
+  }
+
+  onSubmit() {
+    if (this.searchForm.valid) {
+      this.announcementParams.search = this.searchForm.controls.searchInput.value!;
+      this.announcementParams.messageType = this.searchForm.controls.messageTypeSelect.value;
+      this.announcementParams.pageNumber = 1;
+      this.loadAnnouncements();
+    }
+  }
+
+  onResetFilters() {
+    this.announcementParams.pageNumber = 1;
+    this.announcementParams.search = '';
+    this.announcementParams.messageType = '';
+    this.searchForm.controls.searchInput.setValue('');
+    this.searchForm.controls.messageTypeSelect.setValue('');
     this.loadAnnouncements();
   }
 

@@ -127,6 +127,9 @@ export class AdminService {
 
   getAnnouncements(announcementParams: AnnouncementParams) {
     let params = new HttpParams();
+    if (announcementParams.messageType && announcementParams.messageType !== 'All') {
+      params = params.append('messageType', announcementParams.messageType);
+    }
     if (announcementParams.search) {
       params = params.append('search', announcementParams.search);
     }

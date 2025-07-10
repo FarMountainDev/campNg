@@ -3,52 +3,43 @@
     <h2 class="flex items-center gap-2 text-2xl font-semibold p-2">
       <mat-icon aria-hidden="true" fontIcon="campaign" /> Announcements
     </h2>
-<!--    <form [formGroup]="searchForm" (ngSubmit)="onSubmit()" class="flex gap-4">-->
+    <form [formGroup]="searchForm" (ngSubmit)="onSubmit()" class="flex gap-4">
 
-<!--      <mat-form-field appearance="outline">-->
-<!--        <mat-label>Filter by role</mat-label>-->
-<!--        <mat-select (selectionChange)="onFilterRoleSelect($event)" [formControl]="searchForm.controls.userStatusSelect">-->
-<!--          @for (role of roleOptions; track $index) {-->
-<!--            <mat-option [value]="role">{{role}}</mat-option>-->
-<!--          }-->
-<!--        </mat-select>-->
-<!--      </mat-form-field>-->
+      <mat-form-field appearance="outline">
+        <mat-label>Filter by type</mat-label>
+        <mat-select (selectionChange)="onFilterMessageTypeSelect($event)" [formControl]="searchForm.controls.messageTypeSelect">
+          @for (messageType of messageTypeOptions; track $index) {
+            <mat-option [value]="messageType">{{messageType}}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
 
-<!--      <mat-form-field appearance="outline">-->
-<!--        <mat-label>Filter by status</mat-label>-->
-<!--        <mat-select (selectionChange)="onFilterStatusSelect($event)" [formControl]="searchForm.controls.userStatusSelect">-->
-<!--          @for (status of statusOptions; track $index) {-->
-<!--            <mat-option [value]="status">{{status}}</mat-option>-->
-<!--          }-->
-<!--        </mat-select>-->
-<!--      </mat-form-field>-->
+      <mat-form-field appearance="outline" class="w-96">
+        <mat-label>Search by Name or Email</mat-label>
+        <input [formControl]="searchForm.controls.searchInput" matInput placeholder="Search by Title or Content"
+               [errorStateMatcher]="immediateErrorMatcher"/>
+        <button
+          mat-icon-button
+          matPrefix
+          (click)="onSearch(searchForm.controls.searchInput.value!)"
+          [disabled]="searchForm.controls.searchInput.invalid"
+          [attr.aria-label]="'Search by title or content'"
+        >
+          <mat-icon>search</mat-icon>
+        </button>
+        <mat-error *ngIf="searchForm.controls.searchInput.hasError('pattern')">
+          Invalid characters detected
+        </mat-error>
+      </mat-form-field>
 
-<!--      <mat-form-field appearance="outline" class="w-96">-->
-<!--        <mat-label>Search by Name or Email</mat-label>-->
-<!--        <input [formControl]="searchForm.controls.searchInput" matInput placeholder="Search by Name or Email"-->
-<!--               [errorStateMatcher]="immediateErrorMatcher"/>-->
-<!--        <button-->
-<!--          mat-icon-button-->
-<!--          matPrefix-->
-<!--          (click)="onSearch(searchForm.controls.searchInput.value!)"-->
-<!--          [disabled]="searchForm.controls.searchInput.invalid"-->
-<!--          [attr.aria-label]="'Search by name or email'"-->
-<!--        >-->
-<!--          <mat-icon>search</mat-icon>-->
-<!--        </button>-->
-<!--        <mat-error *ngIf="searchForm.controls.searchInput.hasError('pattern')">-->
-<!--          Invalid characters detected-->
-<!--        </mat-error>-->
-<!--      </mat-form-field>-->
+      <button mat-stroked-button aria-label="Filter results" type="submit" class="admin-toolbar-button" [disabled]="searchForm.invalid">
+        <mat-icon>filter_list</mat-icon> Submit
+      </button>
+      <button mat-stroked-button aria-label="Reset filters" type="reset" class="admin-toolbar-button" (click)="onResetFilters()">
+        <mat-icon>clear</mat-icon> Reset
+      </button>
 
-<!--      <button mat-stroked-button aria-label="Filter results" type="submit" class="admin-toolbar-button" [disabled]="searchForm.invalid">-->
-<!--        <mat-icon>filter_list</mat-icon> Submit-->
-<!--      </button>-->
-<!--      <button mat-stroked-button aria-label="Reset filters" type="reset" class="admin-toolbar-button" (click)="onResetFilters()">-->
-<!--        <mat-icon>clear</mat-icon> Reset-->
-<!--      </button>-->
-
-<!--    </form>-->
+    </form>
   </div>
   <div class="table-scroll-container">
     <table mat-table [dataSource]="dataSource" matSort matSortActive="createdAt" matSortDirection="desc"
@@ -65,8 +56,8 @@
       </ng-container>
 
       <ng-container matColumnDef="expirationDate">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by Expiration Date"> Expiration </th>
-        <td mat-cell *matCellDef="let announcement"> {{announcement.expirationDate}} </td>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by Expiration Date" start="desc"> Expiration </th>
+        <td mat-cell *matCellDef="let announcement"> {{announcement.expirationDate | date: 'MMMM d, y, h:mm:ss a'}} </td>
       </ng-container>
 
       <ng-container matColumnDef="messageType">
@@ -80,7 +71,7 @@
       </ng-container>
 
       <ng-container matColumnDef="pinnedPriority">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by Pinned Priority"> Pinned Priority </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by Pinned Priority" start="desc"> Pinned Priority </th>
         <td mat-cell *matCellDef="let announcement"> {{announcement.pinnedPriority}} </td>
       </ng-container>
 

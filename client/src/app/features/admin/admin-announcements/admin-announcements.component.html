@@ -6,7 +6,16 @@
     <form [formGroup]="searchForm" (ngSubmit)="onSubmit()" class="flex gap-4">
 
       <mat-form-field appearance="outline">
-        <mat-label>Filter by type</mat-label>
+        <mat-label>Campground</mat-label>
+        <mat-select (selectionChange)="onCampgroundSelect()" multiple [formControl]="searchForm.controls.campgroundSelect">
+          @for (campground of campgroundOptions; track campground.id) {
+            <mat-option [value]="campground.id">{{campground.name}}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Type</mat-label>
         <mat-select (selectionChange)="onFilterMessageTypeSelect($event)" [formControl]="searchForm.controls.messageTypeSelect">
           @for (messageType of messageTypeOptions; track $index) {
             <mat-option [value]="messageType">{{messageType}}</mat-option>
@@ -15,7 +24,7 @@
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="w-96">
-        <mat-label>Search by Name or Email</mat-label>
+        <mat-label>Search by Title or Content</mat-label>
         <input [formControl]="searchForm.controls.searchInput" matInput placeholder="Search by Title or Content"
                [errorStateMatcher]="immediateErrorMatcher"/>
         <button

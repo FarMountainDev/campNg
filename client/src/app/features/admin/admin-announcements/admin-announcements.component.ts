@@ -25,6 +25,7 @@ import {User} from '../../../shared/models/user';
 import {DialogService} from '../../../core/services/dialog.service';
 import {SnackbarService} from '../../../core/services/snackbar.service';
 import {ImmediateErrorStateMatcher} from '../../../shared/utils/immediate-error-state-matcher';
+import {Campground} from '../../../shared/models/campground';
 
 @Component({
   selector: 'app-admin-announcements',
@@ -74,12 +75,15 @@ export class AdminAnnouncementsComponent implements OnInit {
     searchInput: new FormControl<string>('', [
       Validators.pattern(/^[a-zA-Z0-9._%+-@]*$/)
     ]),
+    campgroundSelect: new FormControl<number[]>([]),
     messageTypeSelect: new FormControl()
   });
   immediateErrorMatcher = new ImmediateErrorStateMatcher();
+  campgroundOptions: Campground[] = [];
 
   ngOnInit() {
     this.loadAnnouncements();
+    this.loadCampgroundOptions();
   }
 
   loadAnnouncements() {
@@ -89,6 +93,18 @@ export class AdminAnnouncementsComponent implements OnInit {
           this.dataSource.data = response.data
           this.totalItems = response.count;
         }
+      }
+    });
+  }
+
+  private loadCampgroundOptions() {
+    this.adminService.getCampgroundSelectOptions().subscribe({
+      next: options => {
+        this.campgroundOptions = options;
+      },
+      error: error => {
+        console.error('Failed to load campground options:', error);
+        this.snackbar.error('Failed to load campground options');
       }
     });
   }
@@ -111,6 +127,13 @@ export class AdminAnnouncementsComponent implements OnInit {
     this.loadAnnouncements();
   }
 
+  onCampgroundSelect() {
+    // TODO: Determine if loading announcements for each selection change can be optimized
+    this.announcementParams.campgrounds = this.searchForm.controls.campgroundSelect.value;
+    this.announcementParams.pageNumber = 1;
+    this.loadAnnouncements();
+  }
+
   onFilterMessageTypeSelect(event: MatSelectChange) {
     this.announcementParams.messageType = event.value;
     this.announcementParams.pageNumber = 1;
@@ -119,7 +142,8 @@ export class AdminAnnouncementsComponent implements OnInit {
 
   onSubmit() {
     if (this.searchForm.valid) {
-      this.announcementParams.search = this.searchForm.controls.searchInput.value!;
+      this.announcementParams.search = this.searchForm.controls.searchInput.value ?? '';
+      this.announcementParams.campgrounds = this.searchForm.controls.campgroundSelect.value;
       this.announcementParams.messageType = this.searchForm.controls.messageTypeSelect.value;
       this.announcementParams.pageNumber = 1;
       this.loadAnnouncements();
@@ -130,7 +154,9 @@ export class AdminAnnouncementsComponent implements OnInit {
     this.announcementParams.pageNumber = 1;
     this.announcementParams.search = '';
     this.announcementParams.messageType = '';
+    this.announcementParams.campgrounds = [];
     this.searchForm.controls.searchInput.setValue('');
+    this.searchForm.controls.campgroundSelect.setValue([]);
     this.searchForm.controls.messageTypeSelect.setValue('');
     this.loadAnnouncements();
   }

@@ -1,4 +1,4 @@
-import {inject, Injectable} from '@angular/core';
+import {inject, Injectable, signal} from '@angular/core';
 import {environment} from '../../../environments/environment';
 import {HttpClient, HttpParams } from '@angular/common/http';
 import {OrderParams} from '../../shared/models/params/orderParams';
@@ -12,6 +12,8 @@ import {User} from '../../shared/models/user';
 import {UserParams} from '../../shared/models/params/userParams';
 import {AnnouncementDto} from '../../shared/models/announcementDto';
 import {AnnouncementParams} from '../../shared/models/params/announcementParams';
+import {Campground} from '../../shared/models/campground';
+import {Observable, of, tap} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +21,8 @@ import {AnnouncementParams} from '../../shared/models/params/announcementParams'
 export class AdminService {
   private readonly baseUrl = environment.apiUrl;
   private readonly http = inject(HttpClient);
+
+  private campgroundOptions = signal<Campground[] | null>(null);
 
   getUsers(userParams: UserParams) {
     let params = new HttpParams();
@@ -127,6 +131,10 @@ export class AdminService {
 
   getAnnouncements(announcementParams: AnnouncementParams) {
     let params = new HttpParams();
+    if (announcementParams.campgrounds && announcementParams.campgrounds.length > 0) {
+      params = params.append('campgrounds', announcementParams.campgrounds.join(','));
+      console.log(announcementParams.campgrounds);
+    }
     if (announcementParams.messageType && announcementParams.messageType !== 'All') {
       params = params.append('messageType', announcementParams.messageType);
     }
@@ -140,5 +148,18 @@ export class AdminService {
     params = params.append('pageNumber', announcementParams.pageNumber);
     params = params.append('pageSize', announcementParams.pageSize);
     return this.http.get<Pagination<AnnouncementDto>>(this.baseUrl + 'admin/announcements', {params});
+  }
+
+  getCampgroundSelectOptions(): Observable<Campground[]> {
+    const cachedOptions = this.campgroundOptions();
+
+    if (cachedOptions) {
+      return of(cachedOptions);
+    }
+
+    return this.http.get<Campground[]>(this.baseUrl + 'admin/campgrounds/select-options')
+      .pipe(
+        tap(options => this.campgroundOptions.set(options))
+      );
   }
 }

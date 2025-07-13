@@ -1,6 +1,6 @@
 ﻿import { PaginationParams } from './paginationParams';
 
 export class AnnouncementParams extends PaginationParams {
-  campground: number[] = [];
+  campgrounds: number[] | null = null;
   messageType: string | null = null;
 }

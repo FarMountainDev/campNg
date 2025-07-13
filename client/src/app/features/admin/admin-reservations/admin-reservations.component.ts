@@ -103,10 +103,14 @@ export class AdminReservationsComponent implements OnInit {
   }
 
   onCreateReservation() {
-    this.snackbar.warning('Admin reservation creation is not available yet.');
+    this.snackbar.info('Admin reservation creation is not available yet.');
   }
 
   openReservationDetailsDialog(reservation: ReservationDto) {
     this.dialogService.openAdminReservationDetails(reservation);
+  }
+
+  onCancelReservation(reservation: ReservationDto) {
+    this.snackbar.info('Admin reservation cancel is not available yet.');
   }
 }

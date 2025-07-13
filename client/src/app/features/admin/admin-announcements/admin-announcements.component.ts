@@ -136,6 +136,6 @@ export class AdminAnnouncementsComponent implements OnInit {
   }
 
   async openAnnouncementDetailsDialog(user: User) {
-    this.snackbar.warning('Admin announcement details are not available yet.');
+    this.snackbar.info('Admin announcement details are not available yet.');
   }
 }

@@ -129,7 +129,7 @@ export class AdminUsersComponent implements OnInit{
   }
 
   async openUserDetailsDialog(user: User) {
-    this.snackbar.warning('Admin user details are not available yet.');
+    this.snackbar.info('Admin user details are not available yet.');
   }
 
   async openUserEditDialog(user: User) {
@@ -235,6 +235,4 @@ export class AdminUsersComponent implements OnInit{
       return user.roles === role || user.roles.split(',').map(r => r.trim()).includes(role);
     }
   }
-
-  protected readonly open = open;
 }

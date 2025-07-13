@@ -1,6 +1,6 @@
 services:
   sql:
-    image: mcr.microsoft.com/azure-sql-edge
+    image: mcr.microsoft.com/mssql/server:2022-latest
     environment:
       ACCEPT_EULA: "1"
       MSSQL_SA_PASSWORD: "Password@1"

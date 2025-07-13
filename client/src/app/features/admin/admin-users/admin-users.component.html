@@ -65,8 +65,8 @@
       </ng-container>
 
       <ng-container matColumnDef="email">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by email"> Email </th>
-        <td mat-cell *matCellDef="let user"> {{user.email}} </td>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by email" class="hidden 2xl:table-cell"> Email </th>
+        <td mat-cell *matCellDef="let user" class="hidden 2xl:table-cell"> {{user.email}} </td>
       </ng-container>
 
       <ng-container matColumnDef="firstName">
@@ -85,8 +85,8 @@
       </ng-container>
 
       <ng-container matColumnDef="isEmailConfirmed">
-        <th mat-header-cell *matHeaderCellDef> Email Confirmed </th>
-        <td mat-cell *matCellDef="let user"> {{user.isEmailConfirmed}} </td>
+        <th mat-header-cell *matHeaderCellDef class="hidden 2xl:table-cell"> Email Confirmed </th>
+        <td mat-cell *matCellDef="let user" class="hidden 2xl:table-cell"> {{user.isEmailConfirmed}} </td>
       </ng-container>
 
       <ng-container matColumnDef="isLocked">

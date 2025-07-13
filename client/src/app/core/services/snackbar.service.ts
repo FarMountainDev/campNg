@@ -10,6 +10,15 @@ export class SnackbarService {
   private readonly horizontalPosition: 'start' | 'center' | 'end' | 'left' | 'right' = 'left';
   private readonly verticalPosition: 'top' | 'bottom' = 'bottom';
 
+  info(message: string) {
+    this.snackbar.open(message, 'Close', {
+      duration: this.defaultDuration,
+      horizontalPosition: this.horizontalPosition,
+      verticalPosition: this.verticalPosition,
+      panelClass: ['snackbar-info']
+    });
+  }
+
   success(message: string) {
     this.snackbar.open(message, 'Close', {
       duration: this.defaultDuration,

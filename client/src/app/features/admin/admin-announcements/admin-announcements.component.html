@@ -57,7 +57,7 @@
 
       <ng-container matColumnDef="expirationDate">
         <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by Expiration Date" start="desc"> Expiration </th>
-        <td mat-cell *matCellDef="let announcement"> {{announcement.expirationDate | date: 'MMMM d, y, h:mm:ss a'}} </td>
+        <td mat-cell *matCellDef="let announcement"> {{announcement.expirationDate | date: 'mediumDate'}} </td>
       </ng-container>
 
       <ng-container matColumnDef="messageType">
@@ -66,13 +66,13 @@
       </ng-container>
 
       <ng-container matColumnDef="forceGlobal">
-        <th mat-header-cell *matHeaderCellDef> Force Global </th>
-        <td mat-cell *matCellDef="let announcement"> {{announcement.forceGlobal}} </td>
+        <th mat-header-cell *matHeaderCellDef class="hidden 2xl:table-cell"> Force Global </th>
+        <td mat-cell *matCellDef="let announcement" class="hidden 2xl:table-cell"> {{announcement.forceGlobal}} </td>
       </ng-container>
 
       <ng-container matColumnDef="pinnedPriority">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by Pinned Priority" start="desc"> Pinned Priority </th>
-        <td mat-cell *matCellDef="let announcement"> {{announcement.pinnedPriority}} </td>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by Pinned Priority" start="desc" class="hidden 2xl:table-cell"> Pinned Priority </th>
+        <td mat-cell *matCellDef="let announcement" class="hidden 2xl:table-cell"> {{announcement.pinnedPriority}} </td>
       </ng-container>
 
       <ng-container matColumnDef="createdAt">

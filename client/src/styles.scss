@@ -77,6 +77,11 @@ html {
   }
 
   .mat-mdc-snack-bar-container {
+    &.snackbar-info {
+      --mdc-snackbar-container-color: #2196f3;
+      --mat-snack-bar-button-color: white;
+      --mdc-snackbar-supporting-text-color: white;
+    }
     &.snackbar-success {
       --mdc-snackbar-container-color: green;
       --mat-snack-bar-button-color: white;

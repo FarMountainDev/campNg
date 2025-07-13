@@ -114,7 +114,7 @@ public static class ToDtoMappingExtensions
             ForceGlobal = announcement.ForceGlobal,
             PinnedPriority = announcement.PinnedPriority,
             CreatedAt = announcement.CreatedAt,
-            CreatedBy = announcement.CreatedBy?.UserName ?? "Unknown",
+            CreatedBy = announcement.CreatedBy?.UserName ?? string.Empty,
             UpdatedAt = announcement.UpdatedAt,
             UpdatedBy = announcement.UpdatedBy?.UserName,
             Campgrounds = announcement.Campgrounds.Select(c => c.ToDto()).ToList()

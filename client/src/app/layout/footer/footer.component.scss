@@ -1,0 +1,17 @@
+a {
+  text-decoration: none;
+  color: var(--mat-sys-primary);
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+a.linkDisabled {
+  color: var(--mat-sys-on-surface);
+  cursor: not-allowed;
+}
+
+a.linkDisabled:hover {
+  text-decoration: none;
+}

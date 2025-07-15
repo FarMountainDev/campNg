@@ -29,8 +29,24 @@ html {
     @apply hover:bg-gray-300;
   }
 
-  .error-text {
-    @apply text-red-800;
+  .text-default {
+    @apply text-gray-600;
+  }
+
+  .text-info {
+    @apply text-blue-600;
+  }
+
+  .text-success {
+    @apply text-green-600;
+  }
+
+  .text-warning {
+    @apply text-yellow-600;
+  }
+
+  .text-error {
+    @apply text-red-600;
   }
 
   .linkDisabled {
@@ -120,7 +136,23 @@ html.dark-mode {
     @apply hover:bg-gray-800;
   }
 
-  .error-text {
+  .text-default {
+    @apply text-gray-300;
+  }
+
+  .text-info {
+    @apply text-blue-300;
+  }
+
+  .text-success {
+    @apply text-green-300;
+  }
+
+  .text-warning {
+    @apply text-yellow-300;
+  }
+
+  .text-error {
     @apply text-red-300;
   }
 

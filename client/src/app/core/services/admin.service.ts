@@ -135,9 +135,6 @@ export class AdminService {
       params = params.append('campgrounds', announcementParams.campgrounds.join(','));
       console.log(announcementParams.campgrounds);
     }
-    if (announcementParams.messageType && announcementParams.messageType !== 'All') {
-      params = params.append('messageType', announcementParams.messageType);
-    }
     if (announcementParams.search) {
       params = params.append('search', announcementParams.search);
     }

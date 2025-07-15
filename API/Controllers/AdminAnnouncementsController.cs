@@ -30,10 +30,6 @@ public class AdminAnnouncementsController(CampContext context, UserManager<AppUs
         if (announcementParams.CampgroundIds().Any())
             query = query.Where(a => a.Campgrounds.Any(c => announcementParams.CampgroundIds().Contains(c.Id)));
         
-        if (!string.IsNullOrWhiteSpace(announcementParams.MessageType) && 
-            Enum.TryParse<MessageType>(announcementParams.MessageType, true, out var messageType))
-            query = query.Where(a => a.MessageType == messageType);
-        
         if (!string.IsNullOrWhiteSpace(announcementParams.Search))
             query = query.Where(a => 
                 a.Title.Contains(announcementParams.Search) || 

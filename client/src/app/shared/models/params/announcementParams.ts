@@ -2,5 +2,4 @@
 
 export class AnnouncementParams extends PaginationParams {
   campgrounds: number[] | null = null;
-  messageType: string | null = null;
 }

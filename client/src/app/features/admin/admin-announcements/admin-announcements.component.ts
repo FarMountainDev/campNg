@@ -11,7 +11,7 @@ import {AnnouncementDto} from '../../../shared/models/announcementDto';
 import {AdminService} from '../../../core/services/admin.service';
 import {AnnouncementParams} from '../../../shared/models/params/announcementParams';
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
-import {DatePipe, NgIf} from '@angular/common';
+import {DatePipe, NgClass, NgIf} from '@angular/common';
 import {MatButton, MatIconButton} from '@angular/material/button';
 import {MatError, MatFormField, MatLabel, MatPrefix} from '@angular/material/form-field';
 import {MatIcon} from '@angular/material/icon';
@@ -57,7 +57,8 @@ import {Campground} from '../../../shared/models/campground';
     NgIf,
     ReactiveFormsModule,
     MatHeaderCellDef,
-    MatNoDataRow
+    MatNoDataRow,
+    NgClass
   ],
   templateUrl: './admin-announcements.component.html',
   styleUrl: './admin-announcements.component.scss'
@@ -66,11 +67,10 @@ export class AdminAnnouncementsComponent implements OnInit {
   private readonly adminService = inject(AdminService);
   private readonly dialogService = inject(DialogService);
   private readonly snackbar = inject(SnackbarService);
-  displayedColumns: string[] = ['id', 'title', 'expirationDate', 'messageType', 'forceGlobal', 'pinnedPriority', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
+  displayedColumns: string[] = ['id', 'title', 'expirationDate', 'forceGlobal', 'pinnedPriority', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy', 'actions'];
   dataSource = new MatTableDataSource<AnnouncementDto>([]);
   announcementParams = new AnnouncementParams();
   totalItems = 0;
-  messageTypeOptions = ['All', 'Default', 'Info', 'Success', 'Warning', 'Error'];
   searchForm = new FormGroup({
     searchInput: new FormControl<string>('', [
       Validators.pattern(/^[a-zA-Z0-9._%+-@]*$/)
@@ -134,17 +134,10 @@ export class AdminAnnouncementsComponent implements OnInit {
     this.loadAnnouncements();
   }
 
-  onFilterMessageTypeSelect(event: MatSelectChange) {
-    this.announcementParams.messageType = event.value;
-    this.announcementParams.pageNumber = 1;
-    this.loadAnnouncements();
-  }
-
   onSubmit() {
     if (this.searchForm.valid) {
       this.announcementParams.search = this.searchForm.controls.searchInput.value ?? '';
       this.announcementParams.campgrounds = this.searchForm.controls.campgroundSelect.value;
-      this.announcementParams.messageType = this.searchForm.controls.messageTypeSelect.value;
       this.announcementParams.pageNumber = 1;
       this.loadAnnouncements();
     }
@@ -153,7 +146,6 @@ export class AdminAnnouncementsComponent implements OnInit {
   onResetFilters() {
     this.announcementParams.pageNumber = 1;
     this.announcementParams.search = '';
-    this.announcementParams.messageType = '';
     this.announcementParams.campgrounds = [];
     this.searchForm.controls.searchInput.setValue('');
     this.searchForm.controls.campgroundSelect.setValue([]);
@@ -163,5 +155,20 @@ export class AdminAnnouncementsComponent implements OnInit {
 
   async openAnnouncementDetailsDialog(user: User) {
     this.snackbar.info('Admin announcement details are not available yet.');
+  }
+
+  getMessageTypeTextClass(messageType: string): string {
+    switch (messageType) {
+      case 'Info':
+        return 'text-info';
+      case 'Success':
+        return 'text-success';
+      case 'Warning':
+        return 'text-warning';
+      case 'Error':
+        return 'text-error';
+      default:
+        return 'text-default';
+    }
   }
 }

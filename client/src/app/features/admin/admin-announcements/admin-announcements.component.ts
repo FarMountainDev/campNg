@@ -26,6 +26,7 @@ import {DialogService} from '../../../core/services/dialog.service';
 import {SnackbarService} from '../../../core/services/snackbar.service';
 import {ImmediateErrorStateMatcher} from '../../../shared/utils/immediate-error-state-matcher';
 import {Campground} from '../../../shared/models/campground';
+import {AnnouncementService} from '../../../core/services/announcement.service';
 
 @Component({
   selector: 'app-admin-announcements',
@@ -64,6 +65,7 @@ import {Campground} from '../../../shared/models/campground';
   styleUrl: './admin-announcements.component.scss'
 })
 export class AdminAnnouncementsComponent implements OnInit {
+  protected readonly announcementService = inject(AnnouncementService);
   private readonly adminService = inject(AdminService);
   private readonly dialogService = inject(DialogService);
   private readonly snackbar = inject(SnackbarService);
@@ -155,20 +157,5 @@ export class AdminAnnouncementsComponent implements OnInit {
 
   async openAnnouncementDetailsDialog(user: User) {
     this.snackbar.info('Admin announcement details are not available yet.');
-  }
-
-  getMessageTypeTextClass(messageType: string): string {
-    switch (messageType) {
-      case 'Info':
-        return 'text-info';
-      case 'Success':
-        return 'text-success';
-      case 'Warning':
-        return 'text-warning';
-      case 'Error':
-        return 'text-error';
-      default:
-        return 'text-default';
-    }
   }
 }

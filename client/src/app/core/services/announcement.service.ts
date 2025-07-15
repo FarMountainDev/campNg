@@ -52,4 +52,19 @@ export class AnnouncementService {
         return 'announcement-default';
     }
   }
+
+  getMessageTypeTextClass(messageType: string): string {
+    switch (messageType) {
+      case 'Info':
+        return 'text-info';
+      case 'Success':
+        return 'text-success';
+      case 'Warning':
+        return 'text-warning';
+      case 'Error':
+        return 'text-error';
+      default:
+        return 'text-default';
+    }
+  }
 }

@@ -159,4 +159,8 @@ export class AdminService {
         tap(options => this.campgroundOptions.set(options))
       );
   }
+
+  clearApiCache() {
+    return this.http.delete(this.baseUrl + 'admin/maintenance/clear-cache');
+  }
 }

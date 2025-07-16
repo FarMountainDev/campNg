@@ -109,7 +109,7 @@ public class PaymentsController(CampContext context, IPaymentService paymentServ
         {
             return EventUtility.ConstructEvent(json, Request.Headers["Stripe-Signature"], whSecret);
         }
-        catch (Exception ex)
+        catch
         {
             throw new StripeException("Invalid signature");
         }

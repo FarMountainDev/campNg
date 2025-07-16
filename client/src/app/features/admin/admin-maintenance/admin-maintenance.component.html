@@ -1,0 +1,12 @@
+<div class="dashboard-card m-4">
+  <h2 class="flex items-center gap-2 text-2xl font-semibold p-2">
+    <mat-icon aria-hidden="true" fontIcon="handyman" /> Maintenance
+  </h2>
+  <mat-divider />
+  <button mat-flat-button
+          (click)="openConfirmClearCacheDialog()"
+          matTooltip="Clear everything in Redis cache"
+          [disabled]="cacheCleared" class="my-4">
+    {{ cacheCleared ? 'Cache Cleared' : 'Clear API Cache' }}
+  </button>
+</div>

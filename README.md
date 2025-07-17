@@ -6,6 +6,8 @@ A web-based application for purchasing and managing camping reservations. Built 
 
 A live demo is available at the link above. The demo is hosted using free versions of Azure services and may take a minute to start.
 
+If the application does not start, it likely means the free tier has been exhausted for the month. It should be back online at the start of the next month.
+
 ## Roadmap
 
 - Complete the admin panel

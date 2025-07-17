@@ -7,21 +7,29 @@ namespace Infrastructure.Services;
 
 public class CartService(IConnectionMultiplexer redis) : ICartService
 {
+    private const int ExpirationMinutes = 10;
+    
     private readonly IDatabase database = redis.GetDatabase();
     
     public async Task<ShoppingCart?> GetCartAsync(string key)
     {
         var data = await database.StringGetAsync(key);
+        if (data.IsNullOrEmpty) return null;
         
-        return data.IsNullOrEmpty 
-            ? null 
-            : JsonSerializer.Deserialize<ShoppingCart>(data!);
+        var cart = JsonSerializer.Deserialize<ShoppingCart>(data!);
+        if (cart == null) return null;
+        
+        var timeToLive = await database.KeyTimeToLiveAsync(key);
+        if (timeToLive.HasValue)
+            cart.ExpirationTime = DateTime.UtcNow.Add(timeToLive.Value);
+
+        return cart;
     }
 
     public async Task<ShoppingCart?> SetCartAsync(ShoppingCart cart)
     {
         var created = await database.StringSetAsync(cart.Id, JsonSerializer.Serialize(cart),
-            TimeSpan.FromMinutes(60));
+            TimeSpan.FromMinutes(ExpirationMinutes));
 
         if (!created) return null;
         
@@ -43,14 +51,14 @@ public class CartService(IConnectionMultiplexer redis) : ICartService
         foreach (var cartKey in cartKeys)
         {
             var cartData = await database.StringGetAsync(cartKey);
-            var expiryTime = await database.KeyTimeToLiveAsync(cartKey);
+            var timeToLive = await database.KeyTimeToLiveAsync(cartKey);
 
-            if (cartData.IsNull || !expiryTime.HasValue) continue;
+            if (cartData.IsNull || !timeToLive.HasValue) continue;
                 
             var cart = JsonSerializer.Deserialize<ShoppingCart>(cartData.ToString());
             if (cart?.Items == null) continue;
                 
-            var cartExpiry = DateTime.UtcNow.Add(expiryTime.Value);
+            var cartExpirationTime = DateTime.UtcNow.Add(timeToLive.Value);
             var cartId = cartKey.ToString();
 
             pendingReservations.AddRange(cart.Items.Select(item => new PendingReservation
@@ -59,7 +67,7 @@ public class CartService(IConnectionMultiplexer redis) : ICartService
                 CampsiteId = item.CampsiteId,
                 StartDate = item.StartDate,
                 EndDate = item.EndDate,
-                ExpiryTime = cartExpiry
+                ExpiryTime = cartExpirationTime
             }));
         }
 

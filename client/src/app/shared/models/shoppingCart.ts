@@ -5,6 +5,7 @@ export type Cart = {
   items: CartItem[];
   paymentIntentId?: string;
   clientSecret?: string;
+  expirationTime?: Date;
 }
 
 export type CartItem = {
@@ -23,4 +24,5 @@ export class ShoppingCart implements Cart {
   items: CartItem[] = [];
   paymentIntentId?: string;
   clientSecret?: string;
+  expirationTime?: Date;
 }

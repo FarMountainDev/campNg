@@ -118,9 +118,7 @@ export class CheckoutComponent implements OnInit, OnDestroy{
     this.loading = true;
     try {
       if (this.confirmationToken) {
-        const result = await this.stripeService.confirmPayment({
-          confirmationToken: this.confirmationToken
-        });
+        const result = await this.stripeService.confirmPayment(this.confirmationToken);
         if (result.paymentIntent?.status === 'succeeded') {
           const order = await this.createOrderModel();
           const orderResult = await firstValueFrom(this.orderService.createOrder(order));
@@ -148,11 +146,9 @@ export class CheckoutComponent implements OnInit, OnDestroy{
   private async createOrderModel(): Promise<OrderToCreate> {
     const cart = this.cartService.cart();
     const card = this.confirmationToken?.payment_method_preview.card;
-
     if (!cart?.id || !card) {
       throw new Error('Problem creating order');
     }
-
     return  {
       cartId: cart.id,
       paymentSummary: {

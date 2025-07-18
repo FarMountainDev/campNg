@@ -13,17 +13,11 @@ import {Cart} from '../../shared/models/shoppingCart';
 import {firstValueFrom, map} from 'rxjs';
 import {ThemeService} from './theme.service';
 
-
 class StripeServiceError extends Error {
   constructor(message: string, public readonly code?: string) {
     super(message);
     this.name = 'StripeServiceError';
   }
-}
-
-interface PaymentConfirmationOptions {
-  confirmationToken: ConfirmationToken;
-  returnUrl?: string;
 }
 
 @Injectable({
@@ -109,6 +103,7 @@ export class StripeService {
       })
     );
   }
+
   async createConfirmationToken() {
     const stripe = await this.getStripeInstance();
     const elements = await this.initializeElements();
@@ -128,7 +123,7 @@ export class StripeService {
     return await stripe.createConfirmationToken({elements});
   }
 
-  async confirmPayment({ confirmationToken, returnUrl }: PaymentConfirmationOptions) {
+  async confirmPayment(confirmationToken: ConfirmationToken) {
     const stripe = await this.getStripeInstance();
     const elements = await this.initializeElements();
     if (!elements) {
@@ -148,8 +143,7 @@ export class StripeService {
     return await stripe.confirmPayment({
       clientSecret,
       confirmParams: {
-        confirmation_token: confirmationToken.id,
-        return_url: returnUrl
+        confirmation_token: confirmationToken.id
       },
       redirect: 'if_required'
     });

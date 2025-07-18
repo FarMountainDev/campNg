@@ -13,8 +13,6 @@ public static class CampContextSeed
 {
     private const string AdminRole = "Admin";
     private const string ModeratorRole = "Moderator";
-
-    private const string AdminEmail = "admin@test.com";
     
     public static async Task SeedAsync(IServiceProvider serviceProvider)
     {
@@ -50,26 +48,13 @@ public static class CampContextSeed
 
     private static async Task SeedUsersAsync(UserManager<AppUser> userManager)
     {
-        if (!userManager.Users.Any(x => x.UserName == AdminEmail))
-        {
-            var adminUser = new AppUser
-            {
-                UserName = AdminEmail,
-                Email = AdminEmail,
-                FirstName = "Admin",
-                LastName = "User"
-            };
-            
-            await userManager.CreateAsync(adminUser, "Pa$$w0rd");
-            await userManager.AddToRoleAsync(adminUser, AdminRole);
-        }
-
-        if (!userManager.Users.Any(x => x.UserName == "moderator@test.com"))
+        const string moderatorEmail = "moderator@campNg.com";
+        if (!userManager.Users.Any(x => x.UserName == moderatorEmail))
         {
             var moderatorUser = new AppUser
             {
-                UserName = "moderator@test.com",
-                Email = "moderator@test.com",
+                UserName = moderatorEmail,
+                Email = moderatorEmail,
                 FirstName = "Moderator",
                 LastName = "User"
             };
@@ -78,12 +63,13 @@ public static class CampContextSeed
             await userManager.AddToRoleAsync(moderatorUser, ModeratorRole);
         }
 
-        if (!userManager.Users.Any(x => x.UserName == "HappyCamper@test.com"))
+        const string happyCamperEmail = "HappyCamper@campNg.com";
+        if (!userManager.Users.Any(x => x.UserName == happyCamperEmail))
         {
             var memberUser = new AppUser
             {
-                UserName = "HappyCamper@test.com",
-                Email = "HappyCamper@test.com",
+                UserName = happyCamperEmail,
+                Email = happyCamperEmail,
                 FirstName = "Happy",
                 LastName = "Camper"
             };

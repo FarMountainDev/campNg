@@ -20,6 +20,7 @@ import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {ReservationService} from '../../core/services/reservation.service';
 import {OrderToCreate} from '../../shared/models/order';
 import {OrderService} from '../../core/services/order.service';
+import {ThemeService} from '../../core/services/theme.service';
 
 @Component({
   selector: 'app-checkout',
@@ -41,6 +42,7 @@ export class CheckoutComponent implements OnInit, OnDestroy{
   private readonly snackbar = inject(SnackbarService);
   private readonly orderService = inject(OrderService);
   private readonly router = inject(Router);
+  private readonly themeService = inject(ThemeService);
   protected readonly cartService = inject(CartService);
   protected readonly reservationService = inject(ReservationService);
   paymentElement?: StripePaymentElement;
@@ -65,6 +67,12 @@ export class CheckoutComponent implements OnInit, OnDestroy{
   }
 
   constructor() {
+    effect(() => {
+      const currentTheme = this.themeService.currentTheme();
+      if (this.paymentElement) {
+        void this.stripeService.updatePaymentElementTheme();
+      }
+    });
     effect(() => {
       const expiredCartId = this.cartService.cartExpired();
       if (expiredCartId) {

@@ -1,19 +1,19 @@
 :host-context {
   --selected-available-color: rgba(66, 165, 245, 0.4);
-  --selected-unavailable-color: rgba(230, 66, 66, 0.2);
+  --selected-unavailable-color: rgba(230, 66, 66, 0.3);
   --date-cell-border-color: rgb(204, 204, 204);
   --available-bg: #e8ecf5;
   --available-text: #38438e;
   --selected-available-bg: #c8e6c9;
-  --selected-available-text: #2e7d32;
+  --selected-available-text: #000;
   --reserved-bg: #ffe2cd;
   --reserved-text: #c66a28;
   --selected-reserved-bg: #ffcdd2;
-  --selected-reserved-text: #c62828;
+  --selected-reserved-text: #000;
   --pending-bg: #fff9c4;
   --pending-text: #c48116;
   --selected-pending-bg: #ffee58;
-  --selected-pending-text: #f57f17;
+  --selected-pending-text: #000;
 
   :host-context(html.dark-mode) & {
     --selected-available-color: rgba(66, 165, 245, 0.6);
@@ -22,15 +22,15 @@
     --available-bg: #38438e;
     --available-text: #e8ecf5;
     --selected-available-bg: #2e7d32;
-    --selected-available-text: #c8e6c9;
+    --selected-available-text: #FFF;
     --reserved-bg: #c66a28;
     --reserved-text: #ffe2cd;
     --selected-reserved-bg: #c62828;
-    --selected-reserved-text: #ffcdd2;
+    --selected-reserved-text: #FFF;
     --pending-bg: #f9cf25;
     --pending-text: #000000;
     --selected-pending-bg: #e09100;
-    --selected-pending-text: #fff4a7;
+    --selected-pending-text: #FFF;
   }
 }
 
@@ -44,7 +44,7 @@
 
 .selected-unavailable, .selected-available {
   border-radius: 8px;
-  font-weight: bold;
+  font-weight: 600;
 }
 
 .selected-available {

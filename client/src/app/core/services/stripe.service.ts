@@ -29,10 +29,10 @@ export class StripeService {
   private readonly cartService = inject(CartService);
   private readonly themeService = inject(ThemeService);
   private readonly stripePromise: Promise<Stripe | null>;
+  private readonly paymentElementsReady = signal(false);
   private elements?: StripeElements;
   private paymentElement?: StripePaymentElement;
   private elementsPromise: Promise<StripeElements | undefined> | null = null;
-  private readonly _isElementsReady = signal(false);
 
   constructor() {
     this.stripePromise = loadStripe(environment.stripePublicKey);
@@ -40,6 +40,23 @@ export class StripeService {
 
   getStripeInstance() {
     return this.stripePromise;
+  }
+
+  createOrUpdatePaymentIntent() {
+    const cart = this.cartService.cart();
+    if (!cart) throw new Error('Problem with cart');
+    return this.http.post<Cart>(this.baseUrl + 'payments/' + cart.id, {}).pipe(
+      map((cart: Cart) => {
+        this.cartService.setCart(cart);
+        return cart;
+      })
+    );
+  }
+
+  disposeElements() {
+    this.elements = undefined;
+    this.paymentElement = undefined;
+    this.paymentElementsReady.set(false);
   }
 
   async initializeElements() {
@@ -54,27 +71,6 @@ export class StripeService {
     return this.elementsPromise;
   }
 
-  private async initializeElementsInternal() {
-    const stripe = await this.getStripeInstance();
-    if (!stripe) {
-      throw new StripeServiceError('Stripe has not been loaded');
-    }
-
-    try {
-      const cart = await firstValueFrom(this.createOrUpdatePaymentIntent());
-      const theme = this.themeService.currentTheme() === 'dark' ? 'night' : 'stripe';
-      this.elements = stripe.elements({
-        clientSecret: cart.clientSecret,
-        appearance: {theme, labels: 'floating'}
-      });
-      return this.elements;
-    } catch (error) {
-      throw new StripeServiceError(
-        `Failed to initialize Stripe elements: ${error instanceof Error ? error.message : String(error)}`
-      );
-    }
-  }
-
   async createPaymentElement() {
     if (this.paymentElement) return this.paymentElement;
 
@@ -84,24 +80,13 @@ export class StripeService {
         throw new StripeServiceError('Stripe elements have not been initialized');
       }
       this.paymentElement = elements.create('payment');
-      this._isElementsReady.set(true);
+      this.paymentElementsReady.set(true);
       return this.paymentElement;
       } catch (error) {
         throw new StripeServiceError(
           `Failed to create payment element: ${error instanceof Error ? error.message : String(error)}`
       );
     }
-  }
-
-  createOrUpdatePaymentIntent() {
-    const cart = this.cartService.cart();
-    if (!cart) throw new Error('Problem with cart');
-    return this.http.post<Cart>(this.baseUrl + 'payments/' + cart.id, {}).pipe(
-      map((cart: Cart) => {
-        this.cartService.setCart(cart);
-        return cart;
-      })
-    );
   }
 
   async createConfirmationToken() {
@@ -149,9 +134,32 @@ export class StripeService {
     });
   }
 
-  disposeElements() {
-    this.elements = undefined;
-    this.paymentElement = undefined;
-    this._isElementsReady.set(false);
+  async updatePaymentElementTheme() {
+    if (!this.paymentElement || !this.elements) return;
+
+    const theme = this.themeService.currentTheme() === 'dark' ? 'night' : 'stripe';
+    this.elements.update({
+      appearance: {theme, labels: 'floating'}
+    });
+  }
+
+  private async initializeElementsInternal() {
+    const stripe = await this.getStripeInstance();
+    if (!stripe) {
+      throw new StripeServiceError('Stripe has not been loaded');
+    }
+    try {
+      const cart = await firstValueFrom(this.createOrUpdatePaymentIntent());
+      const theme = this.themeService.currentTheme() === 'dark' ? 'night' : 'stripe';
+      this.elements = stripe.elements({
+        clientSecret: cart.clientSecret,
+        appearance: {theme, labels: 'floating'}
+      });
+      return this.elements;
+    } catch (error) {
+      throw new StripeServiceError(
+        `Failed to initialize Stripe elements: ${error instanceof Error ? error.message : String(error)}`
+      );
+    }
   }
 }

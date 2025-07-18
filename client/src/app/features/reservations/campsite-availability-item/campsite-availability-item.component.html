@@ -21,11 +21,12 @@
     <div class="date-grid">
       <div *ngFor="let date of dateRange" class="flex flex-col"
            [ngClass]="getSelectedRangeClass(date)"
+           matTooltip="{{getDateAvailabilityLabel(date)}}"
            role="gridcell" [attr.aria-label]="getDateAvailabilityLabel(date)">
         <div class="date-cell">
           {{ date | date:'MMM d' }}
         </div>
-        <div class="date-cell" [ngClass]="getDateCellClass(date)" matTooltip="{{getDateAvailabilityLabel(date)}}">
+        <div class="date-cell" [ngClass]="getDateCellClass(date)">
           {{getDateAvailabilityCode(date)}}
         </div>
       </div>

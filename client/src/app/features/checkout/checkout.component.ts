@@ -1,4 +1,4 @@
-import {Component, inject, OnDestroy, OnInit, signal} from '@angular/core';
+import {Component, inject, OnDestroy, OnInit, signal, effect} from '@angular/core';
 import {OrderSummaryComponent} from '../../shared/components/order-summary/order-summary.component';
 import {MatStepper, MatStepperModule} from '@angular/material/stepper';
 import {MatButton} from '@angular/material/button';
@@ -62,6 +62,16 @@ export class CheckoutComponent implements OnInit, OnDestroy{
     } catch (error: any) {
       this.snackbar.error(error.message);
     }
+  }
+
+  constructor() {
+    effect(() => {
+      const expiredCartId = this.cartService.cartExpired();
+      if (expiredCartId) {
+        this.router.navigate(['/cart']);
+        this.cartService.cartExpired.set(null);
+      }
+    });
   }
 
   ngOnDestroy() {

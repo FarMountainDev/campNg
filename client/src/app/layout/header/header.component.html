@@ -18,9 +18,10 @@
       <a routerLink="/cart" routerLinkActive="active" class="custom-badge mt-2 mr-2 relative"
          matBadge="{{cartService.itemCount()}}" matBadgeSize="large" [matBadgeHidden]="!cartService.itemCount()">
         <mat-icon matTooltip="Shopping cart">shopping_cart</mat-icon>
-        <div *ngIf="expirationTime()" matTooltip="Cart expires at {{ expirationTime() | date:'shortTime' }}"
+        <div *ngIf="cartService.expirationTime()"
+             matTooltip="Cart expires at {{ cartService.expirationTime() | date:'shortTime' }}"
              class="px-2 py-1 rounded-md text-sm font-bold absolute bottom-[-14px] left-[50%] transform translate-x-[-50%] whitespace-nowrap z-10">
-          {{ remainingFormatted() }}
+          {{ cartService.remainingFormatted() }}
         </div>
       </a>
       <a (click)="this.themeService.toggleTheme()" class="mt-2 mr-2 cursor-pointer">

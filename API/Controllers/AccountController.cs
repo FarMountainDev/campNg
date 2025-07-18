@@ -27,17 +27,6 @@ public class AccountController(SignInManager<AppUser> signInManager, IFeatureMan
 
         var result = await signInManager.UserManager.CreateAsync(user, registerDto.Password);
 
-        if (result.Succeeded)
-        {
-            var roleResult = await signInManager.UserManager.AddToRoleAsync(user, "Member");
-        
-            if (roleResult.Succeeded)
-                return Ok();
-        
-            foreach (var error in roleResult.Errors)
-                ModelState.AddModelError(error.Code, error.Description);
-        }
-
         foreach (var error in result.Errors)
             ModelState.AddModelError(error.Code, error.Description);
 

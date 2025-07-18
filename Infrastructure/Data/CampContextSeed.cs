@@ -13,7 +13,6 @@ public static class CampContextSeed
 {
     private const string AdminRole = "Admin";
     private const string ModeratorRole = "Moderator";
-    private const string MemberRole = "Member";
 
     private const string AdminEmail = "admin@test.com";
     
@@ -38,7 +37,7 @@ public static class CampContextSeed
     
     private static async Task SeedRolesAsync(RoleManager<IdentityRole> roleManager)
     {
-        var roles = new List<string> { AdminRole, ModeratorRole, MemberRole };
+        var roles = new List<string> { AdminRole, ModeratorRole };
         
         foreach (var role in roles)
         {
@@ -90,7 +89,6 @@ public static class CampContextSeed
             };
             
             await userManager.CreateAsync(memberUser, "Pa$$w0rd");
-            await userManager.AddToRoleAsync(memberUser, MemberRole);
         }
     }
 

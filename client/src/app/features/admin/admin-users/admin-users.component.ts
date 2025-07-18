@@ -52,7 +52,7 @@ export class AdminUsersComponent implements OnInit{
   userParams = new UserParams();
   totalItems = 0;
   statusOptions = ['All', 'Active', 'Locked'];
-  roleOptions = ['All', 'Member', 'Moderator', 'Admin'];
+  roleOptions = ['All', 'Moderator', 'Admin'];
   searchForm = new FormGroup({
     searchInput: new FormControl<string>('', [
       Validators.pattern(/^[a-zA-Z0-9._%+-@]*$/)

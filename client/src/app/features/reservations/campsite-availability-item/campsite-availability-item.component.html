@@ -1,31 +1,31 @@
 <div *ngIf="campsiteAvailabilityDto" class="px-2 py-2 flex">
   <div class="flex-1 pr-2">
     <button class="reserve-btn"
+            matTooltip="{{getTooltipText()}}"
+            matTooltipPosition="left"
             (click)="addReservationToCart()"
             [disabled]="isSelectedRangeUnavailable()">
       Reserve Now
     </button>
   </div>
   <div>
-    <div class="pb-1">
-      <span class="font-semibold underline text-lg">({{campsiteAvailabilityDto.id}}) {{campsiteAvailabilityDto.name}}</span>&nbsp;
-      <span class="italic">({{campsiteAvailabilityDto.campsiteTypeName}})</span> - <span class="font-light">{{campsiteAvailabilityDto.campgroundName}}</span> -
-      <span class="font-light">Week Day Price: {{campsiteAvailabilityDto.weekDayPrice | currency}}</span> | <span class="font-light">Week End Price: {{campsiteAvailabilityDto.weekEndPrice | currency}}</span> -
-      <span class="font-semibold">Total Price: <u>{{totalPrice | currency}}</u></span> -
-      <span class="font-light">{{reservationService.getNumberOfNights(startDate!, endDate!)}} night(s)</span>
+    <div class="pb-1 w-full flex justify-between items-center">
+      <span class="text-lg">{{campsiteAvailabilityDto.name}}</span>&nbsp;-
+      <span class="font-light">( {{campsiteAvailabilityDto.campsiteTypeName}} )</span> -
+      <span class="font-light">{{campsiteAvailabilityDto.campgroundName}}</span> -
+      <span class="font-light">Week Day Price: {{campsiteAvailabilityDto.weekDayPrice | currency}}</span> -
+      <span class="font-light">Week End Price: {{campsiteAvailabilityDto.weekEndPrice | currency}}</span> -
+      <span class="font-light">{{reservationService.selectedNumberOfNights()}} night<span *ngIf="reservationService.selectedNumberOfNights() > 1">s</span></span> -
+      <span class="text-lg">Total Price: <u class="font-medium">{{totalPrice | currency}}</u></span>
     </div>
     <div class="date-grid">
-      <div *ngFor="let date of dateRange" class="flex flex-col">
-        <div class="date-cell" [class.font-bold]="isDateInSelectedRange(date)">
+      <div *ngFor="let date of dateRange" class="flex flex-col"
+           [ngClass]="getSelectedRangeClass(date)"
+           role="gridcell" [attr.aria-label]="getDateAccessibilityLabel(date)">
+        <div class="date-cell">
           {{ date | date:'MMM d' }}
         </div>
-        <div class="date-cell"
-             [class.available]="!isDateReserved(date)"
-             [class.reserved]="isDateReserved(date)"
-             [class.pending]="isDatePending(date)"
-             [class.selectedAvailable]="!isDateReserved(date) && isDateInSelectedRange(date)"
-             [class.selectedReserved]="isDateReserved(date) && isDateInSelectedRange(date)"
-             [class.selectedPending]="isDatePending(date) && isDateInSelectedRange(date)">
+        <div class="date-cell" [ngClass]="getDateCellClass(date)">
           @if (isDateReserved(date)) {
             R
           } @else if (isDatePending(date)) {

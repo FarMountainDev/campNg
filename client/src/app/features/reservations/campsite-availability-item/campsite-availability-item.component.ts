@@ -1,10 +1,11 @@
-import {Component, inject, Input, OnChanges} from '@angular/core';
-import {CurrencyPipe, DatePipe, NgForOf, NgIf} from '@angular/common';
+import {Component, inject, Input, OnChanges, ChangeDetectionStrategy} from '@angular/core';
+import {CurrencyPipe, DatePipe, NgForOf, NgIf, NgClass} from '@angular/common';
 import {CartService} from '../../../core/services/cart.service';
 import {Router} from '@angular/router';
 import {ReservationService} from '../../../core/services/reservation.service';
 import {CampsiteAvailabilityDto} from '../../../shared/models/campsiteAvailabilityDto';
 import { normalizeDate } from '../../../shared/utils/date-utils';
+import {MatTooltip} from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-campsite-availability-item',
@@ -12,10 +13,13 @@ import { normalizeDate } from '../../../shared/utils/date-utils';
     NgIf,
     DatePipe,
     NgForOf,
-    CurrencyPipe
+    CurrencyPipe,
+    MatTooltip,
+    NgClass
   ],
   templateUrl: './campsite-availability-item.component.html',
-  styleUrl: './campsite-availability-item.component.scss'
+  styleUrl: './campsite-availability-item.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CampsiteAvailabilityItemComponent implements OnChanges{
   @Input() campsiteAvailabilityDto?: CampsiteAvailabilityDto;
@@ -35,29 +39,11 @@ export class CampsiteAvailabilityItemComponent implements OnChanges{
   }
 
   isDateReserved(date: Date): boolean {
-    if (!this.campsiteAvailabilityDto?.reservations?.length) return false;
-
-    const compareDate = normalizeDate(date);
-
-    return this.campsiteAvailabilityDto.reservations.some(reservation => {
-      const startDate = normalizeDate(reservation.startDate);
-      const endDate = normalizeDate(reservation.endDate);
-
-      return compareDate >= startDate && compareDate <= endDate;
-    });
+    return this.checkDateInRange(date, this.campsiteAvailabilityDto?.reservations || []);
   }
 
-  isDatePending(date: Date) {
-    if (!this.campsiteAvailabilityDto?.pendingReservations?.length) return false;
-
-    const compareDate = normalizeDate(date);
-
-    return this.campsiteAvailabilityDto.pendingReservations.some(reservation => {
-      const startDate = normalizeDate(reservation.startDate);
-      const endDate = normalizeDate(reservation.endDate);
-
-      return compareDate >= startDate && compareDate <= endDate;
-    });
+  isDatePending(date: Date): boolean {
+    return this.checkDateInRange(date, this.campsiteAvailabilityDto?.pendingReservations || []);
   }
 
   isDateInSelectedRange(date: Date): boolean {
@@ -68,6 +54,30 @@ export class CampsiteAvailabilityItemComponent implements OnChanges{
     const endDate = normalizeDate(this.endDate)
 
     return checkDate >= startDate && checkDate <= endDate;
+  }
+
+  getDateCellClass(date: Date): string {
+    const isSelected = this.isDateInSelectedRange(date);
+    const isReserved = this.isDateReserved(date);
+    const isPending = this.isDatePending(date);
+
+    if (isReserved && isSelected) return 'selectedReserved';
+    if (isPending && isSelected) return 'selectedPending';
+    if (!isReserved && !isPending && isSelected) return 'selectedAvailable';
+    if (isReserved) return 'reserved';
+    if (isPending) return 'pending';
+    return 'available';
+  }
+
+  getSelectedRangeClass(date: Date): string {
+    const isSelected = this.isDateInSelectedRange(date);
+    if (isSelected) {
+      if (this.isDateReserved(date) || this.isDatePending(date)) {
+        return 'selected-unavailable';
+      }
+      return 'selected-available';
+    }
+    return '';
   }
 
   addReservationToCart() {
@@ -110,7 +120,44 @@ export class CampsiteAvailabilityItemComponent implements OnChanges{
     return false; // No conflicts found
   }
 
+  getTooltipText() {
+    if (this.isSelectedRangeUnavailable()) {
+      return "Unavailable for selected dates. Hit the search button to refresh available campsites or select different dates.";
+    }
+    return undefined;
+  }
+
+  getDateAccessibilityLabel(date: Date): string {
+    const dateStr = date.toLocaleDateString();
+    const status = this.isDateReserved(date) ? 'Reserved' :
+      this.isDatePending(date) ? 'Pending' : 'Available';
+    const selected = this.isDateInSelectedRange(date) ? ', selected' : '';
+    return `${dateStr}: ${status}${selected}`;
+  }
+
+  private checkDateInRange(date: Date, reservations: any[]): boolean {
+    if (!reservations?.length) return false;
+    const compareDate = normalizeDate(date);
+
+    return reservations.some(reservation => {
+      const startDate = normalizeDate(reservation.startDate);
+      const endDate = normalizeDate(reservation.endDate);
+      return compareDate >= startDate && compareDate <= endDate;
+    });
+  }
+
+  private cachedDateRange: { startDate?: Date, dateRange: Date[] } = { dateRange: [] };
+
   private calculateDateRange(): void {
+    // Skip calculation if we already have a cached result for this start date
+    if (this.startDate &&
+      this.cachedDateRange.startDate &&
+      this.cachedDateRange.startDate.getTime() === this.startDate.getTime()) {
+      this.dateRange = [...this.cachedDateRange.dateRange];
+      return;
+    }
+
+    // Reset date range
     this.dateRange = [];
     if (!this.startDate) return;
 
@@ -124,6 +171,12 @@ export class CampsiteAvailabilityItemComponent implements OnChanges{
       date.setDate(date.getDate() + i);
       this.dateRange.push(date);
     }
+
+    // Cache the newly calculated results
+    this.cachedDateRange = {
+      startDate: this.startDate ? new Date(this.startDate) : undefined,
+      dateRange: [...this.dateRange]
+    };
   }
 
   private calculatePrice() {

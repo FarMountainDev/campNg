@@ -1,6 +1,4 @@
-import {inject, Injectable, signal} from '@angular/core';
-import {environment} from '../../../environments/environment';
-import {HttpClient} from '@angular/common/http';
+import {computed, Injectable, signal} from '@angular/core';
 import {CartItem} from '../../shared/models/shoppingCart';
 import {getDateFromDateOnlyString, normalizeDate} from '../../shared/utils/date-utils';
 
@@ -8,8 +6,6 @@ import {getDateFromDateOnlyString, normalizeDate} from '../../shared/utils/date-
   providedIn: 'root'
 })
 export class ReservationService {
-  private readonly baseUrl = environment.apiUrl;
-  private readonly http = inject(HttpClient);
   minDate = normalizeDate(new Date());
   maxDate = (() => {
     const date = new Date();
@@ -21,6 +17,13 @@ export class ReservationService {
   checkOutTime = '11:00 AM';
   selectedStartDate = signal<Date>(new Date());
   selectedEndDate = signal<Date>(new Date());
+  selectedNumberOfNights = computed<number>(() => {
+    const startDate = this.selectedStartDate();
+    const endDate = this.selectedEndDate();
+    if (!startDate || !endDate) return 0;
+
+    return this.getNumberOfNights(startDate, endDate);
+  });
 
   constructor() {
     this.setToNextWeekend();

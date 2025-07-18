@@ -1,17 +1,22 @@
 @use '@angular/material' as mat;
 
+:root {
+  --content-bg-color: #f1f1f1;
+  --card-bg-color: #fff;
+  --card-bg-color-hover: #EDEDED;
+}
+
 html {
   color-scheme: light;
-
-  & {
-    background: #FFF;
-    --content-bg-color: #f1f1f1;
-    --card-bg-color: #fff;
-    --card-bg-color-hover: #EDEDED;
-  }
+  scrollbar-color: gray var(--card-background-color);
+  background: #FFF;
 
   .admin-content {
     background-color: var(--content-bg-color);
+  }
+
+  .nav-bar {
+    background-color: white;
   }
 
   .nav-link {
@@ -41,14 +46,11 @@ html.dark-mode {
   ));
 
   & {
-    background: #000;
     --content-bg-color: #0e1218;
     --card-bg-color: #121821;
     --card-bg-color-hover: #222833;
-  }
-
-  .mat-toolbar {
-    background-color: var(--card-bg-color);
+    background: #000;
+    scrollbar-color: gray var(--card-bg-color);
   }
 
   .nav-bar {

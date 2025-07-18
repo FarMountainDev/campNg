@@ -2,7 +2,7 @@
      [ngClass]="announcementService.getAnnouncementClass(announcement()!)">
   <div class="announcement-content">
     <div class="announcement-header">
-      <div class="title-container">
+      <div class="announcement-title">
         <h3>{{ announcement()!.title }}</h3>
         @if (announcement()!.campgrounds && announcement()!.campgrounds.length) {
           <span class="campgrounds-list">

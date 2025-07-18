@@ -58,9 +58,9 @@
     <div class="flex gap-3">
       <button mat-stroked-button type="button" (click)="clearFilters()">
         <mat-icon>clear</mat-icon>
-        Reset Filters
+        Clear Filters
       </button>
-      <button mat-stroked-button type="submit" [disabled]="searchForm.invalid || searchParamsMatch()">
+      <button mat-flat-button type="submit" [disabled]="searchForm.invalid || searchParamsMatch()">
         <mat-icon>search</mat-icon>
         Search for Campsites
       </button>

@@ -1,6 +1,5 @@
 import {Component, inject, Input, OnChanges} from '@angular/core';
 import {CurrencyPipe, DatePipe, NgForOf, NgIf} from '@angular/common';
-import {MatButton} from '@angular/material/button';
 import {CartService} from '../../../core/services/cart.service';
 import {Router} from '@angular/router';
 import {ReservationService} from '../../../core/services/reservation.service';
@@ -13,7 +12,6 @@ import { normalizeDate } from '../../../shared/utils/date-utils';
     NgIf,
     DatePipe,
     NgForOf,
-    MatButton,
     CurrencyPipe
   ],
   templateUrl: './campsite-availability-item.component.html',

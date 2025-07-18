@@ -1,6 +1,6 @@
 <div *ngIf="campsiteAvailabilityDto" class="px-2 py-2 flex">
   <div class="flex-1 pr-2">
-    <button mat-stroked-button class="reserve-btn"
+    <button class="reserve-btn"
             (click)="addReservationToCart()"
             [disabled]="isSelectedRangeUnavailable()">
       Reserve Now

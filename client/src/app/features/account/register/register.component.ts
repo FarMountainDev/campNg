@@ -9,6 +9,7 @@ import {Router} from '@angular/router';
 import {SnackbarService} from '../../../core/services/snackbar.service';
 import {JsonPipe} from '@angular/common';
 import {TextInputComponent} from '../../../shared/components/text-input/text-input.component';
+import {MatIcon} from '@angular/material/icon';
 
 @Component({
   selector: 'app-register',
@@ -16,7 +17,8 @@ import {TextInputComponent} from '../../../shared/components/text-input/text-inp
     ReactiveFormsModule,
     MatCard,
     MatButton,
-    TextInputComponent
+    TextInputComponent,
+    MatIcon
   ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss'
@@ -39,9 +41,15 @@ export class RegisterComponent {
     this.accountService.register(this.registerForm.value).subscribe({
       next: () => {
         this.snackbar.success('Registration successful. You can now log in.');
-        this.router.navigateByUrl('/account/login');
+        void this.router.navigateByUrl('/account/login');
       },
-      error: errors => this.validationErrors = errors
+      error: errors => {
+        if (Array.isArray(errors) && errors.every(error => typeof error === 'string')) {
+          this.validationErrors = errors;
+        } else {
+          this.validationErrors = ['An unexpected error occurred during registration. Please try again later.'];
+        }
+      }
     })
   }
 }

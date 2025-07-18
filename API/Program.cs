@@ -8,6 +8,7 @@ using Infrastructure.Data;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.FeatureManagement;
 using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -48,6 +49,7 @@ builder.Services.AddIdentityApiEndpoints<AppUser>()
     .AddEntityFrameworkStores<CampContext>();
 
 builder.Services.AddSignalR();
+builder.Services.AddFeatureManagement(builder.Configuration.GetSection("FeatureManagement"));
 
 var app = builder.Build();
 

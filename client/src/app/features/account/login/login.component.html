@@ -1,7 +1,7 @@
-<mat-card class="max-w-lg mx-auto p-8 div-backdrop">
-  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+<mat-card class="w-full p-8 div-backdrop">
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="max-w-xl w-full mx-auto">
     <div class="text-center mb-6">
-      <h1 class="text-3xl font-semibold text-primary">Login</h1>
+      <h1 class="text-3xl font-semibold text-primary mb-3">Login</h1>
       <mat-form-field appearance="outline" class="w-full mb-4">
         <mat-label>Email address</mat-label>
         <input matInput formControlName="email" type="email" placeholder="Enter your email" required />
@@ -13,4 +13,22 @@
       <button mat-flat-button type="submit" class="w-full py-2">Sign in</button>
     </div>
   </form>
+
+  <div class="block w-full max-w-xl mx-auto">
+    <div class="announcement announcement-demo">
+      <div class="announcement-content">
+        <div class="announcement-header">
+          <div class="announcement-title">
+            <mat-icon aria-hidden="true" fontIcon="report" /> <h3>Choose User for Demo Login</h3>
+          </div>
+        </div>
+        <div class="flex flex-col gap-2">
+          <button mat-raised-button (click)="loginAsModerator()">Login as Moderator</button>
+          <button mat-raised-button (click)="loginAsCamper()">Login as Happy Camper</button>
+        </div>
+        <p class="pt-2 text-sm">New user registration is disabled for this demo. You can login as one of the users above by clicking their button.</p>
+      </div>
+    </div>
+  </div>
+
 </mat-card>

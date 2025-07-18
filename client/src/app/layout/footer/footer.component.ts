@@ -1,11 +1,8 @@
 import { Component } from '@angular/core';
-import {MatTooltip} from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-footer',
-  imports: [
-    MatTooltip
-  ],
+  imports: [],
   templateUrl: './footer.component.html',
   styleUrl: './footer.component.scss'
 })

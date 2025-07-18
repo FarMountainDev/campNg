@@ -5,14 +5,18 @@ using Core.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.FeatureManagement;
 
 namespace API.Controllers;
 
-public class AccountController(SignInManager<AppUser> signInManager) : BaseApiController
+public class AccountController(SignInManager<AppUser> signInManager, IFeatureManager featureManager) : BaseApiController
 {
     [HttpPost("register")]
     public async Task<ActionResult> Register(RegisterDto registerDto)
     {
+        if (!await featureManager.IsEnabledAsync("UserRegistrationEnabled"))
+            return BadRequest(new ProblemDetails { Title = "Registration is currently disabled." });
+        
         var user = new AppUser
         {
             FirstName = registerDto.FirstName,

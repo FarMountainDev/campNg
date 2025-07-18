@@ -1,6 +1,6 @@
 :host-context {
-  --selected-available-color: rgba(66, 165, 245, 0.5);
-  --selected-unavailable-color: rgba(230, 66, 66, 0.5);
+  --selected-available-color: rgba(66, 165, 245, 0.4);
+  --selected-unavailable-color: rgba(230, 66, 66, 0.2);
   --date-cell-border-color: rgb(204, 204, 204);
   --available-bg: #e8ecf5;
   --available-text: #38438e;
@@ -16,6 +16,8 @@
   --selected-pending-text: #f57f17;
 
   :host-context(html.dark-mode) & {
+    --selected-available-color: rgba(66, 165, 245, 0.7);
+    --selected-unavailable-color: rgba(230, 66, 66, 0.4);
     --date-cell-border-color: rgb(98, 98, 98);
     --available-bg: #38438e;
     --available-text: #e8ecf5;
@@ -42,18 +44,15 @@
 
 .selected-unavailable, .selected-available {
   border-radius: 8px;
-
-  .date-cell {
-    font-weight: bold;
-  }
+  font-weight: bold;
 }
 
 .selected-available {
-  outline: 2px solid var(--selected-available-color);
+  outline: 3px solid var(--selected-available-color);
 }
 
 .selected-unavailable {
-  outline: 2px solid var(--selected-unavailable-color);
+  outline: 3px solid var(--selected-unavailable-color);
 }
 
 .date-grid {

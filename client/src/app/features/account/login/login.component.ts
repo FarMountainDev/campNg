@@ -6,6 +6,7 @@ import {MatInput} from '@angular/material/input';
 import {MatButton} from '@angular/material/button';
 import {AccountService} from '../../../core/services/account.service';
 import {ActivatedRoute, Router} from '@angular/router';
+import {MatIcon} from '@angular/material/icon';
 
 @Component({
   selector: 'app-login',
@@ -15,7 +16,8 @@ import {ActivatedRoute, Router} from '@angular/router';
     MatFormField,
     MatInput,
     MatLabel,
-    MatButton
+    MatButton,
+    MatIcon
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
@@ -44,5 +46,21 @@ export class LoginComponent {
         void this.router.navigateByUrl(this.returnUrl);
       }
     });
+  }
+
+  loginAsModerator() {
+    this.loginForm.patchValue({
+      email: 'moderator@test.com',
+      password: 'Pa$$w0rd'
+    });
+    this.onSubmit();
+  }
+
+  loginAsCamper() {
+    this.loginForm.patchValue({
+      email: 'HappyCamper@test.com',
+      password: 'Pa$$w0rd'
+    });
+    this.onSubmit();
   }
 }

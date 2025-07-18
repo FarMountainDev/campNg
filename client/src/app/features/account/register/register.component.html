@@ -1,5 +1,5 @@
-<mat-card class="max-w-lg mx-auto p-8 div-backdrop">
-  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+<mat-card class="p-8 div-backdrop">
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="max-w-xl mx-auto">
     <div class="text-center mb-6">
       <h1 class="text-3xl font-semibold text-primary mb-3">Register</h1>
       <app-text-input label="First name" formControlName="firstName" />
@@ -7,7 +7,7 @@
       <app-text-input label="Email" formControlName="email" type="email" />
       <app-text-input label="Password" formControlName="password" type="password" />
       @if (validationErrors) {
-        <div class="mb-3 p-4 bg-red-100 text-red-600 text-left">
+        <div class="mb-3 p-4 bg-red-100 text-red-600 rounded-lg shadow-md text-left">
           <ul class="list-disc px-3">
             @for (error of validationErrors; track $index) {
               <li>{{error}}</li>
@@ -18,4 +18,18 @@
       <button [disabled]="registerForm.invalid" mat-flat-button type="submit" class="w-full py-2">Register</button>
     </div>
   </form>
+
+  <div class="block w-full max-w-xl mx-auto">
+    <div class="announcement announcement-demo">
+      <div class="announcement-content">
+        <div class="announcement-header">
+          <div class="announcement-title">
+            <mat-icon aria-hidden="true" fontIcon="report" /> <h3>Registration Disabled for Live Demo</h3>
+          </div>
+        </div>
+        <p>New user registration is currently disabled for this demo. You can still login with the preset users to explore the application.</p>
+      </div>
+    </div>
+  </div>
+
 </mat-card>

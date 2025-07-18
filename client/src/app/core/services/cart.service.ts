@@ -36,7 +36,7 @@ export class CartService {
     const count = this.itemCount();
     return (count !== undefined && count > 0) ? this.cart()?.expirationTime : undefined;
   });
-  remainingMs = computed(() => {
+  millisecondsToLive = computed(() => {
     const exp = this.expirationTime();
     if (!exp) return 0;
     try {
@@ -45,8 +45,8 @@ export class CartService {
       return Math.max(0, new Date(String(exp)).getTime() - this.now());
     }
   });
-  remainingFormatted = computed(() => {
-    const totalSec = Math.floor(this.remainingMs() / 1000);
+  formattedTimeToLive = computed(() => {
+    const totalSec = Math.floor(this.millisecondsToLive() / 1000);
     const mins = Math.floor(totalSec / 60);
     const secs = totalSec % 60;
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
@@ -135,7 +135,7 @@ export class CartService {
       const currentCart = this.cart();
       if (!currentCart) return;
       const cartId = currentCart?.id;
-      const remainingTime = this.remainingMs();
+      const remainingTime = this.millisecondsToLive();
 
       if (remainingTime === 0 && currentCart && cartId) {
         if (cartId !== this.lastExpiredCartId) {

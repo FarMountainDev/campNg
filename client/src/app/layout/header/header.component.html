@@ -21,7 +21,7 @@
         <div *ngIf="cartService.expirationTime()"
              matTooltip="Cart expires at {{ cartService.expirationTime() | date:'shortTime' }}"
              class="px-2 py-1 rounded-md text-sm font-bold absolute bottom-[-14px] left-[50%] transform translate-x-[-50%] whitespace-nowrap z-10">
-          {{ cartService.remainingFormatted() }}
+          {{ cartService.formattedTimeToLive() }}
         </div>
       </a>
       <a (click)="this.themeService.toggleTheme()" class="mt-2 mr-2 cursor-pointer">

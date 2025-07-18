@@ -31,14 +31,12 @@ Make sure you have a Stripe account setup for this application and have added th
 https://docs.stripe.com/stripe-cli
 
 ### 2. Login to Stripe CLI:
-`PowerShell> stripe login`
+`>> stripe login`
 
 ### 3. Listen to Stripe events:
-`PowerShell> stripe listen --forward-to https://localhost:5001/api/payments/webhook -e payment_intent.succeeded`
+`>> stripe listen --forward-to https://localhost:5001/api/payments/webhook -e payment_intent.succeeded`
 
 Ensure the `StripeSettings:WhSecret` config setting matches the one returned by the CLI.
-
-**Note:** Does not seem to work from JetBrains IDE terminals. Windows PowerShell terminal works fine.
 
 
 ## Deployment to Azure:

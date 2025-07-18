@@ -127,7 +127,18 @@ export class CampsiteAvailabilityItemComponent implements OnChanges{
     return undefined;
   }
 
-  getDateAccessibilityLabel(date: Date): string {
+  getDateAvailabilityCode(date: Date): string {
+    const dateStr = date.toLocaleDateString();
+    if (this.isDateReserved(date)) {
+      return 'R';
+    } else if (this.isDatePending(date)) {
+      return 'P';
+    } else {
+      return 'A';
+    }
+  }
+
+  getDateAvailabilityLabel(date: Date): string {
     const dateStr = date.toLocaleDateString();
     const status = this.isDateReserved(date) ? 'Reserved' :
       this.isDatePending(date) ? 'Pending' : 'Available';

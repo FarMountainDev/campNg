@@ -68,7 +68,7 @@ export class CheckoutComponent implements OnInit, OnDestroy{
     effect(() => {
       const expiredCartId = this.cartService.cartExpired();
       if (expiredCartId) {
-        this.router.navigate(['/cart']);
+        void this.router.navigate(['/cart']);
         this.cartService.cartExpired.set(null);
       }
     });
@@ -118,7 +118,9 @@ export class CheckoutComponent implements OnInit, OnDestroy{
     this.loading = true;
     try {
       if (this.confirmationToken) {
-        const result = await this.stripeService.confirmPayment(this.confirmationToken);
+        const result = await this.stripeService.confirmPayment({
+          confirmationToken: this.confirmationToken
+        });
         if (result.paymentIntent?.status === 'succeeded') {
           const order = await this.createOrderModel();
           const orderResult = await firstValueFrom(this.orderService.createOrder(order));

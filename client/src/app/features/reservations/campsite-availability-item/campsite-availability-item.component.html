@@ -21,18 +21,12 @@
     <div class="date-grid">
       <div *ngFor="let date of dateRange" class="flex flex-col"
            [ngClass]="getSelectedRangeClass(date)"
-           role="gridcell" [attr.aria-label]="getDateAccessibilityLabel(date)">
+           role="gridcell" [attr.aria-label]="getDateAvailabilityLabel(date)">
         <div class="date-cell">
           {{ date | date:'MMM d' }}
         </div>
-        <div class="date-cell" [ngClass]="getDateCellClass(date)">
-          @if (isDateReserved(date)) {
-            R
-          } @else if (isDatePending(date)) {
-            P
-          } @else {
-            A
-          }
+        <div class="date-cell" [ngClass]="getDateCellClass(date)" matTooltip="{{getDateAvailabilityLabel(date)}}">
+          {{getDateAvailabilityCode(date)}}
         </div>
       </div>
     </div>

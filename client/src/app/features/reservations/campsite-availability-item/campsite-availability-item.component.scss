@@ -11,13 +11,13 @@
   --selected-reserved-bg: #ffcdd2;
   --selected-reserved-text: #c62828;
   --pending-bg: #fff9c4;
-  --pending-text: #f9a825;
+  --pending-text: #c48116;
   --selected-pending-bg: #ffee58;
   --selected-pending-text: #f57f17;
 
   :host-context(html.dark-mode) & {
-    --selected-available-color: rgba(66, 165, 245, 0.7);
-    --selected-unavailable-color: rgba(230, 66, 66, 0.4);
+    --selected-available-color: rgba(66, 165, 245, 0.6);
+    --selected-unavailable-color: rgba(230, 66, 66, 0.5);
     --date-cell-border-color: rgb(98, 98, 98);
     --available-bg: #38438e;
     --available-text: #e8ecf5;
@@ -27,10 +27,10 @@
     --reserved-text: #ffe2cd;
     --selected-reserved-bg: #c62828;
     --selected-reserved-text: #ffcdd2;
-    --pending-bg: #f9a825;
-    --pending-text: #fff9c4;
-    --selected-pending-bg: #f57f17;
-    --selected-pending-text: #ffee58;
+    --pending-bg: #f9cf25;
+    --pending-text: #000000;
+    --selected-pending-bg: #e09100;
+    --selected-pending-text: #fff4a7;
   }
 }
 

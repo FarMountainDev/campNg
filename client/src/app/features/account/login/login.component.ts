@@ -50,7 +50,7 @@ export class LoginComponent {
 
   loginAsModerator() {
     this.loginForm.patchValue({
-      email: 'moderator@test.com',
+      email: 'moderator@campNg.com',
       password: 'Pa$$w0rd'
     });
     this.onSubmit();
@@ -58,7 +58,7 @@ export class LoginComponent {
 
   loginAsCamper() {
     this.loginForm.patchValue({
-      email: 'HappyCamper@test.com',
+      email: 'HappyCamper@campNg.com',
       password: 'Pa$$w0rd'
     });
     this.onSubmit();

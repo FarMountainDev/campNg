@@ -64,7 +64,7 @@ export class StripeService {
 
     if (!this.elementsPromise) {
       this.elementsPromise = this.initializeElementsInternal().finally(() => {
-        this.elementsPromise = null;
+        this.elementsPromise = null; // Reset promise to allow re-initialization
       });
     }
 
@@ -83,6 +83,7 @@ export class StripeService {
       this.paymentElementsReady.set(true);
       return this.paymentElement;
       } catch (error) {
+        console.error('Error creating payment element:', error);
         throw new StripeServiceError(
           `Failed to create payment element: ${error instanceof Error ? error.message : String(error)}`
       );
@@ -157,6 +158,7 @@ export class StripeService {
       });
       return this.elements;
     } catch (error) {
+      console.error('Error initializing Stripe elements:', error);
       throw new StripeServiceError(
         `Failed to initialize Stripe elements: ${error instanceof Error ? error.message : String(error)}`
       );

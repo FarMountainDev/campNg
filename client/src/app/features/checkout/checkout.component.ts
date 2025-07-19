@@ -125,9 +125,12 @@ export class CheckoutComponent implements OnInit, OnDestroy{
   async confirmPayment(stepper: MatStepper) {
     this.loading = true;
     try {
-      if (this.confirmationToken) {
-        const result = await this.stripeService.confirmPayment(this.confirmationToken);
-        if (result.paymentIntent?.status === 'succeeded') {
+      if (!this.confirmationToken) {
+        throw new Error('Missing payment confirmation token');
+      }
+      const result = await this.stripeService.confirmPayment(this.confirmationToken);
+      if (result.paymentIntent?.status === 'succeeded') {
+        try {
           const order = await this.createOrderModel();
           const orderResult = await firstValueFrom(this.orderService.createOrder(order));
           if (orderResult) {
@@ -135,16 +138,20 @@ export class CheckoutComponent implements OnInit, OnDestroy{
             this.cartService.deleteCart();
             void this.router.navigateByUrl('/checkout/success');
           } else {
-            throw new Error('Order creation failed');
+            throw new Error('Order creation failed - no result returned');
           }
-        } else if (result.error) {
-          throw new Error(result.error.message);
-        } else {
-          throw new Error('Something went wrong with your payment');
+        } catch (orderError: any) {
+          console.error('Order creation error:', orderError);
+          throw new Error(orderError.message || 'Order creation failed');
         }
+      } else if (result.error) {
+        throw new Error(result.error.message);
+      } else {
+        throw new Error('Payment was not successful');
       }
     } catch (error: any) {
-      this.snackbar.error(error.message || 'Problem with payment');
+      console.error('Payment process error:', error);
+      this.snackbar.error(error.message || 'Problem with payment processing');
       stepper.previous();
     } finally {
       this.loading = false;

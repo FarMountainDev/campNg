@@ -1,8 +1,9 @@
 ﻿import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Order, OrderToCreate } from '../../shared/models/order';
-import { Observable, catchError, throwError } from 'rxjs';
+import { catchError } from 'rxjs';
+import { ErrorHandlingService } from './error-handling.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,53 +11,27 @@ import { Observable, catchError, throwError } from 'rxjs';
 export class OrderService {
   private readonly baseUrl = environment.apiUrl;
   private readonly http = inject(HttpClient);
+  private readonly errorHandler = inject(ErrorHandlingService);
   orderComplete = false;
 
   createOrder(orderToCreate: OrderToCreate) {
     return this.http.post<Order>(this.baseUrl + 'orders', orderToCreate)
       .pipe(
-        catchError(this.handleError)
+        catchError(error => this.errorHandler.handleHttpError(error))
       );
   }
 
   getOrdersForUser() {
     return this.http.get<Order[]>(this.baseUrl + 'orders')
       .pipe(
-        catchError(this.handleError)
+        catchError(error => this.errorHandler.handleHttpError(error))
       );
   }
 
   getOrderDetails(id: number) {
     return this.http.get<Order>(this.baseUrl + 'orders/' + id)
       .pipe(
-        catchError(this.handleError)
+        catchError(error => this.errorHandler.handleHttpError(error))
       );
-  }
-
-  // TODO : Create error handling service?
-  private handleError(error: HttpErrorResponse) {
-    let errorMessage = 'An unknown error occurred';
-
-    if (error.error instanceof ErrorEvent) {
-      // Client-side error
-      errorMessage = `Error: ${error.error.message}`;
-    } else {
-      // Server-side error
-      if (error.error) {
-        if (typeof error.error === 'object' && error.error.errors) {
-          // Handle validation errors
-          const validationErrors = Object.values(error.error.errors).flat();
-          errorMessage = Array.isArray(validationErrors) ? validationErrors.join(', ') : String(validationErrors);
-        } else if (typeof error.error === 'object' && error.error.message) {
-          errorMessage = error.error.message;
-        } else if (typeof error.error === 'string') {
-          errorMessage = error.error;
-        }
-      } else {
-        errorMessage = `Error Code: ${error.status}, Message: ${error.statusText}`;
-      }
-    }
-
-    return throwError(() => new Error(errorMessage));
   }
 }

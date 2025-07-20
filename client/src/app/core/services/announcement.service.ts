@@ -4,6 +4,7 @@ import {HttpClient, HttpParams} from '@angular/common/http';
 import {Announcement} from '../../shared/models/announcement';
 import {tap, catchError} from 'rxjs/operators';
 import {throwError} from 'rxjs';
+import {ErrorHandlingService} from './error-handling.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +12,7 @@ import {throwError} from 'rxjs';
 export class AnnouncementService {
   private readonly baseUrl = environment.apiUrl;
   private readonly http = inject(HttpClient);
+  private readonly errorHandler = inject(ErrorHandlingService);
 
   loading = signal<boolean>(false);
   globalAnnouncements = signal<Announcement[]>([]);
@@ -24,7 +26,7 @@ export class AnnouncementService {
       }),
       catchError(error => {
         this.loading.set(false);
-        return throwError(() => error);
+        return this.errorHandler.handleHttpError(error);
       })
     );
   }

@@ -2,9 +2,10 @@
 import {environment} from '../../../environments/environment';
 import {HttpClient} from '@angular/common/http';
 import {ShoppingCart, CartItem} from '../../shared/models/shoppingCart';
-import {map, of} from 'rxjs';
+import {map, of, tap} from 'rxjs';
 import {catchError, first} from 'rxjs/operators';
 import {SnackbarService} from './snackbar.service';
+import { ErrorHandlingService } from './error-handling.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +14,7 @@ export class CartService {
   private readonly baseUrl = environment.apiUrl;
   private readonly http = inject(HttpClient);
   private readonly snackbar = inject(SnackbarService);
+  private readonly errorHandler = inject(ErrorHandlingService);
   private lastExpiredCartId: string | null = null;
 
   cart = signal<ShoppingCart | null>(null);
@@ -71,15 +73,29 @@ export class CartService {
       catchError(error => {
         this.snackbar.error('Error loading cart');
         this.clearCart();
-        return of(null);
+        return this.errorHandler.handleHttpError(error);
       })
     );
   }
 
   setCart(cart: ShoppingCart) {
-    return this.http.post<ShoppingCart>(this.baseUrl + 'cart', cart).subscribe({
-      next: cart => this.cart.set(cart)
-    })
+    this.http.post<ShoppingCart>(this.baseUrl + 'cart', cart).pipe(
+      tap(responseCart => this.cart.set(responseCart)),
+      catchError(error => {
+        this.snackbar.error('Error saving cart');
+        return this.errorHandler.handleHttpError(error);
+      })
+    ).subscribe();
+  }
+
+  deleteCart() {
+    this.http.delete(this.baseUrl + 'cart?id=' + this.cart()?.id).pipe(
+      tap(() => { this.clearCart(); }),
+      catchError(error => {
+        this.snackbar.error('Error deleting cart');
+        return this.errorHandler.handleHttpError(error);
+      })
+    ).subscribe();
   }
 
   addItemToCart(item: CartItem) {
@@ -95,14 +111,6 @@ export class CartService {
     if (index === -1) return;
     cart.items.splice(index, 1);
     this.setCart(cart);
-  }
-
-  deleteCart() {
-    this.http.delete(this.baseUrl + 'cart?id=' + this.cart()?.id).subscribe({
-      next: () => {
-        this.clearCart();
-      }
-    });
   }
 
   private createCart(): ShoppingCart {
@@ -144,7 +152,7 @@ export class CartService {
             first(),
             catchError(err => {
               this.snackbar.error('Error checking cart expiration');
-              return of(null);
+              return this.errorHandler.handleHttpError(err);
             })
           ).subscribe(result => {
             if (!result) {

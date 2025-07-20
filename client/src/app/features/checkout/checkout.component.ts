@@ -46,13 +46,13 @@ export class CheckoutComponent implements OnInit, OnDestroy{
   protected readonly cartService = inject(CartService);
   protected readonly reservationService = inject(ReservationService);
   paymentElement?: StripePaymentElement;
+  confirmationToken?: ConfirmationToken;
+  termsAccepted = false;
+  loading = false;
   completionStatus = signal<{terms: boolean, payment: boolean}>({
     terms: false,
     payment: false
   });
-  confirmationToken?: ConfirmationToken;
-  termsAccepted = false;
-  loading = false;
 
   async ngOnInit() {
     try {

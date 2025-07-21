@@ -1,4 +1,4 @@
-import {Component, inject, OnDestroy, OnInit, signal, effect} from '@angular/core';
+import {Component, inject, OnDestroy, OnInit, signal, effect, AfterViewInit} from '@angular/core';
 import {OrderSummaryComponent} from '../../shared/components/order-summary/order-summary.component';
 import {MatStepper, MatStepperModule} from '@angular/material/stepper';
 import {MatButton} from '@angular/material/button';
@@ -37,7 +37,7 @@ import {ThemeService} from '../../core/services/theme.service';
   templateUrl: './checkout.component.html',
   styleUrl: './checkout.component.scss'
 })
-export class CheckoutComponent implements OnInit, OnDestroy{
+export class CheckoutComponent implements OnInit, AfterViewInit, OnDestroy{
   private readonly stripeService = inject(StripeService);
   private readonly snackbar = inject(SnackbarService);
   private readonly orderService = inject(OrderService);
@@ -55,10 +55,14 @@ export class CheckoutComponent implements OnInit, OnDestroy{
   });
 
   async ngOnInit() {
-    if (await this.cartService.isCartExpired()) {
+    const isExpired = await this.cartService.isCartExpired();
+    if (isExpired) {
       void this.router.navigate(['/cart']);
       return;
     }
+  }
+
+  async ngAfterViewInit() {
     try {
       this.paymentElement = await this.stripeService.createPaymentElement();
       if (this.paymentElement) {
@@ -71,12 +75,7 @@ export class CheckoutComponent implements OnInit, OnDestroy{
   }
 
   constructor() {
-    effect(() => {
-      const currentTheme = this.themeService.currentTheme();
-      if (this.paymentElement) {
-        void this.stripeService.updatePaymentElementTheme();
-      }
-    });
+    this.cartService.cartExpiredTrigger.set(null);
     effect(() => {
       const expiredCartId = this.cartService.cartExpiredTrigger();
       if (expiredCartId) {

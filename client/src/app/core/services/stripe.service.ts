@@ -1,4 +1,4 @@
-﻿import {inject, Injectable, signal} from '@angular/core';
+﻿import {inject, Injectable, signal, effect} from '@angular/core';
 import {
   ConfirmationToken,
   loadStripe,
@@ -13,13 +13,6 @@ import {Cart} from '../../shared/models/shoppingCart';
 import {firstValueFrom, map} from 'rxjs';
 import {ThemeService} from './theme.service';
 
-class StripeServiceError extends Error {
-  constructor(message: string, public readonly code?: string) {
-    super(message);
-    this.name = 'StripeServiceError';
-  }
-}
-
 @Injectable({
   providedIn: 'root'
 })
@@ -29,17 +22,30 @@ export class StripeService {
   private readonly cartService = inject(CartService);
   private readonly themeService = inject(ThemeService);
   private readonly stripePromise: Promise<Stripe | null>;
-  private readonly paymentElementsReady = signal(false);
+  private readonly paymentElementsReady = signal<boolean>(false);
   private elements?: StripeElements;
   private paymentElement?: StripePaymentElement;
-  private elementsPromise: Promise<StripeElements | undefined> | null = null;
+  private elementsPromise?: Promise<StripeElements>;
 
   constructor() {
     this.stripePromise = loadStripe(environment.stripePublicKey);
+    effect(() => {
+      const currentTheme = this.themeService.currentTheme() === 'dark' ? 'night' : 'stripe';
+      if (this.paymentElementsReady() && this.elements) {
+        void this.updatePaymentElementTheme(currentTheme);
+      }
+    });
   }
 
   getStripeInstance() {
     return this.stripePromise;
+  }
+
+  disposeElements() {
+    this.elements = undefined;
+    this.paymentElement = undefined;
+    this.elementsPromise = undefined;
+    this.paymentElementsReady.set(false);
   }
 
   createOrUpdatePaymentIntent() {
@@ -53,113 +59,110 @@ export class StripeService {
     );
   }
 
-  disposeElements() {
-    this.elements = undefined;
-    this.paymentElement = undefined;
-    this.paymentElementsReady.set(false);
+  async initializeElements() {
+    if (this.elementsPromise) {
+      return this.elementsPromise;
+    }
+    if (this.elements) {
+      return this.elements;
+    }
+    this.elementsPromise = this.initializeElementsPromise();
+
+    try {
+      this.elements = await this.elementsPromise;
+      return this.elements;
+    } catch (error) {
+      this.elementsPromise = undefined;
+      throw error;
+    }
   }
 
-  async initializeElements() {
-    if (this.elements) return this.elements;
-    if (!this.elementsPromise) {
-      this.elementsPromise = this.initializeElementsInternal().finally(() => {
-        this.elementsPromise = null;
-      });
+  private async initializeElementsPromise(): Promise<StripeElements> {
+    const stripe = await this.getStripeInstance();
+    if (!stripe) {
+      throw new Error('Stripe has not been loaded');
     }
-    return this.elementsPromise;
+    const cart = await firstValueFrom(this.createOrUpdatePaymentIntent());
+    if (!cart.clientSecret) {
+      throw new Error('Failed to get client secret from payment intent');
+    }
+    const theme = this.themeService.currentTheme() === 'dark' ? 'night' : 'stripe';
+    return stripe.elements({
+      clientSecret: cart.clientSecret,
+      appearance: { theme, labels: 'floating' }
+    });
   }
 
   async createPaymentElement() {
-    if (this.paymentElement) return this.paymentElement;
-
+    if (this.paymentElement && this.paymentElementsReady()) {
+      return this.paymentElement;
+    }
     try {
       const elements = await this.initializeElements();
-      if (!elements) {
-        throw new StripeServiceError('Stripe elements have not been initialized');
+      if (!this.paymentElement) {
+        this.paymentElement = elements.create('payment');
       }
-      this.paymentElement = elements.create('payment');
       this.paymentElementsReady.set(true);
       return this.paymentElement;
-      } catch (error) {
-        console.error('Error creating payment element:', error);
-        throw new StripeServiceError(
-          `Failed to create payment element: ${error instanceof Error ? error.message : String(error)}`
-      );
+    } catch (error) {
+      this.paymentElementsReady.set(false);
+      throw new Error(`Failed to create payment element: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
   async createConfirmationToken() {
     const stripe = await this.getStripeInstance();
-    const elements = await this.initializeElements();
-    if (!elements) {
-      throw new StripeServiceError('Stripe elements have not been initialized');
-    }
-    const result = await elements.submit();
-    if (result.error) {
-      throw new StripeServiceError(
-        result.error.message || 'Unknown Stripe error',
-        result.error.code
-      );
-    }
     if (!stripe) {
-      throw new StripeServiceError('Stripe has not been loaded');
+      throw new Error('Stripe has not been loaded');
     }
-    return await stripe.createConfirmationToken({elements});
+
+    const elements = await this.initializeElements();
+    const result = await elements.submit();
+
+    if (result.error) {
+      throw new Error(`Form submission failed: ${result.error.message}`);
+    }
+
+    return await stripe.createConfirmationToken({ elements });
   }
 
   async confirmPayment(confirmationToken: ConfirmationToken) {
     const stripe = await this.getStripeInstance();
-    const elements = await this.initializeElements();
-    if (!elements) {
-      throw new StripeServiceError('Stripe elements have not been initialized');
+    if (!stripe) {
+      throw new Error('Stripe has not been loaded');
     }
+
+    const elements = await this.initializeElements();
     const result = await elements.submit();
     if (result.error) {
-      throw new StripeServiceError(
-        result.error.message || 'Unknown Stripe error',
-        result.error.code
-      );
+      throw new Error(`Form submission failed: ${result.error.message}`);
     }
+
     const clientSecret = this.cartService.cart()?.clientSecret;
-    if (!stripe || !clientSecret) {
-      throw new StripeServiceError('Missing required payment configuration');
+    if (stripe && clientSecret) {
+      return await stripe.confirmPayment({
+        clientSecret: clientSecret,
+        confirmParams: {
+          confirmation_token: confirmationToken.id
+        },
+        redirect: 'if_required'
+      })
+    } else {
+      throw new Error('Stripe has not been loaded');
     }
-    return await stripe.confirmPayment({
-      clientSecret,
-      confirmParams: {
-        confirmation_token: confirmationToken.id
-      },
-      redirect: 'if_required'
-    });
   }
 
-  async updatePaymentElementTheme() {
-    if (!this.paymentElement || !this.elements) return;
-
-    const theme = this.themeService.currentTheme() === 'dark' ? 'night' : 'stripe';
-    this.elements.update({
-      appearance: {theme, labels: 'floating'}
-    });
-  }
-
-  private async initializeElementsInternal() {
-    const stripe = await this.getStripeInstance();
-    if (!stripe) {
-      throw new StripeServiceError('Stripe has not been loaded');
+  async updatePaymentElementTheme(theme: 'night' | 'stripe') {
+    if (!this.paymentElementsReady() || !this.elements) {
+      console.warn('Cannot update theme: payment elements not ready');
+      return;
     }
     try {
-      const cart = await firstValueFrom(this.createOrUpdatePaymentIntent());
-      const theme = this.themeService.currentTheme() === 'dark' ? 'night' : 'stripe';
-      this.elements = stripe.elements({
-        clientSecret: cart.clientSecret,
-        appearance: {theme, labels: 'floating'}
+      this.elements.update({
+        appearance: { theme, labels: 'floating' }
       });
-      return this.elements;
     } catch (error) {
-      console.error('Error initializing Stripe elements:', error);
-      throw new StripeServiceError(
-        `Failed to initialize Stripe elements: ${error instanceof Error ? error.message : String(error)}`
-      );
+      console.error('Failed to update payment element theme:', error);
     }
   }
 }

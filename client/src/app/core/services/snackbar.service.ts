@@ -28,7 +28,7 @@ export class SnackbarService {
     });
   }
 
-  warning(message: string) {
+  warn(message: string) {
     this.snackbar.open(message, 'Close', {
       duration: this.defaultDuration,
       horizontalPosition: this.horizontalPosition,

@@ -1,4 +1,4 @@
-﻿import { inject, Injectable } from '@angular/core';
+﻿import {inject, Injectable, signal} from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Order, OrderToCreate } from '../../shared/models/order';
@@ -12,6 +12,7 @@ export class OrderService {
   private readonly baseUrl = environment.apiUrl;
   private readonly http = inject(HttpClient);
   private readonly errorHandler = inject(ErrorHandlingService);
+  private currentOrderId = signal<number | null>(null);
   orderComplete = false;
 
   createOrder(orderToCreate: OrderToCreate) {
@@ -33,5 +34,17 @@ export class OrderService {
       .pipe(
         catchError(error => this.errorHandler.handleHttpError(error))
       );
+  }
+
+  setCurrentOrderId(orderId: number) {
+    this.currentOrderId.set(orderId);
+  }
+
+  getCurrentOrderId() {
+    return this.currentOrderId();
+  }
+
+  clearCurrentOrderId() {
+    this.currentOrderId.set(null);
   }
 }

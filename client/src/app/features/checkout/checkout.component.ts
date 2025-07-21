@@ -21,6 +21,7 @@ import {ReservationService} from '../../core/services/reservation.service';
 import {OrderToCreate} from '../../shared/models/order';
 import {OrderService} from '../../core/services/order.service';
 import {ThemeService} from '../../core/services/theme.service';
+import {SignalrService} from '../../core/services/signalr.service';
 
 @Component({
   selector: 'app-checkout',
@@ -42,7 +43,7 @@ export class CheckoutComponent implements OnInit, AfterViewInit, OnDestroy{
   private readonly snackbar = inject(SnackbarService);
   private readonly orderService = inject(OrderService);
   private readonly router = inject(Router);
-  private readonly themeService = inject(ThemeService);
+  private readonly signalrService = inject(SignalrService);
   protected readonly cartService = inject(CartService);
   protected readonly reservationService = inject(ReservationService);
   paymentElement?: StripePaymentElement;
@@ -145,11 +146,16 @@ export class CheckoutComponent implements OnInit, AfterViewInit, OnDestroy{
       const result = await this.stripeService.confirmPayment(this.confirmationToken);
       if (result.paymentIntent?.status === 'succeeded') {
         try {
+          const connectionReady = await this.signalrService.ensureConnection();
+          if (!connectionReady) {
+            console.warn('SignalR connection failed, proceeding without real-time updates');
+          }
           const order = await this.createOrderModel();
           const orderResult = await firstValueFrom(this.orderService.createOrder(order));
           if (orderResult) {
             console.log('Order created successfully:', orderResult);
             this.orderService.orderComplete = true;
+            this.orderService.setCurrentOrderId(orderResult.id);
             this.cartService.deleteCart();
             void this.router.navigateByUrl('/checkout/success');
           } else {

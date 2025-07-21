@@ -46,7 +46,10 @@ export class AccountService {
 
   logout() {
     return this.http.post(this.baseUrl + 'account/logout', {}).pipe(
-      tap(() => this.signalrService.stopHubConnection())
+      tap(() => {
+        this.signalrService.stopHubConnection();
+        this.signalrService.resetConnection();
+      })
     );
   }
 

@@ -136,7 +136,7 @@ export class CartService implements OnDestroy {
           const isExpired = !cart ||
             (cart.expirationTime ? new Date(cart.expirationTime).getTime() <= Date.now() : false);
           if (isExpired) {
-            this.snackbar.warning('Your shopping cart has expired');
+            this.snackbar.warn('Your shopping cart has expired');
             this.clearCart();
           }
           return isExpired;
@@ -194,7 +194,7 @@ export class CartService implements OnDestroy {
       if (!currentCart) return;
       const cartId = currentCart?.id;
       const remainingTime = this.millisecondsToLive();
-      const bufferMilliseconds = -2000;
+      const bufferMilliseconds = -4200;
       if (remainingTime <= bufferMilliseconds && currentCart && cartId) {
         if (cartId !== this.lastExpiredCartId) {
           this.lastExpiredCartId = cartId;

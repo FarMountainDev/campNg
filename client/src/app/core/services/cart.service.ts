@@ -1,21 +1,29 @@
-﻿import {computed, effect, inject, Injectable, signal} from '@angular/core';
+﻿import {computed, effect, inject, Injectable, OnDestroy, signal} from '@angular/core';
 import {environment} from '../../../environments/environment';
 import {HttpClient} from '@angular/common/http';
 import {ShoppingCart, CartItem} from '../../shared/models/shoppingCart';
-import {map, of, tap} from 'rxjs';
-import {catchError, first} from 'rxjs/operators';
+import {BehaviorSubject, firstValueFrom, map, of, Subject, tap} from 'rxjs';
+import {catchError, first, filter, switchMap, shareReplay, takeUntil, distinctUntilChanged} from 'rxjs/operators';
 import {SnackbarService} from './snackbar.service';
 import { ErrorHandlingService } from './error-handling.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class CartService {
+export class CartService implements OnDestroy {
   private readonly baseUrl = environment.apiUrl;
   private readonly http = inject(HttpClient);
   private readonly snackbar = inject(SnackbarService);
   private readonly errorHandler = inject(ErrorHandlingService);
+  private destroy$ = new Subject<void>();
+  private cartExpirationCheck$ = new BehaviorSubject<string | null>(null);
+  private cartCheckRequests = new Map<string, Promise<boolean>>();
   private lastExpiredCartId: string | null = null;
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   cart = signal<ShoppingCart | null>(null);
   itemCount = computed(() => {
@@ -42,18 +50,20 @@ export class CartService {
     const exp = this.expirationTime();
     if (!exp) return 0;
     try {
-      return Math.max(0, exp.getTime() - this.now());
+      return exp.getTime() - this.now();
     } catch {
-      return Math.max(0, new Date(String(exp)).getTime() - this.now());
+      return new Date(String(exp)).getTime() - this.now();
     }
   });
   formattedTimeToLive = computed(() => {
-    const totalSec = Math.floor(this.millisecondsToLive() / 1000);
+    const msToLive = this.millisecondsToLive();
+    if (msToLive <= 0) return "0:00";
+    const totalSec = Math.floor(msToLive / 1000);
     const mins = Math.floor(totalSec / 60);
     const secs = totalSec % 60;
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
   });
-  cartExpired = signal<string | null>(null);
+  cartExpiredTrigger = signal<string | null>(null);
 
   constructor() {
     this.startClock();
@@ -61,7 +71,7 @@ export class CartService {
   }
 
   getCart(id: string) {
-    return this.http.get<ShoppingCart | null>(this.baseUrl + 'cart?id=' + id).pipe(
+    return this.fetchCart(id).pipe(
       map(cart => {
         if (!cart) {
           this.clearCart();
@@ -69,11 +79,6 @@ export class CartService {
         }
         this.cart.set(cart);
         return cart;
-      }),
-      catchError(error => {
-        this.snackbar.error('Error loading cart');
-        this.clearCart();
-        return this.errorHandler.handleHttpError(error);
       })
     );
   }
@@ -84,7 +89,8 @@ export class CartService {
       catchError(error => {
         this.snackbar.error('Error saving cart');
         return this.errorHandler.handleHttpError(error);
-      })
+      }),
+      takeUntil(this.destroy$)
     ).subscribe();
   }
 
@@ -94,7 +100,8 @@ export class CartService {
       catchError(error => {
         this.snackbar.error('Error deleting cart');
         return this.errorHandler.handleHttpError(error);
-      })
+      }),
+      takeUntil(this.destroy$)
     ).subscribe();
   }
 
@@ -111,6 +118,49 @@ export class CartService {
     if (index === -1) return;
     cart.items.splice(index, 1);
     this.setCart(cart);
+  }
+
+  async isCartExpired(): Promise<boolean> {
+    const currentCart = this.cart();
+    if (!currentCart?.id) return true;
+
+    const cartId = currentCart.id;
+
+    if (this.cartCheckRequests.has(cartId)) {
+      return this.cartCheckRequests.get(cartId)!;
+    }
+
+    const checkPromise = firstValueFrom(
+      this.fetchCart(cartId).pipe(
+        map(cart => {
+          const isExpired = !cart ||
+            (cart.expirationTime ? new Date(cart.expirationTime).getTime() <= Date.now() : false);
+          if (isExpired) {
+            this.snackbar.warning('Your shopping cart has expired');
+            this.clearCart();
+          }
+          return isExpired;
+        }),
+        catchError((err) => {
+          console.error('Error checking cart expiration:', err);
+          this.snackbar.error('Error checking cart expiration');
+          return of(true);
+        })
+      )
+    ).finally(() => {
+      this.cartCheckRequests.delete(cartId);
+    });
+
+    this.cartCheckRequests.set(cartId, checkPromise);
+    return checkPromise;
+  }
+
+  private fetchCart(id: string) {
+    return this.http.get<ShoppingCart | null>(`${this.baseUrl}cart?id=${id}`).pipe(
+      catchError(error => {
+        return this.errorHandler.handleHttpError(error);
+      })
+    );
   }
 
   private createCart(): ShoppingCart {
@@ -144,20 +194,13 @@ export class CartService {
       if (!currentCart) return;
       const cartId = currentCart?.id;
       const remainingTime = this.millisecondsToLive();
-
-      if (remainingTime === 0 && currentCart && cartId) {
+      const bufferMilliseconds = -2000;
+      if (remainingTime <= bufferMilliseconds && currentCart && cartId) {
         if (cartId !== this.lastExpiredCartId) {
           this.lastExpiredCartId = cartId;
-          this.getCart(cartId).pipe(
-            first(),
-            catchError(err => {
-              this.snackbar.error('Error checking cart expiration');
-              return this.errorHandler.handleHttpError(err);
-            })
-          ).subscribe(result => {
-            if (!result) {
-              this.snackbar.warning('Your shopping cart has expired');
-              setTimeout(() => this.cartExpired.set(cartId), 0);
+          this.isCartExpired().then(isExpired => {
+            if (isExpired) {
+              this.cartExpiredTrigger.set(cartId);
             }
           });
         }

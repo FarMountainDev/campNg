@@ -55,6 +55,10 @@ export class CheckoutComponent implements OnInit, OnDestroy{
   });
 
   async ngOnInit() {
+    if (await this.cartService.isCartExpired()) {
+      void this.router.navigate(['/cart']);
+      return;
+    }
     try {
       this.paymentElement = await this.stripeService.createPaymentElement();
       if (this.paymentElement) {
@@ -74,10 +78,10 @@ export class CheckoutComponent implements OnInit, OnDestroy{
       }
     });
     effect(() => {
-      const expiredCartId = this.cartService.cartExpired();
+      const expiredCartId = this.cartService.cartExpiredTrigger();
       if (expiredCartId) {
         void this.router.navigate(['/cart']);
-        this.cartService.cartExpired.set(null);
+        this.cartService.cartExpiredTrigger.set(null);
       }
     });
   }
@@ -114,17 +118,28 @@ export class CheckoutComponent implements OnInit, OnDestroy{
   }
 
   async onStepChange(event: StepperSelectionEvent) {
-    if (event.selectedIndex === 1) {
-      await firstValueFrom(this.stripeService.createOrUpdatePaymentIntent());
-    }
-    if (event.selectedIndex === 2) {
-      await this.getConfirmationToken();
+    const isExpired = await this.cartService.isCartExpired();
+    if (isExpired) {
+      void this.router.navigate(['/cart']);
+      return;
+    } else {
+      if (event.selectedIndex === 1) {
+        await firstValueFrom(this.stripeService.createOrUpdatePaymentIntent());
+      }
+      if (event.selectedIndex === 2) {
+        await this.getConfirmationToken();
+      }
     }
   }
 
   async confirmPayment(stepper: MatStepper) {
     this.loading = true;
     try {
+      const isExpired = await this.cartService.isCartExpired();
+      if (isExpired) {
+        void this.router.navigate(['/cart']);
+        return;
+      }
       if (!this.confirmationToken) {
         throw new Error('Missing payment confirmation token');
       }
@@ -134,6 +149,7 @@ export class CheckoutComponent implements OnInit, OnDestroy{
           const order = await this.createOrderModel();
           const orderResult = await firstValueFrom(this.orderService.createOrder(order));
           if (orderResult) {
+            console.log('Order created successfully:', orderResult);
             this.orderService.orderComplete = true;
             this.cartService.deleteCart();
             void this.router.navigateByUrl('/checkout/success');

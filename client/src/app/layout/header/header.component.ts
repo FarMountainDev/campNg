@@ -8,7 +8,7 @@ import {AccountService} from '../../core/services/account.service';
 import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
 import {MatDivider} from '@angular/material/divider';
 import {ThemeService} from '../../core/services/theme.service';
-import {DatePipe, NgIf} from '@angular/common';
+import {DatePipe, NgClass, NgIf} from '@angular/common';
 import {MatTooltip} from '@angular/material/tooltip';
 import {IsModDirective} from '../../shared/directives/is-mod.directive';
 
@@ -27,7 +27,8 @@ import {IsModDirective} from '../../shared/directives/is-mod.directive';
     NgIf,
     MatTooltip,
     IsModDirective,
-    DatePipe
+    DatePipe,
+    NgClass
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'

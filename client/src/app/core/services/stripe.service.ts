@@ -61,13 +61,11 @@ export class StripeService {
 
   async initializeElements() {
     if (this.elements) return this.elements;
-
     if (!this.elementsPromise) {
       this.elementsPromise = this.initializeElementsInternal().finally(() => {
-        this.elementsPromise = null; // Reset promise to allow re-initialization
+        this.elementsPromise = null;
       });
     }
-
     return this.elementsPromise;
   }
 

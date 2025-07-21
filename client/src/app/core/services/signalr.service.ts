@@ -24,6 +24,7 @@ export class SignalrService {
       .catch(err => console.error('Error while starting SignalR Hub Connection: ', err));
 
     this.hubConnection.on('OrderCompleteNotification', (order: Order) => {
+      console.log('Order complete notification received:', order);
       this.orderSignal.set(order);
     });
   }

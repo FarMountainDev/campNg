@@ -7,7 +7,7 @@ namespace Infrastructure.Services;
 
 public class CartService(IConnectionMultiplexer redis) : ICartService
 {
-    private const int ExpirationMinutes = 10;
+    private const int ExpirationMinutes = 15;
     
     private readonly IDatabase database = redis.GetDatabase();
     
@@ -16,20 +16,14 @@ public class CartService(IConnectionMultiplexer redis) : ICartService
         var data = await database.StringGetAsync(key);
         if (data.IsNullOrEmpty) return null;
         
-        var cart = JsonSerializer.Deserialize<ShoppingCart>(data!);
-        if (cart == null) return null;
-        
-        var timeToLive = await database.KeyTimeToLiveAsync(key);
-        if (timeToLive.HasValue)
-            cart.ExpirationTime = DateTime.UtcNow.Add(timeToLive.Value);
-
-        return cart;
+        return JsonSerializer.Deserialize<ShoppingCart>(data!);
     }
 
     public async Task<ShoppingCart?> SetCartAsync(ShoppingCart cart)
     {
+        cart.ExpirationTime = DateTime.UtcNow.AddSeconds(ExpirationMinutes);
         var created = await database.StringSetAsync(cart.Id, JsonSerializer.Serialize(cart),
-            TimeSpan.FromMinutes(ExpirationMinutes));
+            TimeSpan.FromSeconds(ExpirationMinutes));
 
         if (!created) return null;
         

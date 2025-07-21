@@ -25,7 +25,7 @@ builder.Services.AddDbContext<CampContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
         sqlOptions =>
         {
-            sqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(30), null);
+            sqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
         });
 });
 

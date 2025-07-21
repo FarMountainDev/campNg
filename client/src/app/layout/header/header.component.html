@@ -20,6 +20,11 @@
         <mat-icon matTooltip="Shopping cart">shopping_cart</mat-icon>
         <div *ngIf="cartService.expirationTime()"
              matTooltip="Cart expires at {{ cartService.expirationTime() | date:'shortTime' }}"
+             [ngClass]="{
+               'text-warning': cartService.millisecondsToLive() < 120000 && cartService.millisecondsToLive() >= 60000,
+               'text-error': cartService.millisecondsToLive() < 60000 && cartService.millisecondsToLive() >= 30000,
+               'text-danger': cartService.millisecondsToLive() < 30000
+             }"
              class="px-2 py-1 rounded-md text-sm font-bold absolute bottom-[-14px] left-[50%] transform translate-x-[-50%] whitespace-nowrap z-10">
           {{ cartService.formattedTimeToLive() }}
         </div>

@@ -9,7 +9,7 @@
   <div class="border-b border-gray-500">
     <table class="w-full text-center">
       <tbody class="divide-y divide-gray-200">
-        @for (item of cartService.cart()?.items; track item) {
+        @for (item of cartService.cart()?.items; track item.campsiteId + '-' + item.startDate) {
           <tr class="text-sm">
             <td class="py-4 text-left">
               <span>{{item.campsiteName}}</span> - <span class="italic">{{reservationService.getNumberOfNightsForCartItem(item)}} night(s)</span>

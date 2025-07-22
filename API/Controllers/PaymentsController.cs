@@ -64,10 +64,11 @@ public class PaymentsController(CampContext context, IPaymentService paymentServ
     {
         if (intent.Status == "succeeded")
         {
-            // When testing locally, a race condition can occur where the order is not yet created for the first attempt.
+            // Allow retries to prevent race condition can occur where the order is not yet created for the first attempt.
             Order? order = null;
             var retrievalAttempt = 1;
-            while (order == null && retrievalAttempt < 5)
+            const int maxRetrievalAttempts = 5;
+            while (order == null && retrievalAttempt <= maxRetrievalAttempts)
             {
                 order = await context.Orders
                     .Include(o => o.OrderItems)
@@ -76,7 +77,7 @@ public class PaymentsController(CampContext context, IPaymentService paymentServ
                 
                 if (order != null) continue;
                 logger.LogWarning("Order not found for PaymentIntent ID: {PaymentIntentId} (Attempt {RetrievalAttempt})", intent.Id, retrievalAttempt);
-                await Task.Delay(1000);
+                await Task.Delay(Math.Max(2000, (int)Math.Pow(2, retrievalAttempt) * 1000));
                 retrievalAttempt++;
             }
             
@@ -84,13 +85,9 @@ public class PaymentsController(CampContext context, IPaymentService paymentServ
                 throw new Exception("Order not found");
 
             if ((long)order.GetTotal() * 100 != intent.Amount)
-            {
                 order.Status = OrderStatus.PaymentMismatch;
-            }
             else
-            {
                 order.Status = OrderStatus.PaymentReceived;
-            }
 
             await context.SaveChangesAsync();
 

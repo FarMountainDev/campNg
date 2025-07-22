@@ -2,8 +2,8 @@
 import {environment} from '../../../environments/environment';
 import {HttpClient} from '@angular/common/http';
 import {ShoppingCart, CartItem} from '../../shared/models/shoppingCart';
-import {BehaviorSubject, firstValueFrom, map, of, Subject, tap} from 'rxjs';
-import {catchError, first, filter, switchMap, shareReplay, takeUntil, distinctUntilChanged} from 'rxjs/operators';
+import {firstValueFrom, map, of, Subject, tap} from 'rxjs';
+import {catchError, takeUntil} from 'rxjs/operators';
 import {SnackbarService} from './snackbar.service';
 import { ErrorHandlingService } from './error-handling.service';
 
@@ -16,7 +16,6 @@ export class CartService implements OnDestroy {
   private readonly snackbar = inject(SnackbarService);
   private readonly errorHandler = inject(ErrorHandlingService);
   private destroy$ = new Subject<void>();
-  private cartExpirationCheck$ = new BehaviorSubject<string | null>(null);
   private cartCheckRequests = new Map<string, Promise<boolean>>();
   private lastExpiredCartId: string | null = null;
 
